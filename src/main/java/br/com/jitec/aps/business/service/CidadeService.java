@@ -35,9 +35,8 @@ public class CidadeService {
 	@Transactional
 	public Cidade update(UUID uid, String nome, String uf) {
 		Cidade cidade = get(uid);
-		cidade.nome = nome;
-		cidade.uf = uf;
-		repository.customUpdate(cidade);
+		cidade.setNome(nome);
+		cidade.setUf(uf);
 		return cidade;
 	}
 

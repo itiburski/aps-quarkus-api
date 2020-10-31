@@ -42,14 +42,14 @@ public class CidadeServiceTest {
 	public void shouldGet() {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		Cidade cidade1 = new Cidade("City1", "UF");
-		cidade1.uid = uid;
+		cidade1.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cidade1));
 
 		Cidade result = service.get(uid);
 
-		Assertions.assertEquals("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da", result.uid.toString());
-		Assertions.assertEquals("City1", result.nome);
-		Assertions.assertEquals("UF", result.uf);
+		Assertions.assertEquals("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da", result.getUid().toString());
+		Assertions.assertEquals("City1", result.getNome());
+		Assertions.assertEquals("UF", result.getUf());
 	}
 
 	@Test
@@ -66,22 +66,22 @@ public class CidadeServiceTest {
 	@Test
 	public void shouldCreate() {
 		Cidade created = service.create("City", "UF");
-		Assertions.assertEquals("City", created.nome);
-		Assertions.assertEquals("UF", created.uf);
+		Assertions.assertEquals("City", created.getNome());
+		Assertions.assertEquals("UF", created.getUf());
 	}
 
 	@Test
 	public void shouldUpdate() {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		Cidade cidade = new Cidade("old-city", "UF");
-		cidade.uid = uid;
+		cidade.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cidade));
 
 		Cidade result = service.update(uid, "new-city", "UF");
 
-		Assertions.assertEquals("new-city", result.nome);
-		Assertions.assertEquals("UF", result.uf);
-		Assertions.assertEquals("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da", result.uid.toString());
+		Assertions.assertEquals("new-city", result.getNome());
+		Assertions.assertEquals("UF", result.getUf());
+		Assertions.assertEquals("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da", result.getUid().toString());
 	}
 
 	@Test
@@ -99,7 +99,7 @@ public class CidadeServiceTest {
 	public void shouldDelete() {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		Cidade cidade = new Cidade("old-city", "UF");
-		cidade.uid = uid;
+		cidade.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cidade));
 
 		service.delete(uid);

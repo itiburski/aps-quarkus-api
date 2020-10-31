@@ -49,14 +49,14 @@ public class ClienteServiceTest {
 	public void shouldGet() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(123, "Cliente", "Contato");
-		cliente.uid = uid;
+		cliente.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
 
 		Cliente result = clienteService.get(uid);
 
-		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.uid.toString());
-		Assertions.assertEquals("Cliente", result.nome);
-		Assertions.assertEquals("Contato", result.contato);
+		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
+		Assertions.assertEquals("Cliente", result.getNome());
+		Assertions.assertEquals("Contato", result.getContato());
 	}
 
 	@Test
@@ -77,16 +77,16 @@ public class ClienteServiceTest {
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"));
 
-		Assertions.assertEquals("Nome", created.nome);
-		Assertions.assertEquals("contato", created.contato);
-		Assertions.assertTrue(created.ativo);
+		Assertions.assertEquals("Nome", created.getNome());
+		Assertions.assertEquals("contato", created.getContato());
+		Assertions.assertTrue(created.getAtivo());
 	}
 
 	@Test
 	public void shouldDelete() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(123, "Cliente", "Contato");
-		cliente.uid = uid;
+		cliente.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
 
 		clienteService.delete(uid);
@@ -107,11 +107,10 @@ public class ClienteServiceTest {
 
 	private Cliente getCliente(Integer codigo, String nome, String contato) {
 		Cliente cliente = new Cliente();
-		cliente.codigo = codigo;
-		cliente.nome = nome;
-		cliente.contato = contato;
+		cliente.setCodigo(codigo);
+		cliente.setNome(nome);
+		cliente.setContato(contato);
 		return cliente;
-
 	}
 
 }

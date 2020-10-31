@@ -9,7 +9,7 @@ import javax.persistence.Table;
 public class CategoriaCliente extends APSEntity {
 
 	@Column(name = "DESCRICAO")
-	public String descricao;
+	private String descricao;
 
 	public CategoriaCliente() {
 		// default constructor
@@ -17,6 +17,14 @@ public class CategoriaCliente extends APSEntity {
 
 	public CategoriaCliente(String descricao) {
 		super();
+		this.descricao = descricao;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
 

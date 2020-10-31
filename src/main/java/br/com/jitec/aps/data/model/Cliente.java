@@ -13,50 +13,170 @@ import javax.persistence.Table;
 public class Cliente extends APSEntity {
 
 	@Column(name = "CODIGO")
-	public Integer codigo;
+	private Integer codigo;
 
 	@Column(name = "NOME")
-	public String nome;
+	private String nome;
 
 	@Column(name = "RAZAO")
-	public String razaoSocial;
+	private String razaoSocial;
 
 	@Column(name = "CONTATO")
-	public String contato;
+	private String contato;
 
 	@Column(name = "ATIVO")
-	public Boolean ativo;
+	private Boolean ativo;
 
 	@Column(name = "SALDO")
-	public BigDecimal saldo;
+	private BigDecimal saldo;
 
 	@Column(name = "RUA")
-	public String rua;
+	private String rua;
 
 	@Column(name = "COMPL")
-	public String complemento;
+	private String complemento;
 
 	@Column(name = "BAIRRO")
-	public String bairro;
+	private String bairro;
 
 	@Column(name = "CEP")
-	public String cep;
+	private String cep;
 
 	@Column(name = "HOMEPAGE")
-	public String homepage;
+	private String homepage;
 
 	@Column(name = "CNPJ")
-	public String cnpj;
+	private String cnpj;
 
 	@Column(name = "IE")
-	public String inscricaoEstadual;
+	private String inscricaoEstadual;
 
 	@ManyToOne
 	@JoinColumn(name = "CIDADE_ID")
-	public Cidade cidade;
+	private Cidade cidade;
 
 	@ManyToOne
 	@JoinColumn(name = "CATEGORIA_CLIENTE_ID")
-	public CategoriaCliente categoria;
+	private CategoriaCliente categoria;
+
+	public Integer getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(Integer codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
+
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
+
+	public String getContato() {
+		return contato;
+	}
+
+	public void setContato(String contato) {
+		this.contato = contato;
+	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public BigDecimal getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
+	}
+
+	public String getRua() {
+		return rua;
+	}
+
+	public void setRua(String rua) {
+		this.rua = rua;
+	}
+
+	public String getComplemento() {
+		return complemento;
+	}
+
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
+	public String getHomepage() {
+		return homepage;
+	}
+
+	public void setHomepage(String homepage) {
+		this.homepage = homepage;
+	}
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	public Cidade getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(Cidade cidade) {
+		this.cidade = cidade;
+	}
+
+	public CategoriaCliente getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(CategoriaCliente categoria) {
+		this.categoria = categoria;
+	}
 
 }

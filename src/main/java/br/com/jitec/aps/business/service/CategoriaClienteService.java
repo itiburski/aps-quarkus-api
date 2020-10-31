@@ -36,8 +36,7 @@ public class CategoriaClienteService {
 	@Transactional
 	public CategoriaCliente update(UUID uid, String descricao) {
 		CategoriaCliente categ = get(uid);
-		categ.descricao = descricao;
-		repository.customUpdate(categ);
+		categ.setDescricao(descricao);
 		return categ;
 	}
 

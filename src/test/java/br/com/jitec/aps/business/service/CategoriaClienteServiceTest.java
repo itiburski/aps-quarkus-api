@@ -43,13 +43,13 @@ public class CategoriaClienteServiceTest {
 	public void shouldGet() {
 		CategoriaCliente categoria = new CategoriaCliente("category");
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		categoria.uid = uid;
+		categoria.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(categoria));
 
 		CategoriaCliente result = service.get(uid);
 
-		Assertions.assertEquals("category", result.descricao);
-		Assertions.assertEquals("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8", result.uid.toString());
+		Assertions.assertEquals("category", result.getDescricao());
+		Assertions.assertEquals("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8", result.getUid().toString());
 	}
 
 	@Test
@@ -66,20 +66,20 @@ public class CategoriaClienteServiceTest {
 	@Test
 	public void shouldCreate() {
 		CategoriaCliente created = service.create("category");
-		Assertions.assertEquals("category", created.descricao);
+		Assertions.assertEquals("category", created.getDescricao());
 	}
 
 	@Test
 	public void shouldUpdate() {
 		CategoriaCliente categoria = new CategoriaCliente("old-category");
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		categoria.uid = uid;
+		categoria.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(categoria));
 
 		CategoriaCliente result = service.update(uid, "new-category");
 
-		Assertions.assertEquals("new-category", result.descricao);
-		Assertions.assertEquals("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8", result.uid.toString());
+		Assertions.assertEquals("new-category", result.getDescricao());
+		Assertions.assertEquals("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8", result.getUid().toString());
 	}
 
 	@Test
@@ -97,7 +97,7 @@ public class CategoriaClienteServiceTest {
 	public void shouldDelete() {
 		CategoriaCliente categoria = new CategoriaCliente("category");
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		categoria.uid = uid;
+		categoria.setUid(uid);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(categoria));
 
 		service.delete(uid);

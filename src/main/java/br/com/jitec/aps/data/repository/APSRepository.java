@@ -12,6 +12,4 @@ public interface APSRepository<T extends APSEntity> extends PanacheRepository<T>
 		return find("uid", uid).firstResultOptional();
 	}
 
-	int customUpdate(T entity);
-
 }

@@ -34,25 +34,25 @@ public class ClienteService {
 
 	@Transactional
 	public Cliente create(Integer codigo, String nome, String razaoSocial, String contato, Boolean ativo, String rua,
-			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaEstadual,
+			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
 			UUID cidadeUid, UUID categoriaUid) {
 
 		Cliente cliente = new Cliente();
-		cliente.codigo = getCodigo(codigo);
-		cliente.nome = nome;
-		cliente.razaoSocial = razaoSocial;
-		cliente.contato = contato;
-		cliente.ativo = ativo;
-		cliente.rua = rua;
-		cliente.complemento = complemento;
-		cliente.bairro = bairro;
-		cliente.cep = cep;
-		cliente.homepage = homepage;
-		cliente.cnpj = cnpj;
-		cliente.inscricaoEstadual = inscricaEstadual;
-		cliente.cidade = cidadeService.get(cidadeUid);
-		cliente.categoria = categClienteService.get(categoriaUid);
-		cliente.saldo = BigDecimal.ZERO;
+		cliente.setCodigo(getCodigo(codigo));
+		cliente.setNome(nome);
+		cliente.setRazaoSocial(razaoSocial);
+		cliente.setContato(contato);
+		cliente.setAtivo(ativo);
+		cliente.setRua(rua);
+		cliente.setComplemento(complemento);
+		cliente.setBairro(bairro);
+		cliente.setCep(cep);
+		cliente.setHomepage(homepage);
+		cliente.setCnpj(cnpj);
+		cliente.setInscricaoEstadual(inscricaoEstadual);
+		cliente.setCidade(cidadeService.get(cidadeUid));
+		cliente.setCategoria(categClienteService.get(categoriaUid));
+		cliente.setSaldo(BigDecimal.ZERO);
 
 		repository.persist(cliente);
 		return cliente;
