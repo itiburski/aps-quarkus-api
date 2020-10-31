@@ -2,6 +2,7 @@ package br.com.jitec.aps.business.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import br.com.jitec.aps.business.exception.DataNotFoundException;
+import br.com.jitec.aps.business.exception.InvalidDataException;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 
@@ -60,14 +62,22 @@ public class ClienteService {
 
 	private Integer getCodigo(Integer codigoRequest) {
 		if (codigoRequest != null) {
+			validateCodigo(codigoRequest);
 			return codigoRequest;
 		}
-		// TODO
-//		Optional<Cliente> opMax = repository.find("max(codigo)").firstResultOptional();
-//		if (opMax.isPresent()) {
-//			return opMax.get().codigo + 1;
-//		}
-		return 1;
+
+		Integer maxCodigoCadastrado = repository.getMaiorCodigoCliente();
+		return maxCodigoCadastrado + 1;
+	}
+
+	private void validateCodigo(Integer codigoRequest) {
+		if (codigoRequest <= 0) {
+			throw new InvalidDataException("O código deve ser maior que 0");
+		}
+		Optional<Cliente> op = repository.findByCodigo(codigoRequest);
+		if (op.isPresent()) {
+			throw new InvalidDataException("Já existe um cliente associado ao código informado");
+		}
 	}
 
 	@Transactional

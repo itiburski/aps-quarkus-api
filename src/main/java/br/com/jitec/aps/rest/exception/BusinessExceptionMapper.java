@@ -13,6 +13,8 @@ import javax.ws.rs.ext.Provider;
 
 import br.com.jitec.aps.business.exception.BusinessException;
 import br.com.jitec.aps.business.exception.DataNotFoundException;
+import br.com.jitec.aps.business.exception.InvalidDataException;
+import br.com.jitec.aps.rest.http.AdditionalStatus;
 import br.com.jitec.aps.rest.payload.response.ErrorResponse;
 
 @Provider
@@ -26,6 +28,7 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
 	public BusinessExceptionMapper() {
 		exceptionMapper = new HashMap<>();
 		exceptionMapper.put(DataNotFoundException.class, Status.NOT_FOUND);
+		exceptionMapper.put(InvalidDataException.class, AdditionalStatus.UNPROCESSABLE_ENTITY);
 	}
 
 	@Override

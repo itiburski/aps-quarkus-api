@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import br.com.jitec.aps.business.exception.DataNotFoundException;
+import br.com.jitec.aps.business.exception.InvalidDataException;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.test.junit.QuarkusTest;
@@ -72,7 +73,7 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void shouldCreate() {
+	public void shouldCreateWithCodigo() {
 		Cliente created = clienteService.create(123, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua",
 				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
@@ -80,7 +81,50 @@ public class ClienteServiceTest {
 
 		Assertions.assertEquals("Nome", created.getNome());
 		Assertions.assertEquals("contato", created.getContato());
+		Assertions.assertEquals(123, created.getCodigo());
 		Assertions.assertTrue(created.getAtivo());
+	}
+
+	@Test
+	public void shouldCreateWithoutCodigo() {
+		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
+
+		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua",
+				"complemento",
+				"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"));
+
+		Assertions.assertEquals("Nome", created.getNome());
+		Assertions.assertEquals("contato", created.getContato());
+		Assertions.assertEquals(26, created.getCodigo());
+		Assertions.assertTrue(created.getAtivo());
+	}
+
+	@Test
+	public void shouldThrowExceptionWhenCreateWithCodigoZero() {
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
+				() -> clienteService.create(0, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua", "complemento",
+						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8")),
+				"should have thrown InvalidDataException");
+
+		Assertions.assertEquals("O código deve ser maior que 0", thrown.getMessage());
+	}
+
+	@Test
+	public void shouldThrowExceptionWhenCreateWithCodigoAlreadyAssigned() {
+		Mockito.when(repositoryMock.findByCodigo(Mockito.anyInt())).thenReturn(Optional.of(new Cliente()));
+
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
+				() -> clienteService.create(15, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua", "complemento",
+						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8")),
+				"should have thrown InvalidDataException");
+
+		Assertions.assertEquals("Já existe um cliente associado ao código informado", thrown.getMessage());
 	}
 
 	@Test
