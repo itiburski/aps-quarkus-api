@@ -22,6 +22,7 @@ import br.com.jitec.aps.api.ApiConstants;
 import br.com.jitec.aps.business.service.ClienteService;
 import br.com.jitec.aps.rest.payload.mapper.ClienteMapper;
 import br.com.jitec.aps.rest.payload.request.ClienteCreateRequest;
+import br.com.jitec.aps.rest.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.rest.payload.response.ClienteResponse;
 import br.com.jitec.aps.rest.payload.response.ClienteSimplifResponse;
 import br.com.jitec.aps.rest.validation.ValidationMessages;
@@ -57,8 +58,15 @@ public class ClienteResource {
 				request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
 	}
 
-	// TODO
-//	@PUT
+	@PUT
+	@Path("{clienteUid}")
+	public ClienteResponse update(@PathParam UUID clienteUid,
+			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
+		return mapper.toResponse(service.update(clienteUid, request.getNome(), request.getRazaoSocial(),
+				request.getContato(), request.getRua(), request.getComplemento(),
+				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
+	}
 	
 	@DELETE
 	@Path("{clienteUid}")

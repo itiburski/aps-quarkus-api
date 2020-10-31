@@ -71,6 +71,30 @@ public class ClienteService {
 	}
 
 	@Transactional
+	public Cliente update(UUID clienteUid, String nome, String razaoSocial, String contato, String rua,
+			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
+			UUID cidadeUid, UUID categoriaUid) {
+
+		Cliente cliente = get(clienteUid);
+
+		cliente.setNome(nome);
+		cliente.setRazaoSocial(razaoSocial);
+		cliente.setContato(contato);
+		cliente.setRua(rua);
+		cliente.setComplemento(complemento);
+		cliente.setBairro(bairro);
+		cliente.setCep(cep);
+		cliente.setHomepage(homepage);
+		cliente.setCnpj(cnpj);
+		cliente.setInscricaoEstadual(inscricaoEstadual);
+		cliente.setCidade(cidadeService.get(cidadeUid));
+		cliente.setCategoria(categClienteService.get(categoriaUid));
+
+		repository.persist(cliente);
+		return cliente;
+	}
+
+	@Transactional
 	public void delete(UUID clienteUid) {
 		Cliente cliente = get(clienteUid);
 		repository.delete(cliente);
