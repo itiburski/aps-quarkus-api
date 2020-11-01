@@ -74,7 +74,7 @@ public class ClienteServiceTest {
 
 	@Test
 	public void shouldCreateWithCodigo() {
-		Cliente created = clienteService.create(123, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua",
+		Cliente created = clienteService.create(123, "Nome", "razaoSocial", "contato", "rua",
 				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"));
@@ -89,9 +89,8 @@ public class ClienteServiceTest {
 	public void shouldCreateWithoutCodigo() {
 		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
 
-		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua",
-				"complemento",
-				"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua",
+				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"));
 
@@ -104,7 +103,7 @@ public class ClienteServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenCreateWithCodigoZero() {
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.create(0, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua", "complemento",
+				() -> clienteService.create(0, "Nome", "razaoSocial", "contato", "rua", "complemento",
 						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8")),
@@ -118,7 +117,7 @@ public class ClienteServiceTest {
 		Mockito.when(repositoryMock.findByCodigo(Mockito.anyInt())).thenReturn(Optional.of(new Cliente()));
 
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.create(15, "Nome", "razaoSocial", "contato", Boolean.TRUE, "rua", "complemento",
+				() -> clienteService.create(15, "Nome", "razaoSocial", "contato", "rua", "complemento",
 						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8")),
@@ -133,13 +132,14 @@ public class ClienteServiceTest {
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
 
-		Cliente result = clienteService.update(uid, "Nome-updated", "razaoSocial", "contato-updated", "rua",
-				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+		Cliente result = clienteService.update(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.FALSE,
+				"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"));
 
 		Assertions.assertEquals("Nome-updated", result.getNome());
 		Assertions.assertEquals("contato-updated", result.getContato());
+		Assertions.assertFalse(result.getAtivo());
 		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
 	}
 
@@ -149,8 +149,8 @@ public class ClienteServiceTest {
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> clienteService.update(uid, "Nome-updated", "razaoSocial", "contato-updated", "rua", "complemento",
-						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+				() -> clienteService.update(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.TRUE, "rua",
+						"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8")),
 				"should have thrown DataNotFoundException");

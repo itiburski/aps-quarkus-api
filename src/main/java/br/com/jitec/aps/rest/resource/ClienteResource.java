@@ -53,9 +53,10 @@ public class ClienteResource {
 	@POST
 	public ClienteResponse create(
 			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteCreateRequest request) {
-		return mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(), request.getContato(),
-				request.getAtivo(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(), request.getHomepage(),
-				request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
+		return mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
+				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
+				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
+				request.getCategoriaUid()));
 	}
 
 	@PUT
@@ -63,7 +64,7 @@ public class ClienteResource {
 	public ClienteResponse update(@PathParam UUID clienteUid,
 			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
 		return mapper.toResponse(service.update(clienteUid, request.getNome(), request.getRazaoSocial(),
-				request.getContato(), request.getRua(), request.getComplemento(),
+				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
 				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
 	}

@@ -35,7 +35,7 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public Cliente create(Integer codigo, String nome, String razaoSocial, String contato, Boolean ativo, String rua,
+	public Cliente create(Integer codigo, String nome, String razaoSocial, String contato, String rua,
 			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
 			UUID cidadeUid, UUID categoriaUid) {
 
@@ -44,7 +44,6 @@ public class ClienteService {
 		cliente.setNome(nome);
 		cliente.setRazaoSocial(razaoSocial);
 		cliente.setContato(contato);
-		cliente.setAtivo(ativo);
 		cliente.setRua(rua);
 		cliente.setComplemento(complemento);
 		cliente.setBairro(bairro);
@@ -54,6 +53,7 @@ public class ClienteService {
 		cliente.setInscricaoEstadual(inscricaoEstadual);
 		cliente.setCidade(cidadeService.get(cidadeUid));
 		cliente.setCategoria(categClienteService.get(categoriaUid));
+		cliente.setAtivo(Boolean.TRUE);
 		cliente.setSaldo(BigDecimal.ZERO);
 
 		repository.persist(cliente);
@@ -81,7 +81,7 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public Cliente update(UUID clienteUid, String nome, String razaoSocial, String contato, String rua,
+	public Cliente update(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo, String rua,
 			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
 			UUID cidadeUid, UUID categoriaUid) {
 
@@ -90,6 +90,7 @@ public class ClienteService {
 		cliente.setNome(nome);
 		cliente.setRazaoSocial(razaoSocial);
 		cliente.setContato(contato);
+		cliente.setAtivo(ativo);
 		cliente.setRua(rua);
 		cliente.setComplemento(complemento);
 		cliente.setBairro(bairro);

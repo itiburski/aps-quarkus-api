@@ -8,7 +8,6 @@ public class ClienteCreateRequest {
 	private String nome;
 	private String razaoSocial;
 	private String contato;
-	private Boolean ativo;
 	private String rua;
 	private String complemento;
 	private String bairro;
@@ -49,14 +48,6 @@ public class ClienteCreateRequest {
 
 	public void setContato(String contato) {
 		this.contato = contato;
-	}
-
-	public Boolean getAtivo() {
-		return ativo;
-	}
-
-	public void setAtivo(Boolean ativo) {
-		this.ativo = ativo;
 	}
 
 	public String getRua() {
