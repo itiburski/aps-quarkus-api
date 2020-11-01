@@ -2,6 +2,7 @@ package br.com.jitec.aps.business.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,10 +81,29 @@ public class ClienteService {
 		}
 	}
 
+	/**
+	 * Update all Cliente's fields with the parameter's values
+	 *
+	 * @param clienteUid
+	 * @param nome
+	 * @param razaoSocial
+	 * @param contato
+	 * @param ativo
+	 * @param rua
+	 * @param complemento
+	 * @param bairro
+	 * @param cep
+	 * @param homepage
+	 * @param cnpj
+	 * @param inscricaoEstadual
+	 * @param cidadeUid
+	 * @param categoriaUid
+	 * @return the entity with all updated fields
+	 */
 	@Transactional
-	public Cliente update(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo, String rua,
-			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
-			UUID cidadeUid, UUID categoriaUid) {
+	public Cliente updateAll(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo,
+			String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
+			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid) {
 
 		Cliente cliente = get(clienteUid);
 
@@ -100,6 +120,77 @@ public class ClienteService {
 		cliente.setInscricaoEstadual(inscricaoEstadual);
 		cliente.setCidade(cidadeService.get(cidadeUid));
 		cliente.setCategoria(categClienteService.get(categoriaUid));
+
+		repository.persist(cliente);
+		return cliente;
+	}
+
+	/**
+	 * Update each Cliente's field only when the related parameter has a meaningful
+	 * value (is not null)
+	 *
+	 * @param clienteUid
+	 * @param nome
+	 * @param razaoSocial
+	 * @param contato
+	 * @param ativo
+	 * @param rua
+	 * @param complemento
+	 * @param bairro
+	 * @param cep
+	 * @param homepage
+	 * @param cnpj
+	 * @param inscricaoEstadual
+	 * @param cidadeUid
+	 * @param categoriaUid
+	 * @return the entity with updated fields
+	 */
+	@Transactional
+	public Cliente updateNotNull(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo,
+			String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
+			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid) {
+
+		Cliente cliente = get(clienteUid);
+
+		if (Objects.nonNull(nome)) {
+			cliente.setNome(nome);
+		}
+		if (Objects.nonNull(razaoSocial)) {
+			cliente.setRazaoSocial(razaoSocial);
+		}
+		if (Objects.nonNull(contato)) {
+			cliente.setContato(contato);
+		}
+		if (Objects.nonNull(ativo)) {
+			cliente.setAtivo(ativo);
+		}
+		if (Objects.nonNull(rua)) {
+			cliente.setRua(rua);
+		}
+		if (Objects.nonNull(complemento)) {
+			cliente.setComplemento(complemento);
+		}
+		if (Objects.nonNull(bairro)) {
+			cliente.setBairro(bairro);
+		}
+		if (Objects.nonNull(cep)) {
+			cliente.setCep(cep);
+		}
+		if (Objects.nonNull(homepage)) {
+			cliente.setHomepage(homepage);
+		}
+		if (Objects.nonNull(cnpj)) {
+			cliente.setCnpj(cnpj);
+		}
+		if (Objects.nonNull(inscricaoEstadual)) {
+			cliente.setInscricaoEstadual(inscricaoEstadual);
+		}
+		if (Objects.nonNull(cidadeUid)) {
+			cliente.setCidade(cidadeService.get(cidadeUid));
+		}
+		if (Objects.nonNull(categoriaUid)) {
+			cliente.setCategoria(categClienteService.get(categoriaUid));
+		}
 
 		repository.persist(cliente);
 		return cliente;

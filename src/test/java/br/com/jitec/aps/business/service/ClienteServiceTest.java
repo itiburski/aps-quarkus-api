@@ -1,5 +1,6 @@
 package br.com.jitec.aps.business.service;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,8 @@ import org.mockito.Mockito;
 
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.business.exception.InvalidDataException;
+import br.com.jitec.aps.data.model.CategoriaCliente;
+import br.com.jitec.aps.data.model.Cidade;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.test.junit.QuarkusTest;
@@ -132,7 +135,7 @@ public class ClienteServiceTest {
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
 
-		Cliente result = clienteService.update(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.FALSE,
+		Cliente result = clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.FALSE,
 				"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"));
@@ -149,13 +152,65 @@ public class ClienteServiceTest {
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> clienteService.update(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.TRUE, "rua",
+				() -> clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.TRUE, "rua",
 						"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8")),
 				"should have thrown DataNotFoundException");
 
 		Assertions.assertTrue(thrown.getMessage().contains("Cliente não encontrado"));
+	}
+
+	@Test
+	public void updateNotNull_WhenValuesNull_ShouldNotUpdateFields() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Cliente cliente = getClienteWithDefaultValues(uid, 123);
+		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
+
+		Cliente result = clienteService.updateNotNull(uid, null, null, null, null, null, null, null, null, null, null,
+				null, null, null);
+
+		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
+		Assertions.assertEquals("nome", result.getNome());
+		Assertions.assertEquals("contato", result.getContato());
+		Assertions.assertEquals("88111222", result.getCep());
+		Assertions.assertTrue(result.getAtivo());
+		Assertions.assertEquals("razaoSocial", result.getRazaoSocial());
+		Assertions.assertEquals("rua", result.getRua());
+		Assertions.assertEquals("complemento", result.getComplemento());
+		Assertions.assertEquals("bairro", result.getBairro());
+		Assertions.assertEquals("homepage", result.getHomepage());
+		Assertions.assertEquals("cnpj", result.getCnpj());
+	}
+
+	@Test
+	public void updateNotNull_WhenValuesInformed_ShouldUpdateFields() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Cliente cliente = getClienteWithDefaultValues(uid, 123);
+		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
+
+		Mockito.when(categClienteServiceMock.get(Mockito.any(UUID.class))).thenReturn(new CategoriaCliente("categoria-updated"));
+		Mockito.when(cidadeServiceMock.get(Mockito.any(UUID.class))).thenReturn(new Cidade("cidade-alterada", "FF"));
+
+		Cliente result = clienteService.updateNotNull(uid, "nome-updated", "razaoSocial-updated", "contato-updated",
+				Boolean.FALSE, "rua-updated", "complemento-updated", "bairro-updated", "cep-updated",
+				"homepage-updated", "cnpj-updated", "inscricaoEstadual-updated",
+				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"));
+
+		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
+		Assertions.assertEquals("nome-updated", result.getNome());
+		Assertions.assertEquals("contato-updated", result.getContato());
+		Assertions.assertEquals("cep-updated", result.getCep());
+		Assertions.assertFalse(result.getAtivo());
+		Assertions.assertEquals("razaoSocial-updated", result.getRazaoSocial());
+		Assertions.assertEquals("rua-updated", result.getRua());
+		Assertions.assertEquals("complemento-updated", result.getComplemento());
+		Assertions.assertEquals("bairro-updated", result.getBairro());
+		Assertions.assertEquals("homepage-updated", result.getHomepage());
+		Assertions.assertEquals("cnpj-updated", result.getCnpj());
+		Assertions.assertEquals("categoria-updated", cliente.getCategoria().getDescricao());
+		Assertions.assertEquals("cidade-alterada", cliente.getCidade().getNome());
 	}
 
 	@Test
@@ -186,6 +241,28 @@ public class ClienteServiceTest {
 		cliente.setCodigo(codigo);
 		cliente.setNome(nome);
 		cliente.setContato(contato);
+		return cliente;
+	}
+
+	private Cliente getClienteWithDefaultValues(UUID uid, Integer codigo) {
+		Cliente cliente = new Cliente();
+		cliente.setUid(uid);
+		cliente.setCodigo(codigo);
+		cliente.setNome("nome");
+		cliente.setContato("contato");
+		cliente.setRazaoSocial("razaoSocial");
+		cliente.setRua("rua");
+		cliente.setComplemento("complemento");
+		cliente.setBairro("bairro");
+		cliente.setCep("88111222");
+		cliente.setHomepage("homepage");
+		cliente.setCnpj("cnpj");
+		cliente.setInscricaoEstadual("inscricaoEstadual");
+		cliente.setCidade(new Cidade("nome", "uf"));
+		cliente.setCategoria(new CategoriaCliente("categoria"));
+		cliente.setAtivo(Boolean.TRUE);
+		cliente.setSaldo(BigDecimal.ZERO);
+
 		return cliente;
 	}
 

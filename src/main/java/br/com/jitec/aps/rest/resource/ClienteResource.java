@@ -9,12 +9,14 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -61,18 +63,30 @@ public class ClienteResource {
 
 	@PUT
 	@Path("{clienteUid}")
-	public ClienteResponse update(@PathParam UUID clienteUid,
+	@Operation(summary = "Update all Cliente's fields with the payload's values")
+	public ClienteResponse updateAll(@PathParam UUID clienteUid,
 			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
-		return mapper.toResponse(service.update(clienteUid, request.getNome(), request.getRazaoSocial(),
+		return mapper.toResponse(service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
 				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
 	}
-	
+
+	@PATCH
+	@Path("{clienteUid}")
+	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null)")
+	public ClienteResponse updateNotNull(@PathParam UUID clienteUid,
+			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
+		return mapper.toResponse(service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(),
+				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
+				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
+	}
+
 	@DELETE
 	@Path("{clienteUid}")
 	public void delete(@PathParam UUID clienteUid) {
 		service.delete(clienteUid);
 	}
-	
+
 }
