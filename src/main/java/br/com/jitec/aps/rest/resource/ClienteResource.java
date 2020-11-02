@@ -63,7 +63,7 @@ public class ClienteResource {
 
 	@PUT
 	@Path("{clienteUid}")
-	@Operation(summary = "Update all Cliente's fields with the payload's values")
+	@Operation(summary = "Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased")
 	public ClienteResponse updateAll(@PathParam UUID clienteUid,
 			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
 		return mapper.toResponse(service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(),
@@ -74,7 +74,7 @@ public class ClienteResource {
 
 	@PATCH
 	@Path("{clienteUid}")
-	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null)")
+	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed")
 	public ClienteResponse updateNotNull(@PathParam UUID clienteUid,
 			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
 		return mapper.toResponse(service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(),

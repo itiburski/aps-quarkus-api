@@ -76,7 +76,7 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void shouldCreateWithCodigo() {
+	public void create_WhenCodigoInformed_ShouldCreateUsingCodigo() {
 		Cliente created = clienteService.create(123, "Nome", "razaoSocial", "contato", "rua",
 				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
@@ -89,7 +89,7 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void shouldCreateWithoutCodigo() {
+	public void create_WhenCodigoNotInformed_ShouldCreateWithNextCodigoAvailable() {
 		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
 
 		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua",
@@ -104,7 +104,22 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenCreateWithCodigoZero() {
+	public void create_WhenFieldsNull_ShouldCreateWithNullValues() {
+		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
+
+		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
+				"cep", "homepage", "cnpj", "inscricaEstadual", null, null);
+
+		Assertions.assertEquals("Nome", created.getNome());
+		Assertions.assertEquals("contato", created.getContato());
+		Assertions.assertEquals(26, created.getCodigo());
+		Assertions.assertTrue(created.getAtivo());
+		Assertions.assertNull(created.getCategoria());
+		Assertions.assertNull(created.getCidade());
+	}
+
+	@Test
+	public void create_WhenCodigoZeroInformed_ShouldThrowException() {
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
 				() -> clienteService.create(0, "Nome", "razaoSocial", "contato", "rua", "complemento",
 						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
@@ -116,7 +131,7 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenCreateWithCodigoAlreadyAssigned() {
+	public void create_WhenCreateWithCodigoAlreadyAssigned_ShouldThrowException() {
 		Mockito.when(repositoryMock.findByCodigo(Mockito.anyInt())).thenReturn(Optional.of(new Cliente()));
 
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
@@ -130,7 +145,7 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void shouldUpdate() {
+	public void updateAll_WhenAllParametersInformed_ShouldUpdateAllFields() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
@@ -147,7 +162,24 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenUpdateInexistentUid() {
+	public void updateAll_WhenSomeParameterNull_ShouldUpdateFieldToNull() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
+		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
+
+		Cliente result = clienteService.updateAll(uid, "Nome-updated", "razaoSocial", null, null, "rua", "complemento",
+				"bairro", "cep", "homepage", "cnpj", "inscricaEstadual", null, null);
+
+		Assertions.assertEquals("Nome-updated", result.getNome());
+		Assertions.assertNull(result.getContato());
+		Assertions.assertFalse(result.getAtivo());
+		Assertions.assertNull(result.getCategoria());
+		Assertions.assertNull(result.getCidade());
+		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
+	}
+
+	@Test
+	public void updateAll_WhenUpdateInexistentUid_ShouldThrowException() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
 

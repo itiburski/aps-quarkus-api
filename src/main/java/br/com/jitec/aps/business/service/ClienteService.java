@@ -86,7 +86,8 @@ public class ClienteService {
 	}
 
 	/**
-	 * Update all Cliente's fields with the parameter's values
+	 * Update all Cliente's fields with the parameter values. If the parameter value
+	 * is empty or null, the field's value will be erased
 	 *
 	 * @param clienteUid
 	 * @param nome
@@ -114,7 +115,7 @@ public class ClienteService {
 		cliente.setNome(nome);
 		cliente.setRazaoSocial(razaoSocial);
 		cliente.setContato(contato);
-		cliente.setAtivo(ativo);
+		cliente.setAtivo(Objects.nonNull(ativo) ? ativo : Boolean.FALSE);
 		cliente.setRua(rua);
 		cliente.setComplemento(complemento);
 		cliente.setBairro(bairro);
@@ -122,12 +123,8 @@ public class ClienteService {
 		cliente.setHomepage(homepage);
 		cliente.setCnpj(cnpj);
 		cliente.setInscricaoEstadual(inscricaoEstadual);
-		if (Objects.nonNull(cidadeUid)) {
-			cliente.setCidade(cidadeService.get(cidadeUid));
-		}
-		if (Objects.nonNull(categoriaUid)) {
-			cliente.setCategoria(categClienteService.get(categoriaUid));
-		}
+		cliente.setCidade(Objects.nonNull(cidadeUid) ? cidadeService.get(cidadeUid) : null);
+		cliente.setCategoria(Objects.nonNull(categoriaUid) ? categClienteService.get(categoriaUid) : null);
 
 		repository.persist(cliente);
 		return cliente;
@@ -135,7 +132,7 @@ public class ClienteService {
 
 	/**
 	 * Update each Cliente's field only when the related parameter has a meaningful
-	 * value (is not null)
+	 * value (is not null). Otherwise, the field value will not be changed
 	 *
 	 * @param clienteUid
 	 * @param nome
