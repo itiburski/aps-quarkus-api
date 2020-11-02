@@ -52,8 +52,12 @@ public class ClienteService {
 		cliente.setHomepage(homepage);
 		cliente.setCnpj(cnpj);
 		cliente.setInscricaoEstadual(inscricaoEstadual);
-		cliente.setCidade(cidadeService.get(cidadeUid));
-		cliente.setCategoria(categClienteService.get(categoriaUid));
+		if (Objects.nonNull(cidadeUid)) {
+			cliente.setCidade(cidadeService.get(cidadeUid));
+		}
+		if (Objects.nonNull(categoriaUid)) {
+			cliente.setCategoria(categClienteService.get(categoriaUid));
+		}
 		cliente.setAtivo(Boolean.TRUE);
 		cliente.setSaldo(BigDecimal.ZERO);
 
@@ -118,8 +122,12 @@ public class ClienteService {
 		cliente.setHomepage(homepage);
 		cliente.setCnpj(cnpj);
 		cliente.setInscricaoEstadual(inscricaoEstadual);
-		cliente.setCidade(cidadeService.get(cidadeUid));
-		cliente.setCategoria(categClienteService.get(categoriaUid));
+		if (Objects.nonNull(cidadeUid)) {
+			cliente.setCidade(cidadeService.get(cidadeUid));
+		}
+		if (Objects.nonNull(categoriaUid)) {
+			cliente.setCategoria(categClienteService.get(categoriaUid));
+		}
 
 		repository.persist(cliente);
 		return cliente;
