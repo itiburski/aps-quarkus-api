@@ -3,45 +3,44 @@ package br.com.jitec.aps.rest.payload.request;
 import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import br.com.jitec.aps.rest.validation.ValidationMessages;
+import br.com.jitec.aps.util.validator.OnlyDigits;
 
 public abstract class GenericClienteRequest {
 
-	@NotBlank(message = ValidationMessages.NOME_NOT_BLANK)
-	@Size(max = 60, message = ValidationMessages.NOME_SIZE)
+	@NotBlank
+	@Size(max = 60)
 	private String nome;
 
-	@NotBlank(message = ValidationMessages.RAZAO_SOCIAL_NOT_BLANK)
-	@Size(max = 60, message = ValidationMessages.RAZAO_SOCIAL_SIZE)
+	@NotBlank
+	@Size(max = 60)
 	private String razaoSocial;
 
-	@Size(max = 60, message = ValidationMessages.CONTATO_SIZE)
+	@Size(max = 60)
 	private String contato;
 
-	@Size(max = 60, message = ValidationMessages.RUA_SIZE)
+	@Size(max = 60)
 	private String rua;
 
-	@Size(max = 30, message = ValidationMessages.COMPLEMENTO_SIZE)
+	@Size(max = 30)
 	private String complemento;
 
-	@Size(max = 40, message = ValidationMessages.BAIRRO_SIZE)
+	@Size(max = 40)
 	private String bairro;
 
-	@Size(max = 8, message = ValidationMessages.CEP_SIZE)
-	@Pattern(regexp = "^[0-9]*$", message = ValidationMessages.CEP_FORMAT)
+	@Size(max = 8)
+	@OnlyDigits
 	private String cep;
 
-	@Size(max = 80, message = ValidationMessages.HOMEPAGE_SIZE)
+	@Size(max = 80)
 	private String homepage;
 
-	@Size(max = 14, message = ValidationMessages.CNPJ_SIZE)
-	@Pattern(regexp = "^[0-9]*$", message = ValidationMessages.CNPJ_FORMAT)
+	@Size(max = 14)
+	@OnlyDigits
 	private String cnpj;
 
-	@Size(max = 20, message = ValidationMessages.IE_SIZE)
+	@Size(max = 20)
 	private String inscricaoEstadual;
 
 	private UUID cidadeUid;

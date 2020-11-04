@@ -1,5 +1,6 @@
 package br.com.jitec.aps.rest.exception;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -10,25 +11,31 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.hibernate.validator.internal.engine.path.PathImpl;
+
 import br.com.jitec.aps.rest.http.AdditionalStatus;
 import br.com.jitec.aps.rest.payload.response.ErrorResponse;
+import br.com.jitec.aps.rest.payload.response.ViolationResponse;
 
 @Provider
 public class BeanValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
 	private static final StatusType STATUS = AdditionalStatus.UNPROCESSABLE_ENTITY;
+	private static final String CONSTRAINT_VIOLATION_DETAIL = "Parametros da requisição inválidos";
 
 	@Context
 	private UriInfo uriInfo;
 
 	@Override
 	public Response toResponse(ConstraintViolationException exception) {
-		String violations = exception.getConstraintViolations().stream().map(constraint -> constraint.getMessage())
-				.collect(Collectors.joining(", "));
+		List<ViolationResponse> violations = exception.getConstraintViolations().stream()
+				.map(constraint -> new ViolationResponse(
+						((PathImpl) constraint.getPropertyPath()).getLeafNode().getName(), constraint.getMessage()))
+				.collect(Collectors.toList());
 
 		ErrorResponse error = ErrorResponse.builder().withStatus(STATUS.getStatusCode())
-				.withTitle(STATUS.getReasonPhrase()).withDetail(violations)
-				.withInstance(uriInfo.getRequestUri()).build();
+				.withTitle(STATUS.getReasonPhrase()).withDetail(CONSTRAINT_VIOLATION_DETAIL)
+				.withInstance(uriInfo.getRequestUri()).withViolations(violations).build();
 		return Response.status(STATUS).entity(error).build();
 	}
 

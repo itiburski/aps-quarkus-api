@@ -1,8 +1,12 @@
 package br.com.jitec.aps.rest.payload.response;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class ErrorResponse {
+
+	private LocalDateTime timestamp;
 
 	/**
 	 * The HTTP response code (optional)
@@ -23,6 +27,16 @@ public class ErrorResponse {
 	 * A URI that identifies the specific occurrence of the error
 	 */
 	private URI instance;
+
+	private List<ViolationResponse> violations;
+
+	public LocalDateTime getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(LocalDateTime timestamp) {
+		this.timestamp = timestamp;
+	}
 
 	public Integer getStatus() {
 		return status;
@@ -56,6 +70,14 @@ public class ErrorResponse {
 		this.instance = instance;
 	}
 
+	public List<ViolationResponse> getViolations() {
+		return violations;
+	}
+
+	public void setViolations(List<ViolationResponse> violations) {
+		this.violations = violations;
+	}
+
 	public static ErrorResponse.Builder builder() {
 		return new ErrorResponse.Builder();
 	}
@@ -65,6 +87,11 @@ public class ErrorResponse {
 
 		public Builder() {
 			response = new ErrorResponse();
+		}
+
+		public Builder withTimestamp(LocalDateTime timestamp) {
+			response.setTimestamp(timestamp);
+			return this;
 		}
 
 		public Builder withStatus(Integer status) {
@@ -87,7 +114,15 @@ public class ErrorResponse {
 			return this;
 		}
 
+		public Builder withViolations(List<ViolationResponse> violations) {
+			response.setViolations(violations);
+			return this;
+		}
+
 		public ErrorResponse build() {
+			if (response.timestamp == null) {
+				response.setTimestamp(LocalDateTime.now());
+			}
 			return response;
 		}
 	}

@@ -2,11 +2,9 @@ package br.com.jitec.aps.rest.payload.request;
 
 import javax.validation.constraints.NotBlank;
 
-import br.com.jitec.aps.rest.validation.ValidationMessages;
-
 public class CategoriaClienteRequest {
 
-	@NotBlank(message = ValidationMessages.DESCRICAO_NOT_BLANK)
+	@NotBlank
 	private String descricao;
 
 	public String getDescricao() {

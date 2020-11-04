@@ -23,7 +23,6 @@ import br.com.jitec.aps.business.service.CategoriaClienteService;
 import br.com.jitec.aps.rest.payload.mapper.CategoriaClienteMapper;
 import br.com.jitec.aps.rest.payload.request.CategoriaClienteRequest;
 import br.com.jitec.aps.rest.payload.response.CategoriaClienteResponse;
-import br.com.jitec.aps.rest.validation.ValidationMessages;
 
 @Tag(name = ApiConstants.TAG_CATEGORIAS_CLIENTE)
 @Path("/categorias-cliente")
@@ -49,15 +48,14 @@ public class CategoriaClienteResource {
 	}
 
 	@POST
-	public CategoriaClienteResponse create(
-			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) CategoriaClienteRequest request) {
+	public CategoriaClienteResponse create(@Valid @NotNull CategoriaClienteRequest request) {
 		return mapper.toResponse(service.create(request.getDescricao()));
 	}
 
 	@PUT
 	@Path("{categClienteUid}")
 	public CategoriaClienteResponse update(@PathParam UUID categClienteUid,
-			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) CategoriaClienteRequest request) {
+			@Valid @NotNull CategoriaClienteRequest request) {
 		return mapper.toResponse(service.update(categClienteUid, request.getDescricao()));
 	}
 

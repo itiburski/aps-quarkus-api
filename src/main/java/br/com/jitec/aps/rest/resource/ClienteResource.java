@@ -27,7 +27,6 @@ import br.com.jitec.aps.rest.payload.request.ClienteCreateRequest;
 import br.com.jitec.aps.rest.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.rest.payload.response.ClienteResponse;
 import br.com.jitec.aps.rest.payload.response.ClienteSimplifResponse;
-import br.com.jitec.aps.rest.validation.ValidationMessages;
 
 @Tag(name = ApiConstants.TAG_CLIENTES)
 @Path("/clientes")
@@ -53,8 +52,7 @@ public class ClienteResource {
 	}
 
 	@POST
-	public ClienteResponse create(
-			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteCreateRequest request) {
+	public ClienteResponse create(@Valid @NotNull ClienteCreateRequest request) {
 		return mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
 				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
@@ -64,8 +62,7 @@ public class ClienteResource {
 	@PUT
 	@Path("{clienteUid}")
 	@Operation(summary = "Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased")
-	public ClienteResponse updateAll(@PathParam UUID clienteUid,
-			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
+	public ClienteResponse updateAll(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
 		return mapper.toResponse(service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
@@ -75,8 +72,7 @@ public class ClienteResource {
 	@PATCH
 	@Path("{clienteUid}")
 	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed")
-	public ClienteResponse updateNotNull(@PathParam UUID clienteUid,
-			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) ClienteUpdateRequest request) {
+	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
 		return mapper.toResponse(service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),

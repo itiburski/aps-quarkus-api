@@ -23,7 +23,6 @@ import br.com.jitec.aps.business.service.CidadeService;
 import br.com.jitec.aps.rest.payload.mapper.CidadeMapper;
 import br.com.jitec.aps.rest.payload.request.CidadeRequest;
 import br.com.jitec.aps.rest.payload.response.CidadeResponse;
-import br.com.jitec.aps.rest.validation.ValidationMessages;
 
 @Tag(name = ApiConstants.TAG_CIDADES)
 @Path("/cidades")
@@ -49,15 +48,13 @@ public class CidadeResource {
 	}
 
 	@POST
-	public CidadeResponse create(
-			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) CidadeRequest request) {
+	public CidadeResponse create(@Valid @NotNull CidadeRequest request) {
 		return mapper.toResponse(service.create(request.getNome(), request.getUf()));
 	}
 
 	@PUT
 	@Path("{cidadeUid}")
-	public CidadeResponse update(@PathParam UUID cidadeUid,
-			@Valid @NotNull(message = ValidationMessages.REQUEST_BODY_NOT_NULL) CidadeRequest request) {
+	public CidadeResponse update(@PathParam UUID cidadeUid, @Valid @NotNull CidadeRequest request) {
 		return mapper.toResponse(service.update(cidadeUid, request.getNome(), request.getUf()));
 	}
 
