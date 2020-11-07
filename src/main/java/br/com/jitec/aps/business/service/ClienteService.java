@@ -1,7 +1,10 @@
 package br.com.jitec.aps.business.service;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,8 +30,27 @@ public class ClienteService {
 	@Inject
 	CategoriaClienteService categClienteService;
 
-	public List<Cliente> getAll() {
-		return repository.listAll();
+	public List<Cliente> getClientes(Integer codigo, String nomeOuRazaoSocial, Boolean ativo) {
+		List<String> where = new LinkedList<>();
+		Map<String, Object> params = new LinkedHashMap<>();
+
+		if (Objects.nonNull(codigo)) {
+			where.add("codigo = :codigo");
+			params.put("codigo", codigo);
+		}
+
+		if (Objects.nonNull(nomeOuRazaoSocial)) {
+			where.add("(upper(nome) like :nomeOuRazaoSocial OR upper(razaoSocial) like :nomeOuRazaoSocial)");
+			params.put("nomeOuRazaoSocial", "%" + nomeOuRazaoSocial.toUpperCase() + "%");
+		}
+
+		if (Objects.nonNull(ativo)) {
+			where.add("ativo = :ativo");
+			params.put("ativo", ativo);
+		}
+
+		String query = String.join(" and ", where);
+		return repository.list(query, params);
 	}
 
 	public Cliente get(UUID clienteUid) {

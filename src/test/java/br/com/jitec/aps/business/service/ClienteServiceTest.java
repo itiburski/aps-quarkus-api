@@ -2,7 +2,9 @@ package br.com.jitec.aps.business.service;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,18 +39,46 @@ public class ClienteServiceTest {
 	CategoriaClienteService categClienteServiceMock;
 
 	@Test
-	public void shouldListAll() {
+	public void getClientes_WhenUsingNullFilters_ShouldListAll() {
+		Map<String, Object> params = new LinkedHashMap<>();
+
 		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 		Cliente cliente1 = getCliente(uid1, 123, "Cliente 1", "Contato 1");
 		Cliente cliente2 = getCliente(uid2, 456, "Cliente 2", "Contato 2");
 
 		List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
-		Mockito.when(repositoryMock.listAll()).thenReturn(clientes);
+		Mockito.when(repositoryMock.list("", params)).thenReturn(clientes);
 
-		List<Cliente> result = clienteService.getAll();
+		List<Cliente> result = clienteService.getClientes(null, null, null);
 
 		Assertions.assertEquals(2, result.size());
+		Mockito.verify(repositoryMock).list("", params);
+	}
+
+	@Test
+	public void getClientes_WhenUsingSomeFilters_ShouldListUsingFilter() {
+		int codigo = 123;
+		String nomeOuRazaoSocial = "cliente";
+		Boolean ativo = Boolean.TRUE;
+
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("codigo", codigo);
+		params.put("nomeOuRazaoSocial", "%" + nomeOuRazaoSocial.toUpperCase() + "%");
+		params.put("ativo", ativo);
+
+		String query = "codigo = :codigo and (upper(nome) like :nomeOuRazaoSocial OR upper(razaoSocial) like :nomeOuRazaoSocial) and ativo = :ativo";
+
+		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Cliente cliente1 = getClienteAtivo(uid1, codigo, "Cliente 1", "Contato 1");
+
+		List<Cliente> clientes = Arrays.asList(cliente1);
+		Mockito.when(repositoryMock.list(query, params)).thenReturn(clientes);
+
+		List<Cliente> result = clienteService.getClientes(codigo, nomeOuRazaoSocial, ativo);
+
+		Assertions.assertEquals(1, result.size());
+		Mockito.verify(repositoryMock).list(query, params);
 	}
 
 	@Test
@@ -273,6 +303,12 @@ public class ClienteServiceTest {
 		cliente.setCodigo(codigo);
 		cliente.setNome(nome);
 		cliente.setContato(contato);
+		return cliente;
+	}
+
+	private Cliente getClienteAtivo(UUID uid, Integer codigo, String nome, String contato) {
+		Cliente cliente = getCliente(uid, codigo, nome, contato);
+		cliente.setAtivo(Boolean.TRUE);
 		return cliente;
 	}
 

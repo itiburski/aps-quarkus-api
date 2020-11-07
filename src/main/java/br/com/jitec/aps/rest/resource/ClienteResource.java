@@ -14,6 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -41,8 +42,9 @@ public class ClienteResource {
 	ClienteMapper mapper;
 
 	@GET
-	public List<ClienteSimplifResponse> getAll() {
-		return mapper.toSimplifListResponse(service.getAll());
+	public List<ClienteSimplifResponse> getClientes(@QueryParam("codigo") Integer codigo,
+			@QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial, @QueryParam("ativo") Boolean ativo) {
+		return mapper.toSimplifListResponse(service.getClientes(codigo, nomeOuRazaoSocial, ativo));
 	}
 
 	@GET
