@@ -18,7 +18,7 @@ public class CategoriaClienteService {
 	CategoriaClienteRepository repository;
 
 	public List<CategoriaCliente> getAll() {
-		return repository.listAll();
+		return repository.list("order by descricao");
 	}
 
 	public CategoriaCliente get(UUID uid) {

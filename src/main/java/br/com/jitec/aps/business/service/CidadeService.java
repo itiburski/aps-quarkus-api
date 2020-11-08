@@ -18,7 +18,7 @@ public class CidadeService {
 	CidadeRepository repository;
 
 	public List<Cidade> getAll() {
-		return repository.listAll();
+		return repository.list("order by nome");
 	}
 
 	public Cidade get(UUID uid) {

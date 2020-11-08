@@ -33,7 +33,7 @@ public class CategoriaClienteServiceTest {
 		CategoriaCliente categ3 = new CategoriaCliente("category3");
 		List<CategoriaCliente> categorias = Arrays.asList(categ1, categ2, categ3);
 
-		Mockito.when(repositoryMock.listAll()).thenReturn(categorias);
+		Mockito.when(repositoryMock.list("order by descricao")).thenReturn(categorias);
 
 		List<CategoriaCliente> all = service.getAll();
 		Assertions.assertEquals(3, all.size());

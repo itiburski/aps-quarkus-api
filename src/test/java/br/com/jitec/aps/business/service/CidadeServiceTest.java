@@ -31,7 +31,7 @@ public class CidadeServiceTest {
 		Cidade cidade1 = new Cidade("City1", "UF");
 		Cidade cidade2 = new Cidade("City2", "UF");
 		List<Cidade> cidades = Arrays.asList(cidade1, cidade2);
-		Mockito.when(repositoryMock.listAll()).thenReturn(cidades);
+		Mockito.when(repositoryMock.list("order by nome")).thenReturn(cidades);
 
 		List<Cidade> result = service.getAll();
 
