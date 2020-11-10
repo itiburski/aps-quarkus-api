@@ -48,12 +48,13 @@ public class ClienteServiceTest {
 		Cliente cliente2 = getCliente(uid2, 456, "Cliente 2", "Contato 2");
 
 		List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
-		Mockito.when(repositoryMock.list("", params)).thenReturn(clientes);
+		String query = "order by id";
+		Mockito.when(repositoryMock.list(query, params)).thenReturn(clientes);
 
-		List<Cliente> result = clienteService.getClientes(null, null, null);
+		List<Cliente> result = clienteService.getClientes(null, null, null, null);
 
 		Assertions.assertEquals(2, result.size());
-		Mockito.verify(repositoryMock).list("", params);
+		Mockito.verify(repositoryMock).list(query, params);
 	}
 
 	@Test
@@ -67,7 +68,7 @@ public class ClienteServiceTest {
 		params.put("nomeOuRazaoSocial", "%" + nomeOuRazaoSocial.toUpperCase() + "%");
 		params.put("ativo", ativo);
 
-		String query = "codigo = :codigo and (upper(nome) like :nomeOuRazaoSocial OR upper(razaoSocial) like :nomeOuRazaoSocial) and ativo = :ativo";
+		String query = "codigo = :codigo and ativo = :ativo and (upper(nome) like :nomeOuRazaoSocial OR upper(razaoSocial) like :nomeOuRazaoSocial) order by id";
 
 		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente1 = getClienteAtivo(uid1, codigo, "Cliente 1", "Contato 1");
@@ -75,10 +76,38 @@ public class ClienteServiceTest {
 		List<Cliente> clientes = Arrays.asList(cliente1);
 		Mockito.when(repositoryMock.list(query, params)).thenReturn(clientes);
 
-		List<Cliente> result = clienteService.getClientes(codigo, nomeOuRazaoSocial, ativo);
+		List<Cliente> result = clienteService.getClientes(codigo, nomeOuRazaoSocial, ativo, null);
 
 		Assertions.assertEquals(1, result.size());
 		Mockito.verify(repositoryMock).list(query, params);
+	}
+
+	@Test
+	public void getClientes_WhenOrderIsInformed_ShouldConsiderFieldInOrderBy() {
+		Map<String, Object> params = new LinkedHashMap<>();
+
+		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+		Cliente cliente1 = getCliente(uid1, 123, "Cliente 1", "Contato 1");
+		Cliente cliente2 = getCliente(uid2, 456, "Cliente 2", "Contato 2");
+
+		List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
+		String query = "order by nome";
+		Mockito.when(repositoryMock.list(query, params)).thenReturn(clientes);
+
+		List<Cliente> result = clienteService.getClientes(null, null, null, "nome");
+
+		Assertions.assertEquals(2, result.size());
+		Mockito.verify(repositoryMock).list(query, params);
+	}
+
+	@Test
+	public void getClientes_WhenOrderIsInvalid_ShouldThrowException() {
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
+				() -> clienteService.getClientes(null, null, null, "campoInexistente"),
+				"should have thrown InvalidDataException");
+
+		Assertions.assertEquals("Campo para ordenação inválido", thrown.getMessage());
 	}
 
 	@Test

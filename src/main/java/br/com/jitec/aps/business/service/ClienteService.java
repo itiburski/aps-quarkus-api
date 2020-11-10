@@ -1,10 +1,8 @@
 package br.com.jitec.aps.business.service;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,11 +13,15 @@ import javax.transaction.Transactional;
 
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.business.exception.InvalidDataException;
+import br.com.jitec.aps.business.util.QueryBuilder;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 
 @ApplicationScoped
 public class ClienteService {
+
+	private static final List<String> SORTABLE_FIELDS = Arrays.asList("codigo", "nome", "razaoSocial");
+	private static final String DEFAULT_SORT_FIELD = "id";
 
 	@Inject
 	ClienteRepository repository;
@@ -30,27 +32,27 @@ public class ClienteService {
 	@Inject
 	CategoriaClienteService categClienteService;
 
-	public List<Cliente> getClientes(Integer codigo, String nomeOuRazaoSocial, Boolean ativo) {
-		List<String> where = new LinkedList<>();
-		Map<String, Object> params = new LinkedHashMap<>();
+	public List<Cliente> getClientes(Integer codigo, String nomeOuRazaoSocial, Boolean ativo, final String sort) {
+		String field = DEFAULT_SORT_FIELD;
 
-		if (Objects.nonNull(codigo)) {
-			where.add("codigo = :codigo");
-			params.put("codigo", codigo);
+		if (Objects.nonNull(sort)) {
+			if (!SORTABLE_FIELDS.contains(sort)) {
+				throw new InvalidDataException("Campo para ordenação inválido");
+			}
+			field = sort;
 		}
 
+		QueryBuilder builder = new QueryBuilder();
+		builder.setSortBy(field);
+
+		builder.addFilter(Objects.nonNull(codigo), "codigo = :codigo", "codigo", codigo);
+		builder.addFilter(Objects.nonNull(ativo), "ativo = :ativo", "ativo", ativo);
 		if (Objects.nonNull(nomeOuRazaoSocial)) {
-			where.add("(upper(nome) like :nomeOuRazaoSocial OR upper(razaoSocial) like :nomeOuRazaoSocial)");
-			params.put("nomeOuRazaoSocial", "%" + nomeOuRazaoSocial.toUpperCase() + "%");
+			builder.addFilter("(upper(nome) like :nomeOuRazaoSocial OR upper(razaoSocial) like :nomeOuRazaoSocial)",
+					"nomeOuRazaoSocial", "%" + nomeOuRazaoSocial.toUpperCase() + "%");
 		}
 
-		if (Objects.nonNull(ativo)) {
-			where.add("ativo = :ativo");
-			params.put("ativo", ativo);
-		}
-
-		String query = String.join(" and ", where);
-		return repository.list(query, params);
+		return repository.list(builder.getQuery(), builder.getParams());
 	}
 
 	public Cliente get(UUID clienteUid) {

@@ -43,8 +43,9 @@ public class ClienteResource {
 
 	@GET
 	public List<ClienteSimplifResponse> getClientes(@QueryParam("codigo") Integer codigo,
-			@QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial, @QueryParam("ativo") Boolean ativo) {
-		return mapper.toSimplifListResponse(service.getClientes(codigo, nomeOuRazaoSocial, ativo));
+			@QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial, @QueryParam("ativo") Boolean ativo,
+			@QueryParam("sort") String sort) {
+		return mapper.toSimplifListResponse(service.getClientes(codigo, nomeOuRazaoSocial, ativo, sort));
 	}
 
 	@GET
