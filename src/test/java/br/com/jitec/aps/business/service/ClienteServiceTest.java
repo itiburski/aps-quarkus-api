@@ -16,15 +16,21 @@ import org.mockito.Mockito;
 
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.business.exception.InvalidDataException;
+import br.com.jitec.aps.business.wrapper.Paged;
 import br.com.jitec.aps.data.model.CategoriaCliente;
 import br.com.jitec.aps.data.model.Cidade;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class ClienteServiceTest {
+
+	private static final Integer PAGE = 1;
+	private static final Integer SIZE = 10;
 
 	@Inject
 	ClienteService clienteService;
@@ -49,12 +55,14 @@ public class ClienteServiceTest {
 
 		List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
 		String query = "order by id";
-		Mockito.when(repositoryMock.list(query, params)).thenReturn(clientes);
 
-		List<Cliente> result = clienteService.getClientes(null, null, null, null);
+		PanacheQuery<Cliente> panacheQuery = mockPanacheQuery(clientes);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Assertions.assertEquals(2, result.size());
-		Mockito.verify(repositoryMock).list(query, params);
+		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, null, null, null, null);
+
+		Assertions.assertEquals(2, result.getContent().size());
+		Mockito.verify(repositoryMock).find(query, params);
 	}
 
 	@Test
@@ -74,12 +82,13 @@ public class ClienteServiceTest {
 		Cliente cliente1 = getClienteAtivo(uid1, codigo, "Cliente 1", "Contato 1");
 
 		List<Cliente> clientes = Arrays.asList(cliente1);
-		Mockito.when(repositoryMock.list(query, params)).thenReturn(clientes);
+		PanacheQuery<Cliente> panacheQuery = mockPanacheQuery(clientes);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		List<Cliente> result = clienteService.getClientes(codigo, nomeOuRazaoSocial, ativo, null);
+		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, codigo, nomeOuRazaoSocial, ativo, null);
 
-		Assertions.assertEquals(1, result.size());
-		Mockito.verify(repositoryMock).list(query, params);
+		Assertions.assertEquals(1, result.getContent().size());
+		Mockito.verify(repositoryMock).find(query, params);
 	}
 
 	@Test
@@ -93,18 +102,19 @@ public class ClienteServiceTest {
 
 		List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
 		String query = "order by nome";
-		Mockito.when(repositoryMock.list(query, params)).thenReturn(clientes);
+		PanacheQuery<Cliente> panacheQuery = mockPanacheQuery(clientes);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		List<Cliente> result = clienteService.getClientes(null, null, null, "nome");
+		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, null, null, null, "nome");
 
-		Assertions.assertEquals(2, result.size());
-		Mockito.verify(repositoryMock).list(query, params);
+		Assertions.assertEquals(2, result.getContent().size());
+		Mockito.verify(repositoryMock).find(query, params);
 	}
 
 	@Test
 	public void getClientes_WhenOrderIsInvalid_ShouldThrowException() {
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.getClientes(null, null, null, "campoInexistente"),
+				() -> clienteService.getClientes(PAGE, SIZE, null, null, null, "campoInexistente"),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Campo para ordenação inválido", thrown.getMessage());
@@ -361,6 +371,14 @@ public class ClienteServiceTest {
 		cliente.setSaldo(BigDecimal.ZERO);
 
 		return cliente;
+	}
+
+	@SuppressWarnings("unchecked")
+	private PanacheQuery<Cliente> mockPanacheQuery(List<Cliente> clientes) {
+		PanacheQuery<Cliente> query = Mockito.mock(PanacheQuery.class);
+		Mockito.when(query.page(Mockito.any(Page.class))).thenReturn(query);
+		Mockito.when(query.list()).thenReturn(clientes);
+		return query;
 	}
 
 }

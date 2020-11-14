@@ -14,8 +14,11 @@ import javax.transaction.Transactional;
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.business.exception.InvalidDataException;
 import br.com.jitec.aps.business.util.QueryBuilder;
+import br.com.jitec.aps.business.wrapper.Paged;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 
 @ApplicationScoped
 public class ClienteService {
@@ -32,7 +35,8 @@ public class ClienteService {
 	@Inject
 	CategoriaClienteService categClienteService;
 
-	public List<Cliente> getClientes(Integer codigo, String nomeOuRazaoSocial, Boolean ativo, final String sort) {
+	public Paged<Cliente> getClientes(Integer page, Integer size, Integer codigo, String nomeOuRazaoSocial,
+			Boolean ativo, final String sort) {
 		String field = DEFAULT_SORT_FIELD;
 
 		if (Objects.nonNull(sort)) {
@@ -52,7 +56,9 @@ public class ClienteService {
 					"nomeOuRazaoSocial", "%" + nomeOuRazaoSocial.toUpperCase() + "%");
 		}
 
-		return repository.list(builder.getQuery(), builder.getParams());
+		PanacheQuery<Cliente> query = repository.find(builder.getQuery(), builder.getParams())
+				.page(Page.of(page, size));
+		return new Paged<Cliente>(query.list(), query.pageCount(), query.count());
 	}
 
 	public Cliente get(UUID clienteUid) {

@@ -16,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -23,6 +24,9 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.api.ApiConstants;
 import br.com.jitec.aps.business.service.ClienteService;
+import br.com.jitec.aps.business.wrapper.Paged;
+import br.com.jitec.aps.data.model.Cliente;
+import br.com.jitec.aps.rest.http.Pagination;
 import br.com.jitec.aps.rest.payload.mapper.ClienteMapper;
 import br.com.jitec.aps.rest.payload.request.ClienteCreateRequest;
 import br.com.jitec.aps.rest.payload.request.ClienteUpdateRequest;
@@ -42,10 +46,19 @@ public class ClienteResource {
 	ClienteMapper mapper;
 
 	@GET
-	public List<ClienteSimplifResponse> getClientes(@QueryParam("codigo") Integer codigo,
-			@QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial, @QueryParam("ativo") Boolean ativo,
-			@QueryParam("sort") String sort) {
-		return mapper.toSimplifListResponse(service.getClientes(codigo, nomeOuRazaoSocial, ativo, sort));
+	public Response getClientes(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
+			@QueryParam("codigo") Integer codigo, @QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial,
+			@QueryParam("ativo") Boolean ativo, @QueryParam("sort") String sort) {
+
+		Integer pageReq = Pagination.handlePage(page);
+		Integer sizeReq = Pagination.handleSize(size);
+
+		Paged<Cliente> query = service.getClientes((pageReq - 1), sizeReq, codigo, nomeOuRazaoSocial, ativo, sort);
+		List<ClienteSimplifResponse> clientes = mapper.toSimplifListResponse(query.getContent());
+
+		return Response.ok(clientes).header(Pagination.PAGE_NUMBER, pageReq).header(Pagination.PAGE_SIZE, sizeReq)
+				.header(Pagination.TOTAL_PAGES, query.getPageCount()).header(Pagination.TOTAL_ITEMS, query.getItemCount())
+				.build();
 	}
 
 	@GET
