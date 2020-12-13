@@ -23,6 +23,7 @@ import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 
@@ -56,7 +57,7 @@ public class ClienteServiceTest {
 		List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
 		String query = "order by id";
 
-		PanacheQuery<Cliente> panacheQuery = mockPanacheQuery(clientes);
+		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
 		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, null, null, null, null);
@@ -82,7 +83,7 @@ public class ClienteServiceTest {
 		Cliente cliente1 = getClienteAtivo(uid1, codigo, "Cliente 1", "Contato 1");
 
 		List<Cliente> clientes = Arrays.asList(cliente1);
-		PanacheQuery<Cliente> panacheQuery = mockPanacheQuery(clientes);
+		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
 		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, codigo, nomeOuRazaoSocial, ativo, null);
@@ -102,7 +103,7 @@ public class ClienteServiceTest {
 
 		List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
 		String query = "order by nome";
-		PanacheQuery<Cliente> panacheQuery = mockPanacheQuery(clientes);
+		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
 		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, null, null, null, "nome");
@@ -139,6 +140,35 @@ public class ClienteServiceTest {
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> clienteService.get(uid),
+				"should have thrown DataNotFoundException");
+
+		Assertions.assertTrue(thrown.getMessage().contains("Cliente não encontrado"));
+	}
+
+	@Test
+	public void getComplete_WhenValidUid_ShouldReturnCompleteCliente() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
+
+		PanacheQuery<Cliente> query = Mockito.mock(PanacheQuery.class);
+		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Parameters.class))).thenReturn(query);
+		Mockito.when(query.singleResultOptional()).thenReturn(Optional.of(cliente));
+
+		Cliente result = clienteService.getComplete(uid);
+
+		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
+		Assertions.assertEquals("Cliente", result.getNome());
+	}
+
+	@Test
+	public void getComplete_WhenInexistentUid_ShouldThrowException() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+
+		PanacheQuery<Cliente> query = Mockito.mock(PanacheQuery.class);
+		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Parameters.class))).thenReturn(query);
+		Mockito.when(query.singleResultOptional()).thenReturn(Optional.empty());
+
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> clienteService.getComplete(uid),
 				"should have thrown DataNotFoundException");
 
 		Assertions.assertTrue(thrown.getMessage().contains("Cliente não encontrado"));
@@ -374,7 +404,7 @@ public class ClienteServiceTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	private PanacheQuery<Cliente> mockPanacheQuery(List<Cliente> clientes) {
+	private PanacheQuery<Cliente> mockListPanacheQuery(List<Cliente> clientes) {
 		PanacheQuery<Cliente> query = Mockito.mock(PanacheQuery.class);
 		Mockito.when(query.page(Mockito.any(Page.class))).thenReturn(query);
 		Mockito.when(query.list()).thenReturn(clientes);

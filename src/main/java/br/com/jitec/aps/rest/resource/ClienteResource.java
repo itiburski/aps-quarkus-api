@@ -64,7 +64,7 @@ public class ClienteResource {
 	@GET
 	@Path("{clienteUid}")
 	public ClienteResponse get(@PathParam UUID clienteUid) {
-		return mapper.toResponse(service.get(clienteUid));
+		return mapper.toResponse(service.getComplete(clienteUid));
 	}
 
 	@POST

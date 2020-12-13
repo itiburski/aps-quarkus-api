@@ -1,6 +1,7 @@
 package br.com.jitec.aps.rest.payload.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public class ClienteResponse {
@@ -21,6 +22,7 @@ public class ClienteResponse {
 	private String inscricaoEstadual;
 	private CidadeResponse cidade;
 	private CategoriaClienteResponse categoriaCliente;
+	private List<ClienteEmailResponse> emails;
 
 	public UUID getUid() {
 		return uid;
@@ -148,6 +150,14 @@ public class ClienteResponse {
 
 	public void setCategoriaCliente(CategoriaClienteResponse categoriaCliente) {
 		this.categoriaCliente = categoriaCliente;
+	}
+
+	public List<ClienteEmailResponse> getEmails() {
+		return emails;
+	}
+
+	public void setEmails(List<ClienteEmailResponse> emails) {
+		this.emails = emails;
 	}
 
 }

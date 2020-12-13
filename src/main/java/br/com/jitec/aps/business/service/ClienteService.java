@@ -19,6 +19,7 @@ import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
 
 @ApplicationScoped
 public class ClienteService {
@@ -63,6 +64,13 @@ public class ClienteService {
 
 	public Cliente get(UUID clienteUid) {
 		return repository.findByUid(clienteUid).orElseThrow(() -> new DataNotFoundException("Cliente não encontrado"));
+	}
+
+	public Cliente getComplete(UUID clienteUid) {
+		Optional<Cliente> clienteOp = repository
+				.find("from Cliente c left join fetch c.emails where c.uid = :uid", Parameters.with("uid", clienteUid))
+				.singleResultOptional();
+		return clienteOp.orElseThrow(() -> new DataNotFoundException("Cliente não encontrado"));
 	}
 
 	@Transactional
