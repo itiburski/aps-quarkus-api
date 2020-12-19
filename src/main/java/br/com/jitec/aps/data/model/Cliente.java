@@ -1,8 +1,10 @@
 package br.com.jitec.aps.data.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,8 +64,8 @@ public class Cliente extends APSEntity {
 	@JoinColumn(name = "CATEGORIA_CLIENTE_ID")
 	private CategoriaCliente categoria;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cliente")
-	private List<ClienteEmail> emails;
+	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ClienteEmail> emails = new ArrayList<>();
 
 	public Integer getCodigo() {
 		return codigo;
@@ -191,6 +193,16 @@ public class Cliente extends APSEntity {
 
 	public void setEmails(List<ClienteEmail> emails) {
 		this.emails = emails;
+	}
+
+	public void addEmail(ClienteEmail clienteEmail) {
+		emails.add(clienteEmail);
+		clienteEmail.setCliente(this);
+	}
+
+	public void removeEmail(ClienteEmail clienteEmail) {
+		emails.remove(clienteEmail);
+		clienteEmail.setCliente(null);
 	}
 
 }

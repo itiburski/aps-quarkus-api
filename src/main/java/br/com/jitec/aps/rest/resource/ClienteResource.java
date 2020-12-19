@@ -23,10 +23,12 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.api.ApiConstants;
+import br.com.jitec.aps.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.business.service.ClienteService;
 import br.com.jitec.aps.business.wrapper.Paged;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.rest.http.Pagination;
+import br.com.jitec.aps.rest.payload.mapper.ClienteEmailMapper;
 import br.com.jitec.aps.rest.payload.mapper.ClienteMapper;
 import br.com.jitec.aps.rest.payload.request.ClienteCreateRequest;
 import br.com.jitec.aps.rest.payload.request.ClienteUpdateRequest;
@@ -44,6 +46,9 @@ public class ClienteResource {
 
 	@Inject
 	ClienteMapper mapper;
+
+	@Inject
+	ClienteEmailMapper emailMapper;
 
 	@GET
 	public Response getClientes(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
@@ -69,30 +74,33 @@ public class ClienteResource {
 
 	@POST
 	public ClienteResponse create(@Valid @NotNull ClienteCreateRequest request) {
+		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		return mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
 				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
-				request.getCategoriaUid()));
+				request.getCategoriaUid(), emails));
 	}
 
 	@PUT
 	@Path("{clienteUid}")
 	@Operation(summary = "Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased")
 	public ClienteResponse updateAll(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
+		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		return mapper.toResponse(service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails));
 	}
 
 	@PATCH
 	@Path("{clienteUid}")
 	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed")
 	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
+		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		return mapper.toResponse(service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid()));
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails));
 	}
 
 	@DELETE

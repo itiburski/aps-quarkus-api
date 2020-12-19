@@ -1,5 +1,6 @@
 package br.com.jitec.aps.rest.payload.request;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
@@ -45,6 +46,8 @@ public abstract class GenericClienteRequest {
 
 	private UUID cidadeUid;
 	private UUID categoriaUid;
+
+	private List<ClienteEmailRequest> emails;
 
 	public String getNome() {
 		return nome;
@@ -140,6 +143,14 @@ public abstract class GenericClienteRequest {
 
 	public void setCategoriaUid(UUID categoriaUid) {
 		this.categoriaUid = categoriaUid;
+	}
+
+	public List<ClienteEmailRequest> getEmails() {
+		return emails;
+	}
+
+	public void setEmails(List<ClienteEmailRequest> emails) {
+		this.emails = emails;
 	}
 
 }
