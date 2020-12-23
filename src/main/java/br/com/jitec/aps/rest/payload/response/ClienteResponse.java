@@ -23,6 +23,7 @@ public class ClienteResponse {
 	private CidadeResponse cidade;
 	private CategoriaClienteResponse categoriaCliente;
 	private List<ClienteEmailResponse> emails;
+	private List<ClienteTelefoneResponse> telefones;
 
 	public UUID getUid() {
 		return uid;
@@ -158,6 +159,14 @@ public class ClienteResponse {
 
 	public void setEmails(List<ClienteEmailResponse> emails) {
 		this.emails = emails;
+	}
+
+	public List<ClienteTelefoneResponse> getTelefones() {
+		return telefones;
+	}
+
+	public void setTelefones(List<ClienteTelefoneResponse> telefones) {
+		this.telefones = telefones;
 	}
 
 }

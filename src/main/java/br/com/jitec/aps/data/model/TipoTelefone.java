@@ -28,4 +28,9 @@ public class TipoTelefone extends APSEntity {
 		this.descricao = descricao;
 	}
 
+	@Override
+	public String toString() {
+		return "TipoTelefone [descricao=" + descricao + ", id=" + getId() + ", UUID=" + getUid() + "]";
+	}
+
 }

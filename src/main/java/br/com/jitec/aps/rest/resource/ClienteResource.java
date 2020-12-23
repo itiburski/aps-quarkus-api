@@ -24,12 +24,14 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.api.ApiConstants;
 import br.com.jitec.aps.business.data.ClienteEmailDTO;
+import br.com.jitec.aps.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.business.service.ClienteService;
 import br.com.jitec.aps.business.wrapper.Paged;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.rest.http.Pagination;
 import br.com.jitec.aps.rest.payload.mapper.ClienteEmailMapper;
 import br.com.jitec.aps.rest.payload.mapper.ClienteMapper;
+import br.com.jitec.aps.rest.payload.mapper.ClienteTelefoneMapper;
 import br.com.jitec.aps.rest.payload.request.ClienteCreateRequest;
 import br.com.jitec.aps.rest.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.rest.payload.response.ClienteResponse;
@@ -50,6 +52,9 @@ public class ClienteResource {
 	@Inject
 	ClienteEmailMapper emailMapper;
 
+	@Inject
+	ClienteTelefoneMapper telefoneMapper;
+
 	@GET
 	public Response getClientes(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
 			@QueryParam("codigo") Integer codigo, @QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial,
@@ -62,8 +67,8 @@ public class ClienteResource {
 		List<ClienteSimplifResponse> clientes = mapper.toSimplifListResponse(query.getContent());
 
 		return Response.ok(clientes).header(Pagination.PAGE_NUMBER, pageReq).header(Pagination.PAGE_SIZE, sizeReq)
-				.header(Pagination.TOTAL_PAGES, query.getPageCount()).header(Pagination.TOTAL_ITEMS, query.getItemCount())
-				.build();
+				.header(Pagination.TOTAL_PAGES, query.getPageCount())
+				.header(Pagination.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
 	@GET
@@ -75,10 +80,12 @@ public class ClienteResource {
 	@POST
 	public ClienteResponse create(@Valid @NotNull ClienteCreateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
+		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
+
 		return mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
 				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
-				request.getCategoriaUid(), emails));
+				request.getCategoriaUid(), emails, telefones));
 	}
 
 	@PUT
@@ -86,10 +93,12 @@ public class ClienteResource {
 	@Operation(summary = "Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased")
 	public ClienteResponse updateAll(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
+		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
+
 		return mapper.toResponse(service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails));
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails, telefones));
 	}
 
 	@PATCH
@@ -97,10 +106,12 @@ public class ClienteResource {
 	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed")
 	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
+		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
+
 		return mapper.toResponse(service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
 				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails));
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails, telefones));
 	}
 
 	@DELETE

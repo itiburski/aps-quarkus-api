@@ -67,6 +67,9 @@ public class Cliente extends APSEntity {
 	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ClienteEmail> emails = new ArrayList<>();
 
+	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ClienteTelefone> telefones = new ArrayList<>();
+
 	public Integer getCodigo() {
 		return codigo;
 	}
@@ -203,6 +206,24 @@ public class Cliente extends APSEntity {
 	public void removeEmail(ClienteEmail clienteEmail) {
 		emails.remove(clienteEmail);
 		clienteEmail.setCliente(null);
+	}
+
+	public List<ClienteTelefone> getTelefones() {
+		return telefones;
+	}
+
+	public void setTelefones(List<ClienteTelefone> telefones) {
+		this.telefones = telefones;
+	}
+
+	public void addTelefone(ClienteTelefone clienteTelefone) {
+		telefones.add(clienteTelefone);
+		clienteTelefone.setCliente(this);
+	}
+
+	public void removeTelefone(ClienteTelefone clienteTelefone) {
+		telefones.remove(clienteTelefone);
+		clienteTelefone.setCliente(null);
 	}
 
 }

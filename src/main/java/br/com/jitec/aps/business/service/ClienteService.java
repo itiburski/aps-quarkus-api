@@ -14,12 +14,14 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import br.com.jitec.aps.business.data.ClienteEmailDTO;
+import br.com.jitec.aps.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.business.exception.InvalidDataException;
 import br.com.jitec.aps.business.util.QueryBuilder;
 import br.com.jitec.aps.business.wrapper.Paged;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.model.ClienteEmail;
+import br.com.jitec.aps.data.model.ClienteTelefone;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
@@ -39,6 +41,9 @@ public class ClienteService {
 
 	@Inject
 	CategoriaClienteService categClienteService;
+
+	@Inject
+	TipoTelefoneService tipoTelefoneService;
 
 	public Paged<Cliente> getClientes(Integer page, Integer size, Integer codigo, String nomeOuRazaoSocial,
 			Boolean ativo, final String sort) {
@@ -81,7 +86,7 @@ public class ClienteService {
 	@Transactional
 	public Cliente create(Integer codigo, String nome, String razaoSocial, String contato, String rua,
 			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
-			UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails) {
+			UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails, List<ClienteTelefoneDTO> telefones) {
 
 		Cliente cliente = new Cliente();
 		cliente.setCodigo(getCodigo(codigo));
@@ -108,8 +113,21 @@ public class ClienteService {
 			cliente.addEmail(new ClienteEmail(dto.getEmail()));
 		}
 
+		for (ClienteTelefoneDTO dto : telefones) {
+			cliente.addTelefone(buildClienteTelefone(dto));
+		}
+
 		repository.persist(cliente);
 		return cliente;
+	}
+
+	private ClienteTelefone buildClienteTelefone(ClienteTelefoneDTO dto) {
+		ClienteTelefone telefone = new ClienteTelefone();
+		telefone.setNumero(dto.getNumero());
+		if (Objects.nonNull(dto.getUidTipoTelefone())) {
+			telefone.setTipoTelefone(tipoTelefoneService.get(dto.getUidTipoTelefone()));
+		}
+		return telefone;
 	}
 
 	private Integer getCodigo(Integer codigoRequest) {
@@ -151,12 +169,14 @@ public class ClienteService {
 	 * @param cidadeUid
 	 * @param categoriaUid
 	 * @param emails
+	 * @param telefones
 	 * @return the entity with all updated fields
 	 */
 	@Transactional
 	public Cliente updateAll(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo,
 			String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
-			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails) {
+			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails,
+			List<ClienteTelefoneDTO> telefones) {
 
 		Cliente cliente = getComplete(clienteUid);
 
@@ -175,6 +195,7 @@ public class ClienteService {
 		cliente.setCategoria(Objects.nonNull(categoriaUid) ? categClienteService.get(categoriaUid) : null);
 
 		mergeEmails(cliente, emails);
+		mergeTelefones(cliente, telefones);
 
 		repository.persist(cliente);
 		return cliente;
@@ -198,8 +219,7 @@ public class ClienteService {
 
 		for (ClienteEmail existing : cliente.getEmails()) {
 			Optional<ClienteEmailDTO> optUpdated = emails.stream()
-					.filter(updated -> existing.getUid().equals(updated.getUid()))
-					.findFirst();
+					.filter(updated -> existing.getUid().equals(updated.getUid())).findFirst();
 			if (optUpdated.isPresent()) {
 				existing.setEmail(optUpdated.get().getEmail());
 			} else {
@@ -209,6 +229,28 @@ public class ClienteService {
 
 		removedEmails.stream().forEach(removed -> cliente.removeEmail(removed));
 		newEmails.stream().forEach(added -> cliente.addEmail(new ClienteEmail(added.getEmail())));
+	}
+
+	private void mergeTelefones(Cliente cliente, List<ClienteTelefoneDTO> telefones) {
+		List<ClienteTelefoneDTO> newTelefones = telefones.stream().filter(upd -> upd.getUid() == null)
+				.collect(Collectors.toList());
+		List<ClienteTelefone> removedTelefones = new ArrayList<>();
+
+		for (ClienteTelefone existing : cliente.getTelefones()) {
+			Optional<ClienteTelefoneDTO> optUpdated = telefones.stream()
+					.filter(updated -> existing.getUid().equals(updated.getUid())).findFirst();
+			if (optUpdated.isPresent()) {
+				existing.setNumero(optUpdated.get().getNumero());
+				existing.setTipoTelefone(Objects.nonNull(optUpdated.get().getUidTipoTelefone())
+						? tipoTelefoneService.get(optUpdated.get().getUidTipoTelefone())
+						: null);
+			} else {
+				removedTelefones.add(existing);
+			}
+		}
+
+		removedTelefones.stream().forEach(removed -> cliente.removeTelefone(removed));
+		newTelefones.stream().forEach(added -> cliente.addTelefone(buildClienteTelefone(added)));
 	}
 
 	/**
@@ -230,12 +272,14 @@ public class ClienteService {
 	 * @param cidadeUid
 	 * @param categoriaUid
 	 * @param emails
+	 * @param telefones
 	 * @return the entity with updated fields
 	 */
 	@Transactional
 	public Cliente updateNotNull(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo,
 			String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
-			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails) {
+			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails,
+			List<ClienteTelefoneDTO> telefones) {
 
 		Cliente cliente = getComplete(clienteUid);
 
@@ -280,6 +324,9 @@ public class ClienteService {
 		}
 		if (Objects.nonNull(emails)) {
 			mergeEmails(cliente, emails);
+		}
+		if (Objects.nonNull(telefones)) {
+			mergeTelefones(cliente, telefones);
 		}
 
 		repository.persist(cliente);

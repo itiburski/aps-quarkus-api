@@ -49,6 +49,8 @@ public abstract class GenericClienteRequest {
 
 	private List<ClienteEmailRequest> emails;
 
+	private List<ClienteTelefoneRequest> telefones;
+
 	public String getNome() {
 		return nome;
 	}
@@ -151,6 +153,14 @@ public abstract class GenericClienteRequest {
 
 	public void setEmails(List<ClienteEmailRequest> emails) {
 		this.emails = emails;
+	}
+
+	public List<ClienteTelefoneRequest> getTelefones() {
+		return telefones;
+	}
+
+	public void setTelefones(List<ClienteTelefoneRequest> telefones) {
+		this.telefones = telefones;
 	}
 
 }

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import br.com.jitec.aps.business.data.ClienteEmailDTO;
+import br.com.jitec.aps.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.business.exception.InvalidDataException;
 import br.com.jitec.aps.business.wrapper.Paged;
@@ -23,6 +24,8 @@ import br.com.jitec.aps.data.model.CategoriaCliente;
 import br.com.jitec.aps.data.model.Cidade;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.model.ClienteEmail;
+import br.com.jitec.aps.data.model.ClienteTelefone;
+import br.com.jitec.aps.data.model.TipoTelefone;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
@@ -47,6 +50,9 @@ public class ClienteServiceTest {
 
 	@InjectMock
 	CategoriaClienteService categClienteServiceMock;
+
+	@InjectMock
+	TipoTelefoneService tipoTelefoneServiceMock;
 
 	@Test
 	public void getClientes_WhenUsingNullFilters_ShouldListAll() {
@@ -178,15 +184,26 @@ public class ClienteServiceTest {
 	public void create_WhenCodigoInformed_ShouldCreateUsingCodigo() {
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		emails.add(new ClienteEmailDTO.Builder().withEmail("email@email.com").build());
-		Cliente created = clienteService.create(123, "Nome", "razaoSocial", "contato", "rua",
-				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
-				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails);
+
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
+		UUID uidTtipo = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
+		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(111222333).withUidTipoTelefone(uidTtipo).build());
+
+		Mockito.when(tipoTelefoneServiceMock.get(Mockito.any(UUID.class))).thenReturn(new TipoTelefone("mock"));
+
+		Cliente created = clienteService.create(123, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
+				"cep", "homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
 
 		Assertions.assertEquals("Nome", created.getNome());
 		Assertions.assertEquals("contato", created.getContato());
 		Assertions.assertEquals(123, created.getCodigo());
 		Assertions.assertTrue(created.getAtivo());
+		Assertions.assertEquals(1, created.getEmails().size());
+		Assertions.assertEquals("email@email.com", created.getEmails().get(0).getEmail());
+		Assertions.assertEquals(1, created.getTelefones().size());
+		Assertions.assertEquals(111222333, created.getTelefones().get(0).getNumero());
+		Assertions.assertEquals("mock", created.getTelefones().get(0).getTipoTelefone().getDescricao());
 	}
 
 	@Test
@@ -194,10 +211,12 @@ public class ClienteServiceTest {
 		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
-		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua",
-				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
-				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails);
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
+		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(111222333).build());
+
+		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
+				"cep", "homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
 
 		Assertions.assertEquals("Nome", created.getNome());
 		Assertions.assertEquals("contato", created.getContato());
@@ -210,8 +229,10 @@ public class ClienteServiceTest {
 		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
+
 		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
-				"cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails);
+				"cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails, telefones);
 
 		Assertions.assertEquals("Nome", created.getNome());
 		Assertions.assertEquals("contato", created.getContato());
@@ -224,10 +245,9 @@ public class ClienteServiceTest {
 	@Test
 	public void create_WhenCodigoZeroInformed_ShouldThrowException() {
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.create(0, "Nome", "razaoSocial", "contato", "rua", "complemento",
-						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
-						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null),
+				() -> clienteService.create(0, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro", "cep",
+						"homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null, null),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("O código deve ser maior que 0", thrown.getMessage());
@@ -238,10 +258,9 @@ public class ClienteServiceTest {
 		Mockito.when(repositoryMock.findByCodigo(Mockito.anyInt())).thenReturn(Optional.of(new Cliente()));
 
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.create(15, "Nome", "razaoSocial", "contato", "rua", "complemento",
-						"bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
-						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null),
+				() -> clienteService.create(15, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro", "cep",
+						"homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null, null),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Já existe um cliente associado ao código informado", thrown.getMessage());
@@ -249,6 +268,26 @@ public class ClienteServiceTest {
 
 	@Test
 	public void updateAll_WhenAllParametersInformed_ShouldUpdateAllFields() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
+		mockFindSingleResultOptional(cliente);
+
+		List<ClienteEmailDTO> emails = new ArrayList<>();
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
+
+		Cliente result = clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.FALSE,
+				"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
+
+		Assertions.assertEquals("Nome-updated", result.getNome());
+		Assertions.assertEquals("contato-updated", result.getContato());
+		Assertions.assertFalse(result.getAtivo());
+		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
+	}
+
+	@Test
+	public void updateAll_WhenChangingEmails_ShouldUpdateEmailsList() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
 		cliente.addEmail(new ClienteEmail.Builder().withEmail("email-one@domain.com")
@@ -262,18 +301,62 @@ public class ClienteServiceTest {
 				.withUid(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da")).build());
 		emails.add(new ClienteEmailDTO.Builder().withEmail("added@email.com").build());
 
-		Cliente result = clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.FALSE,
-				"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
-				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails);
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 
-		Assertions.assertEquals("Nome-updated", result.getNome());
-		Assertions.assertEquals("contato-updated", result.getContato());
-		Assertions.assertFalse(result.getAtivo());
-		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
+		Cliente result = clienteService.updateAll(uid, "Nome", "razaoSocial", "contato", Boolean.FALSE, "rua",
+				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
+
 		Assertions.assertEquals(2, result.getEmails().size());
 		Assertions.assertEquals("changed-one@email.com", result.getEmails().get(0).getEmail());
 		Assertions.assertEquals("added@email.com", result.getEmails().get(1).getEmail());
+	}
+
+	@Test
+	public void updateAll_WhenChangingTelefone_ShouldUpdateTelefoneList() {
+		UUID uidCliente = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+
+		UUID uidFone1 = UUID.fromString("53846f5e-2216-46e6-8ff6-868bb5b32c82");
+		UUID uidFone2 = UUID.fromString("d43cba7f-110c-4818-a013-5eda8a7122d9");
+		UUID uidFone3 = UUID.fromString("0586d129-e102-456e-b47a-9dabaa30e06c");
+
+		UUID uidTipoFone1 = UUID.fromString("7f437e6f-6e20-49cd-9914-36311484a291");
+		UUID uidTipoFone2 = UUID.fromString("57b45020-20e6-484f-9f6c-e1f4d6bf9f3b");
+		UUID uidTipoFone3 = UUID.fromString("c04ed766-f6e5-42ea-8339-6d2098e0101f");
+
+		Cliente cliente = getCliente(uidCliente, 123, "Cliente", "Contato");
+		cliente.addTelefone(getTelefone(uidFone1, 222222, uidTipoFone1, "mock-1"));
+		cliente.addTelefone(getTelefone(uidFone2, 999999, uidTipoFone1, "mock-2"));
+		cliente.addTelefone(getTelefone(uidFone3, 555555, uidTipoFone1, "mock-3"));
+
+		mockFindSingleResultOptional(cliente);
+
+		List<ClienteEmailDTO> emails = new ArrayList<>();
+
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
+		telefones.add(new ClienteTelefoneDTO.Builder().withUid(uidFone1).withNumero(333333).withUidTipoTelefone(null)
+				.build()); // alterou numero e removeu iudTipoFone
+		telefones.add(new ClienteTelefoneDTO.Builder().withUid(uidFone2).withNumero(999999)
+				.withUidTipoTelefone(uidTipoFone1).build()); // manteve
+		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(888888).withUidTipoTelefone(uidTipoFone3).build()); // novo
+
+		Mockito.when(tipoTelefoneServiceMock.get(uidTipoFone1)).thenReturn(getTipoTelefone(uidTipoFone1, "mock-1"));
+		Mockito.when(tipoTelefoneServiceMock.get(uidTipoFone2)).thenReturn(getTipoTelefone(uidTipoFone2, "mock-2"));
+		Mockito.when(tipoTelefoneServiceMock.get(uidTipoFone3)).thenReturn(getTipoTelefone(uidTipoFone3, "mock-3"));
+
+		Cliente result = clienteService.updateAll(uidCliente, "Nome", "razaoSocial", "contato", Boolean.FALSE, "rua",
+				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
+
+		Assertions.assertEquals(3, result.getTelefones().size());
+		Assertions.assertEquals(333333, result.getTelefones().get(0).getNumero());
+		Assertions.assertEquals(999999, result.getTelefones().get(1).getNumero());
+		Assertions.assertEquals(888888, result.getTelefones().get(2).getNumero());
+		Assertions.assertNull(result.getTelefones().get(0).getTipoTelefone());
+		Assertions.assertEquals(uidTipoFone1, result.getTelefones().get(1).getTipoTelefone().getUid());
+		Assertions.assertEquals(uidTipoFone3, result.getTelefones().get(2).getTipoTelefone().getUid());
 	}
 
 	@Test
@@ -283,8 +366,9 @@ public class ClienteServiceTest {
 		mockFindSingleResultOptional(cliente);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 		Cliente result = clienteService.updateAll(uid, "Nome-updated", "razaoSocial", null, null, "rua", "complemento",
-				"bairro", "cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails);
+				"bairro", "cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails, telefones);
 
 		Assertions.assertEquals("Nome-updated", result.getNome());
 		Assertions.assertNull(result.getContato());
@@ -300,10 +384,10 @@ public class ClienteServiceTest {
 		mockFindSingleResultOptionalEmpty();
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.TRUE, "rua",
-						"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+				() -> clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.TRUE,
+						"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null),
+						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null, null),
 				"should have thrown DataNotFoundException");
 
 		Assertions.assertTrue(thrown.getMessage().contains("Cliente não encontrado"));
@@ -316,7 +400,7 @@ public class ClienteServiceTest {
 		mockFindSingleResultOptional(cliente);
 
 		Cliente result = clienteService.updateNotNull(uid, null, null, null, null, null, null, null, null, null, null,
-				null, null, null, null);
+				null, null, null, null, null);
 
 		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
 		Assertions.assertEquals("nome", result.getNome());
@@ -337,15 +421,18 @@ public class ClienteServiceTest {
 		Cliente cliente = getClienteWithDefaultValues(uid, 123);
 		mockFindSingleResultOptional(cliente);
 
-		Mockito.when(categClienteServiceMock.get(Mockito.any(UUID.class))).thenReturn(new CategoriaCliente("categoria-updated"));
+		Mockito.when(categClienteServiceMock.get(Mockito.any(UUID.class)))
+				.thenReturn(new CategoriaCliente("categoria-updated"));
 		Mockito.when(cidadeServiceMock.get(Mockito.any(UUID.class))).thenReturn(new Cidade("cidade-alterada", "FF"));
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
+		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
+
 		Cliente result = clienteService.updateNotNull(uid, "nome-updated", "razaoSocial-updated", "contato-updated",
 				Boolean.FALSE, "rua-updated", "complemento-updated", "bairro-updated", "cep-updated",
 				"homepage-updated", "cnpj-updated", "inscricaoEstadual-updated",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails);
+				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
 
 		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
 		Assertions.assertEquals("nome-updated", result.getNome());
@@ -419,6 +506,21 @@ public class ClienteServiceTest {
 		cliente.setSaldo(BigDecimal.ZERO);
 
 		return cliente;
+	}
+
+	private TipoTelefone getTipoTelefone(UUID uidTipoFone, String descricao) {
+		TipoTelefone tipoTelefone = new TipoTelefone(descricao);
+		tipoTelefone.setUid(uidTipoFone);
+		return tipoTelefone;
+	}
+
+	private ClienteTelefone getTelefone(UUID uidTelefone, Integer numero, UUID uidTipoTelefone,
+			String descricaoTipoTelefone) {
+		ClienteTelefone clienteTelefone = new ClienteTelefone();
+		clienteTelefone.setUid(uidTelefone);
+		clienteTelefone.setNumero(numero);
+		clienteTelefone.setTipoTelefone(getTipoTelefone(uidTipoTelefone, descricaoTipoTelefone));
+		return clienteTelefone;
 	}
 
 	@SuppressWarnings("unchecked")
