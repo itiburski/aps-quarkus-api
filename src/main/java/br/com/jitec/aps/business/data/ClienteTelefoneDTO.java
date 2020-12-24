@@ -4,26 +4,26 @@ import java.util.UUID;
 
 public class ClienteTelefoneDTO {
 
-	private UUID uid;
+	private UUID telefoneUid;
 
-	private UUID uidTipoTelefone;
+	private UUID tipoTelefoneUid;
 
 	private Integer numero;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getTipoTelefoneUid() {
+		return tipoTelefoneUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setTipoTelefoneUid(UUID tipoTelefoneUid) {
+		this.tipoTelefoneUid = tipoTelefoneUid;
 	}
 
-	public UUID getUidTipoTelefone() {
-		return uidTipoTelefone;
+	public UUID getTelefoneUid() {
+		return telefoneUid;
 	}
 
-	public void setUidTipoTelefone(UUID uidTipoTelefone) {
-		this.uidTipoTelefone = uidTipoTelefone;
+	public void setTelefoneUid(UUID telefoneUid) {
+		this.telefoneUid = telefoneUid;
 	}
 
 	public Integer getNumero() {
@@ -36,7 +36,8 @@ public class ClienteTelefoneDTO {
 
 	@Override
 	public String toString() {
-		return "ClienteTelefoneDTO [uid=" + uid + ", uidTipoTelefone=" + uidTipoTelefone + ", numero=" + numero + "]";
+		return "ClienteTelefoneDTO [telefoneUid=" + telefoneUid + ", tipoTelefoneUid=" + tipoTelefoneUid + ", numero="
+				+ numero + "]";
 	}
 
 	public static class Builder {
@@ -51,13 +52,13 @@ public class ClienteTelefoneDTO {
 			return this;
 		}
 
-		public Builder withUidTipoTelefone(UUID uidTipoTelefone) {
-			instance.setUidTipoTelefone(uidTipoTelefone);
+		public Builder withTipoTelefoneUid(UUID tipoTelefoneUid) {
+			instance.setTipoTelefoneUid(tipoTelefoneUid);
 			return this;
 		}
 
-		public Builder withUid(UUID uid) {
-			instance.setUid(uid);
+		public Builder withTelefoneUid(UUID telefoneUid) {
+			instance.setTelefoneUid(telefoneUid);
 			return this;
 		}
 

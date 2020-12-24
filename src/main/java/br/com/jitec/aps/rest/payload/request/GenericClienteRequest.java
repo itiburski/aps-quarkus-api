@@ -45,7 +45,7 @@ public abstract class GenericClienteRequest {
 	private String inscricaoEstadual;
 
 	private UUID cidadeUid;
-	private UUID categoriaUid;
+	private UUID categoriaClienteUid;
 
 	private List<ClienteEmailRequest> emails;
 
@@ -139,12 +139,12 @@ public abstract class GenericClienteRequest {
 		this.cidadeUid = cidadeUid;
 	}
 
-	public UUID getCategoriaUid() {
-		return categoriaUid;
+	public UUID getCategoriaClienteUid() {
+		return categoriaClienteUid;
 	}
 
-	public void setCategoriaUid(UUID categoriaUid) {
-		this.categoriaUid = categoriaUid;
+	public void setCategoriaClienteUid(UUID categoriaClienteUid) {
+		this.categoriaClienteUid = categoriaClienteUid;
 	}
 
 	public List<ClienteEmailRequest> getEmails() {

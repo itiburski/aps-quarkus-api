@@ -85,7 +85,7 @@ public class ClienteResource {
 		return mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
 				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
-				request.getCategoriaUid(), emails, telefones));
+				request.getCategoriaClienteUid(), emails, telefones));
 	}
 
 	@PUT
@@ -95,10 +95,11 @@ public class ClienteResource {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
 
-		return mapper.toResponse(service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(),
-				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
-				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails, telefones));
+		return mapper.toResponse(
+				service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(), request.getContato(),
+						request.getAtivo(), request.getRua(), request.getComplemento(), request.getBairro(),
+						request.getCep(), request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(),
+						request.getCidadeUid(), request.getCategoriaClienteUid(), emails, telefones));
 	}
 
 	@PATCH
@@ -108,10 +109,11 @@ public class ClienteResource {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
 
-		return mapper.toResponse(service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(),
-				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
-				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaUid(), emails, telefones));
+		return mapper.toResponse(
+				service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(), request.getContato(),
+						request.getAtivo(), request.getRua(), request.getComplemento(), request.getBairro(),
+						request.getCep(), request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(),
+						request.getCidadeUid(), request.getCategoriaClienteUid(), emails, telefones));
 	}
 
 	@DELETE

@@ -4,15 +4,15 @@ import java.util.UUID;
 
 public class ClienteEmailResponse {
 
-	private UUID uid;
+	private UUID emailUid;
 	private String email;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getEmailUid() {
+		return emailUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setEmailUid(UUID emailUid) {
+		this.emailUid = emailUid;
 	}
 
 	public String getEmail() {

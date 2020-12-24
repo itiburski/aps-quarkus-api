@@ -4,16 +4,16 @@ import java.util.UUID;
 
 public class ClienteTelefoneResponse {
 
-	private UUID uid;
+	private UUID telefoneUid;
 	private TipoTelefoneResponse tipoTelefone;
 	private Integer numero;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getTelefoneUid() {
+		return telefoneUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setTelefoneUid(UUID telefoneUid) {
+		this.telefoneUid = telefoneUid;
 	}
 
 	public TipoTelefoneResponse getTipoTelefone() {

@@ -4,15 +4,15 @@ import java.util.UUID;
 
 public class TipoTelefoneResponse {
 
-	private UUID uid;
+	private UUID tipoTelefoneUid;
 	private String descricao;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getTipoTelefoneUid() {
+		return tipoTelefoneUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setTipoTelefoneUid(UUID tipoTelefoneUid) {
+		this.tipoTelefoneUid = tipoTelefoneUid;
 	}
 
 	public String getDescricao() {

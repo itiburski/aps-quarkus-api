@@ -4,19 +4,19 @@ import java.util.UUID;
 
 public class ClienteSimplifResponse {
 
-	private UUID uid;
+	private UUID clienteUid;
 	private Integer codigo;
 	private String nome;
 	private String razaoSocial;
 	private String contato;
 	private Boolean ativo;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getClienteUid() {
+		return clienteUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setClienteUid(UUID clienteUid) {
+		this.clienteUid = clienteUid;
 	}
 
 	public Integer getCodigo() {

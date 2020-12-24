@@ -4,16 +4,15 @@ import java.util.UUID;
 
 public class ClienteEmailDTO {
 
-	private UUID uid;
-
+	private UUID emailUid;
 	private String email;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getEmailUid() {
+		return emailUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setEmailUid(UUID emailUid) {
+		this.emailUid = emailUid;
 	}
 
 	public String getEmail() {
@@ -26,7 +25,7 @@ public class ClienteEmailDTO {
 
 	@Override
 	public String toString() {
-		return "ClienteEmailDTO [uid=" + uid + ", email=" + email + "]";
+		return "ClienteEmailDTO [emailUid=" + emailUid + ", email=" + email + "]";
 	}
 
 	public static class Builder {
@@ -41,8 +40,8 @@ public class ClienteEmailDTO {
 			return this;
 		}
 
-		public Builder withUid(UUID uid) {
-			instance.setUid(uid);
+		public Builder withEmailUid(UUID emailUid) {
+			instance.setEmailUid(emailUid);
 			return this;
 		}
 

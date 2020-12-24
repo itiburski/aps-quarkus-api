@@ -186,8 +186,8 @@ public class ClienteServiceTest {
 		emails.add(new ClienteEmailDTO.Builder().withEmail("email@email.com").build());
 
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
-		UUID uidTtipo = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(111222333).withUidTipoTelefone(uidTtipo).build());
+		UUID tipoTelefoneUid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
+		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(111222333).withTipoTelefoneUid(tipoTelefoneUid).build());
 
 		Mockito.when(tipoTelefoneServiceMock.get(Mockito.any(UUID.class))).thenReturn(new TipoTelefone("mock"));
 
@@ -298,7 +298,7 @@ public class ClienteServiceTest {
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		emails.add(new ClienteEmailDTO.Builder().withEmail("changed-one@email.com")
-				.withUid(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da")).build());
+				.withEmailUid(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da")).build());
 		emails.add(new ClienteEmailDTO.Builder().withEmail("added@email.com").build());
 
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
@@ -315,37 +315,37 @@ public class ClienteServiceTest {
 
 	@Test
 	public void updateAll_WhenChangingTelefone_ShouldUpdateTelefoneList() {
-		UUID uidCliente = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 
-		UUID uidFone1 = UUID.fromString("53846f5e-2216-46e6-8ff6-868bb5b32c82");
-		UUID uidFone2 = UUID.fromString("d43cba7f-110c-4818-a013-5eda8a7122d9");
-		UUID uidFone3 = UUID.fromString("0586d129-e102-456e-b47a-9dabaa30e06c");
+		UUID foneUid1 = UUID.fromString("53846f5e-2216-46e6-8ff6-868bb5b32c82");
+		UUID foneUid2 = UUID.fromString("d43cba7f-110c-4818-a013-5eda8a7122d9");
+		UUID foneUid3 = UUID.fromString("0586d129-e102-456e-b47a-9dabaa30e06c");
 
-		UUID uidTipoFone1 = UUID.fromString("7f437e6f-6e20-49cd-9914-36311484a291");
-		UUID uidTipoFone2 = UUID.fromString("57b45020-20e6-484f-9f6c-e1f4d6bf9f3b");
-		UUID uidTipoFone3 = UUID.fromString("c04ed766-f6e5-42ea-8339-6d2098e0101f");
+		UUID tipoFoneUid1 = UUID.fromString("7f437e6f-6e20-49cd-9914-36311484a291");
+		UUID tipoFoneUid2 = UUID.fromString("57b45020-20e6-484f-9f6c-e1f4d6bf9f3b");
+		UUID tipoFoneUid3 = UUID.fromString("c04ed766-f6e5-42ea-8339-6d2098e0101f");
 
-		Cliente cliente = getCliente(uidCliente, 123, "Cliente", "Contato");
-		cliente.addTelefone(getTelefone(uidFone1, 222222, uidTipoFone1, "mock-1"));
-		cliente.addTelefone(getTelefone(uidFone2, 999999, uidTipoFone1, "mock-2"));
-		cliente.addTelefone(getTelefone(uidFone3, 555555, uidTipoFone1, "mock-3"));
+		Cliente cliente = getCliente(clienteUid, 123, "Cliente", "Contato");
+		cliente.addTelefone(getTelefone(foneUid1, 222222, tipoFoneUid1, "mock-1"));
+		cliente.addTelefone(getTelefone(foneUid2, 999999, tipoFoneUid1, "mock-2"));
+		cliente.addTelefone(getTelefone(foneUid3, 555555, tipoFoneUid1, "mock-3"));
 
 		mockFindSingleResultOptional(cliente);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
-		telefones.add(new ClienteTelefoneDTO.Builder().withUid(uidFone1).withNumero(333333).withUidTipoTelefone(null)
-				.build()); // alterou numero e removeu iudTipoFone
-		telefones.add(new ClienteTelefoneDTO.Builder().withUid(uidFone2).withNumero(999999)
-				.withUidTipoTelefone(uidTipoFone1).build()); // manteve
-		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(888888).withUidTipoTelefone(uidTipoFone3).build()); // novo
+		telefones.add(new ClienteTelefoneDTO.Builder().withTelefoneUid(foneUid1).withNumero(333333)
+				.withTipoTelefoneUid(null).build()); // alterou numero e removeu tipoTelefoneUid
+		telefones.add(new ClienteTelefoneDTO.Builder().withTelefoneUid(foneUid2).withNumero(999999)
+				.withTipoTelefoneUid(tipoFoneUid1).build()); // manteve
+		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(888888).withTipoTelefoneUid(tipoFoneUid3).build()); // novo
 
-		Mockito.when(tipoTelefoneServiceMock.get(uidTipoFone1)).thenReturn(getTipoTelefone(uidTipoFone1, "mock-1"));
-		Mockito.when(tipoTelefoneServiceMock.get(uidTipoFone2)).thenReturn(getTipoTelefone(uidTipoFone2, "mock-2"));
-		Mockito.when(tipoTelefoneServiceMock.get(uidTipoFone3)).thenReturn(getTipoTelefone(uidTipoFone3, "mock-3"));
+		Mockito.when(tipoTelefoneServiceMock.get(tipoFoneUid1)).thenReturn(getTipoTelefone(tipoFoneUid1, "mock-1"));
+		Mockito.when(tipoTelefoneServiceMock.get(tipoFoneUid2)).thenReturn(getTipoTelefone(tipoFoneUid2, "mock-2"));
+		Mockito.when(tipoTelefoneServiceMock.get(tipoFoneUid3)).thenReturn(getTipoTelefone(tipoFoneUid3, "mock-3"));
 
-		Cliente result = clienteService.updateAll(uidCliente, "Nome", "razaoSocial", "contato", Boolean.FALSE, "rua",
+		Cliente result = clienteService.updateAll(clienteUid, "Nome", "razaoSocial", "contato", Boolean.FALSE, "rua",
 				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
@@ -355,8 +355,8 @@ public class ClienteServiceTest {
 		Assertions.assertEquals(999999, result.getTelefones().get(1).getNumero());
 		Assertions.assertEquals(888888, result.getTelefones().get(2).getNumero());
 		Assertions.assertNull(result.getTelefones().get(0).getTipoTelefone());
-		Assertions.assertEquals(uidTipoFone1, result.getTelefones().get(1).getTipoTelefone().getUid());
-		Assertions.assertEquals(uidTipoFone3, result.getTelefones().get(2).getTipoTelefone().getUid());
+		Assertions.assertEquals(tipoFoneUid1, result.getTelefones().get(1).getTipoTelefone().getUid());
+		Assertions.assertEquals(tipoFoneUid3, result.getTelefones().get(2).getTipoTelefone().getUid());
 	}
 
 	@Test
@@ -508,18 +508,18 @@ public class ClienteServiceTest {
 		return cliente;
 	}
 
-	private TipoTelefone getTipoTelefone(UUID uidTipoFone, String descricao) {
+	private TipoTelefone getTipoTelefone(UUID tipoTelefoneUid, String descricao) {
 		TipoTelefone tipoTelefone = new TipoTelefone(descricao);
-		tipoTelefone.setUid(uidTipoFone);
+		tipoTelefone.setUid(tipoTelefoneUid);
 		return tipoTelefone;
 	}
 
-	private ClienteTelefone getTelefone(UUID uidTelefone, Integer numero, UUID uidTipoTelefone,
+	private ClienteTelefone getTelefone(UUID telefoneUid, Integer numero, UUID tipoTelefoneUid,
 			String descricaoTipoTelefone) {
 		ClienteTelefone clienteTelefone = new ClienteTelefone();
-		clienteTelefone.setUid(uidTelefone);
+		clienteTelefone.setUid(telefoneUid);
 		clienteTelefone.setNumero(numero);
-		clienteTelefone.setTipoTelefone(getTipoTelefone(uidTipoTelefone, descricaoTipoTelefone));
+		clienteTelefone.setTipoTelefone(getTipoTelefone(tipoTelefoneUid, descricaoTipoTelefone));
 		return clienteTelefone;
 	}
 

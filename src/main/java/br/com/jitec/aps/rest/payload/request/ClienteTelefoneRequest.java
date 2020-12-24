@@ -6,27 +6,26 @@ import javax.validation.constraints.NotBlank;
 
 public class ClienteTelefoneRequest {
 
-	private UUID uid;
-
-	private UUID uidTipoTelefone;
+	private UUID telefoneUid;
+	private UUID tipoTelefoneUid;
 
 	@NotBlank
 	private Integer numero;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getTelefoneUid() {
+		return telefoneUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setTelefoneUid(UUID telefoneUid) {
+		this.telefoneUid = telefoneUid;
 	}
 
-	public UUID getUidTipoTelefone() {
-		return uidTipoTelefone;
+	public UUID getTipoTelefoneUid() {
+		return tipoTelefoneUid;
 	}
 
-	public void setUidTipoTelefone(UUID uidTipoTelefone) {
-		this.uidTipoTelefone = uidTipoTelefone;
+	public void setTipoTelefoneUid(UUID tipoTelefoneUid) {
+		this.tipoTelefoneUid = tipoTelefoneUid;
 	}
 
 	public Integer getNumero() {

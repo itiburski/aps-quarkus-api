@@ -77,8 +77,8 @@ public class ClienteService {
 
 	public Cliente getComplete(UUID clienteUid) {
 		Optional<Cliente> clienteOp = repository.find(
-				"from Cliente c left join fetch c.emails left join fetch c.cidade left join fetch c.categoria where c.uid = :uid",
-				Parameters.with("uid", clienteUid)).singleResultOptional();
+				"from Cliente c left join fetch c.emails left join fetch c.cidade left join fetch c.categoria where c.uid = :clienteUid",
+				Parameters.with("clienteUid", clienteUid)).singleResultOptional();
 		if (clienteOp.isEmpty()) {
 			throw new DataNotFoundException("Cliente não encontrado");
 		}
@@ -128,8 +128,8 @@ public class ClienteService {
 	private ClienteTelefone buildClienteTelefone(ClienteTelefoneDTO dto) {
 		ClienteTelefone telefone = new ClienteTelefone();
 		telefone.setNumero(dto.getNumero());
-		if (Objects.nonNull(dto.getUidTipoTelefone())) {
-			telefone.setTipoTelefone(tipoTelefoneService.get(dto.getUidTipoTelefone()));
+		if (Objects.nonNull(dto.getTipoTelefoneUid())) {
+			telefone.setTipoTelefone(tipoTelefoneService.get(dto.getTipoTelefoneUid()));
 		}
 		return telefone;
 	}
@@ -171,7 +171,7 @@ public class ClienteService {
 	 * @param cnpj
 	 * @param inscricaoEstadual
 	 * @param cidadeUid
-	 * @param categoriaUid
+	 * @param categoriaClienteUid
 	 * @param emails
 	 * @param telefones
 	 * @return the entity with all updated fields
@@ -179,7 +179,7 @@ public class ClienteService {
 	@Transactional
 	public Cliente updateAll(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo,
 			String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
-			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails,
+			String inscricaoEstadual, UUID cidadeUid, UUID categoriaClienteUid, List<ClienteEmailDTO> emails,
 			List<ClienteTelefoneDTO> telefones) {
 
 		Cliente cliente = getComplete(clienteUid);
@@ -196,7 +196,7 @@ public class ClienteService {
 		cliente.setCnpj(cnpj);
 		cliente.setInscricaoEstadual(inscricaoEstadual);
 		cliente.setCidade(Objects.nonNull(cidadeUid) ? cidadeService.get(cidadeUid) : null);
-		cliente.setCategoria(Objects.nonNull(categoriaUid) ? categClienteService.get(categoriaUid) : null);
+		cliente.setCategoria(Objects.nonNull(categoriaClienteUid) ? categClienteService.get(categoriaClienteUid) : null);
 
 		mergeEmails(cliente, emails);
 		mergeTelefones(cliente, telefones);
@@ -217,13 +217,13 @@ public class ClienteService {
 	 * @param emails
 	 */
 	private void mergeEmails(Cliente cliente, List<ClienteEmailDTO> emails) {
-		List<ClienteEmailDTO> newEmails = emails.stream().filter(upd -> upd.getUid() == null)
+		List<ClienteEmailDTO> newEmails = emails.stream().filter(upd -> upd.getEmailUid() == null)
 				.collect(Collectors.toList());
 		List<ClienteEmail> removedEmails = new ArrayList<>();
 
 		for (ClienteEmail existing : cliente.getEmails()) {
 			Optional<ClienteEmailDTO> optUpdated = emails.stream()
-					.filter(updated -> existing.getUid().equals(updated.getUid())).findFirst();
+					.filter(updated -> existing.getUid().equals(updated.getEmailUid())).findFirst();
 			if (optUpdated.isPresent()) {
 				existing.setEmail(optUpdated.get().getEmail());
 			} else {
@@ -236,17 +236,17 @@ public class ClienteService {
 	}
 
 	private void mergeTelefones(Cliente cliente, List<ClienteTelefoneDTO> telefones) {
-		List<ClienteTelefoneDTO> newTelefones = telefones.stream().filter(upd -> upd.getUid() == null)
+		List<ClienteTelefoneDTO> newTelefones = telefones.stream().filter(upd -> upd.getTelefoneUid() == null)
 				.collect(Collectors.toList());
 		List<ClienteTelefone> removedTelefones = new ArrayList<>();
 
 		for (ClienteTelefone existing : cliente.getTelefones()) {
 			Optional<ClienteTelefoneDTO> optUpdated = telefones.stream()
-					.filter(updated -> existing.getUid().equals(updated.getUid())).findFirst();
+					.filter(updated -> existing.getUid().equals(updated.getTelefoneUid())).findFirst();
 			if (optUpdated.isPresent()) {
 				existing.setNumero(optUpdated.get().getNumero());
-				existing.setTipoTelefone(Objects.nonNull(optUpdated.get().getUidTipoTelefone())
-						? tipoTelefoneService.get(optUpdated.get().getUidTipoTelefone())
+				existing.setTipoTelefone(Objects.nonNull(optUpdated.get().getTipoTelefoneUid())
+						? tipoTelefoneService.get(optUpdated.get().getTipoTelefoneUid())
 						: null);
 			} else {
 				removedTelefones.add(existing);

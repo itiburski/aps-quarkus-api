@@ -6,17 +6,17 @@ import javax.validation.constraints.Email;
 
 public class ClienteEmailRequest {
 
-	private UUID uid;
+	private UUID emailUid;
 
 	@Email
 	private String email;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getEmailUid() {
+		return emailUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setEmailUid(UUID emailUid) {
+		this.emailUid = emailUid;
 	}
 
 	public String getEmail() {

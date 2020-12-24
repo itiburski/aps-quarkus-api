@@ -4,16 +4,16 @@ import java.util.UUID;
 
 public class CidadeResponse {
 
-	private UUID uid;
+	private UUID cidadeUid;
 	private String nome;
 	private String uf;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getCidadeUid() {
+		return cidadeUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setCidadeUid(UUID cidadeUid) {
+		this.cidadeUid = cidadeUid;
 	}
 
 	public String getNome() {

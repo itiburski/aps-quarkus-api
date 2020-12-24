@@ -21,8 +21,8 @@ public class CidadeService {
 		return repository.list("order by nome");
 	}
 
-	public Cidade get(UUID uid) {
-		return repository.findByUid(uid).orElseThrow(() -> new DataNotFoundException("Cidade não encontrada"));
+	public Cidade get(UUID cidadeUid) {
+		return repository.findByUid(cidadeUid).orElseThrow(() -> new DataNotFoundException("Cidade não encontrada"));
 	}
 
 	@Transactional
@@ -33,16 +33,16 @@ public class CidadeService {
 	}
 
 	@Transactional
-	public Cidade update(UUID uid, String nome, String uf) {
-		Cidade cidade = get(uid);
+	public Cidade update(UUID cidadeUid, String nome, String uf) {
+		Cidade cidade = get(cidadeUid);
 		cidade.setNome(nome);
 		cidade.setUf(uf);
 		return cidade;
 	}
 
 	@Transactional
-	public void delete(UUID uid) {
-		Cidade cidade = get(uid);
+	public void delete(UUID cidadeUid) {
+		Cidade cidade = get(cidadeUid);
 		repository.delete(cidade);
 	}
 

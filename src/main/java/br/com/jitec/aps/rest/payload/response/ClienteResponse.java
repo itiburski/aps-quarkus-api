@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class ClienteResponse {
 
-	private UUID uid;
+	private UUID clienteUid;
 	private Integer codigo;
 	private String nome;
 	private String razaoSocial;
@@ -25,12 +25,12 @@ public class ClienteResponse {
 	private List<ClienteEmailResponse> emails;
 	private List<ClienteTelefoneResponse> telefones;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getClienteUid() {
+		return clienteUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setClienteUid(UUID clienteUid) {
+		this.clienteUid = clienteUid;
 	}
 
 	public Integer getCodigo() {

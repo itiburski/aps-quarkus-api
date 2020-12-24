@@ -21,8 +21,8 @@ public class TipoTelefoneService {
 		return repository.list("order by descricao");
 	}
 
-	public TipoTelefone get(UUID uid) {
-		return repository.findByUid(uid)
+	public TipoTelefone get(UUID tipoTelefoneUid) {
+		return repository.findByUid(tipoTelefoneUid)
 				.orElseThrow(() -> new DataNotFoundException("Tipo de telefone não encontrado"));
 	}
 
@@ -34,15 +34,15 @@ public class TipoTelefoneService {
 	}
 
 	@Transactional
-	public TipoTelefone update(UUID uid, String descricao) {
-		TipoTelefone tipoTelefone = get(uid);
+	public TipoTelefone update(UUID tipoTelefoneUid, String descricao) {
+		TipoTelefone tipoTelefone = get(tipoTelefoneUid);
 		tipoTelefone.setDescricao(descricao);
 		return tipoTelefone;
 	}
 
 	@Transactional
-	public void delete(UUID uid) {
-		TipoTelefone tipoTelefone = get(uid);
+	public void delete(UUID tipoTelefoneUid) {
+		TipoTelefone tipoTelefone = get(tipoTelefoneUid);
 		repository.delete(tipoTelefone);
 	}
 }

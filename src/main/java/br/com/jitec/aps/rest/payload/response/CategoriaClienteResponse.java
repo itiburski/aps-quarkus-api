@@ -4,15 +4,15 @@ import java.util.UUID;
 
 public class CategoriaClienteResponse {
 
-	private UUID uid;
+	private UUID categoriaClienteUid;
 	private String descricao;
 
-	public UUID getUid() {
-		return uid;
+	public UUID getCategoriaClienteUid() {
+		return categoriaClienteUid;
 	}
 
-	public void setUid(UUID uid) {
-		this.uid = uid;
+	public void setCategoriaClienteUid(UUID categoriaClienteUid) {
+		this.categoriaClienteUid = categoriaClienteUid;
 	}
 
 	public String getDescricao() {
