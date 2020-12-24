@@ -76,11 +76,15 @@ public class ClienteService {
 	}
 
 	public Cliente getComplete(UUID clienteUid) {
-		Optional<Cliente> clienteOp = repository
-				.find("from Cliente c left join fetch c.emails left join fetch c.cidade left join fetch c.categoria where c.uid = :uid",
-						Parameters.with("uid", clienteUid))
-				.singleResultOptional();
-		return clienteOp.orElseThrow(() -> new DataNotFoundException("Cliente não encontrado"));
+		Optional<Cliente> clienteOp = repository.find(
+				"from Cliente c left join fetch c.emails left join fetch c.cidade left join fetch c.categoria where c.uid = :uid",
+				Parameters.with("uid", clienteUid)).singleResultOptional();
+		if (clienteOp.isEmpty()) {
+			throw new DataNotFoundException("Cliente não encontrado");
+		}
+		Cliente cliente = clienteOp.get();
+		cliente.getTelefones(); // solve org.hibernate.LazyInitializationException
+		return cliente;
 	}
 
 	@Transactional
