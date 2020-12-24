@@ -40,10 +40,14 @@ public class ClienteTelefoneDTO {
 				+ numero + "]";
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public static class Builder {
 		private ClienteTelefoneDTO instance;
 
-		public Builder() {
+		private Builder() {
 			instance = new ClienteTelefoneDTO();
 		}
 

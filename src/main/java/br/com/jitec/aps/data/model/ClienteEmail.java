@@ -66,8 +66,16 @@ public class ClienteEmail extends APSEntity {
 		return "ClienteEmail [email=" + email + ", id=" + getId() + ", UUID=" + getUid() + "]";
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public static class Builder {
 		private ClienteEmail instance = new ClienteEmail();
+
+		private Builder() {
+			// empty
+		}
 
 		public Builder withEmail(String email) {
 			instance.setEmail(email);

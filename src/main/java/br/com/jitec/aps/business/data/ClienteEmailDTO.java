@@ -28,10 +28,14 @@ public class ClienteEmailDTO {
 		return "ClienteEmailDTO [emailUid=" + emailUid + ", email=" + email + "]";
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public static class Builder {
 		private ClienteEmailDTO instance;
 
-		public Builder() {
+		private Builder() {
 			instance = new ClienteEmailDTO();
 		}
 

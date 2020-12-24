@@ -183,11 +183,11 @@ public class ClienteServiceTest {
 	@Test
 	public void create_WhenCodigoInformed_ShouldCreateUsingCodigo() {
 		List<ClienteEmailDTO> emails = new ArrayList<>();
-		emails.add(new ClienteEmailDTO.Builder().withEmail("email@email.com").build());
+		emails.add(ClienteEmailDTO.builder().withEmail("email@email.com").build());
 
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 		UUID tipoTelefoneUid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(111222333).withTipoTelefoneUid(tipoTelefoneUid).build());
+		telefones.add(ClienteTelefoneDTO.builder().withNumero(111222333).withTipoTelefoneUid(tipoTelefoneUid).build());
 
 		Mockito.when(tipoTelefoneServiceMock.get(Mockito.any(UUID.class))).thenReturn(new TipoTelefone("mock"));
 
@@ -212,7 +212,7 @@ public class ClienteServiceTest {
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
-		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(111222333).build());
+		telefones.add(ClienteTelefoneDTO.builder().withNumero(111222333).build());
 
 		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
 				"cep", "homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
@@ -290,16 +290,16 @@ public class ClienteServiceTest {
 	public void updateAll_WhenChangingEmails_ShouldUpdateEmailsList() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
-		cliente.addEmail(new ClienteEmail.Builder().withEmail("email-one@domain.com")
+		cliente.addEmail(ClienteEmail.builder().withEmail("email-one@domain.com")
 				.withUid(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da")).build());
-		cliente.addEmail(new ClienteEmail.Builder().withEmail("email-two@domain.com")
+		cliente.addEmail(ClienteEmail.builder().withEmail("email-two@domain.com")
 				.withUid(UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8")).build());
 		mockFindSingleResultOptional(cliente);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
-		emails.add(new ClienteEmailDTO.Builder().withEmail("changed-one@email.com")
+		emails.add(ClienteEmailDTO.builder().withEmail("changed-one@email.com")
 				.withEmailUid(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da")).build());
-		emails.add(new ClienteEmailDTO.Builder().withEmail("added@email.com").build());
+		emails.add(ClienteEmailDTO.builder().withEmail("added@email.com").build());
 
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 
@@ -335,11 +335,11 @@ public class ClienteServiceTest {
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
-		telefones.add(new ClienteTelefoneDTO.Builder().withTelefoneUid(foneUid1).withNumero(333333)
+		telefones.add(ClienteTelefoneDTO.builder().withTelefoneUid(foneUid1).withNumero(333333)
 				.withTipoTelefoneUid(null).build()); // alterou numero e removeu tipoTelefoneUid
-		telefones.add(new ClienteTelefoneDTO.Builder().withTelefoneUid(foneUid2).withNumero(999999)
+		telefones.add(ClienteTelefoneDTO.builder().withTelefoneUid(foneUid2).withNumero(999999)
 				.withTipoTelefoneUid(tipoFoneUid1).build()); // manteve
-		telefones.add(new ClienteTelefoneDTO.Builder().withNumero(888888).withTipoTelefoneUid(tipoFoneUid3).build()); // novo
+		telefones.add(ClienteTelefoneDTO.builder().withNumero(888888).withTipoTelefoneUid(tipoFoneUid3).build()); // novo
 
 		Mockito.when(tipoTelefoneServiceMock.get(tipoFoneUid1)).thenReturn(getTipoTelefone(tipoFoneUid1, "mock-1"));
 		Mockito.when(tipoTelefoneServiceMock.get(tipoFoneUid2)).thenReturn(getTipoTelefone(tipoFoneUid2, "mock-2"));
