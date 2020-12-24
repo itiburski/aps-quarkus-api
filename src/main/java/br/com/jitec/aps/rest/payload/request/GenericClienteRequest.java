@@ -3,6 +3,7 @@ package br.com.jitec.aps.rest.payload.request;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -47,6 +48,7 @@ public abstract class GenericClienteRequest {
 	private UUID cidadeUid;
 	private UUID categoriaClienteUid;
 
+	@Valid
 	private List<ClienteEmailRequest> emails;
 
 	private List<ClienteTelefoneRequest> telefones;

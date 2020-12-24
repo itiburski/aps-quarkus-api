@@ -3,11 +3,13 @@ package br.com.jitec.aps.rest.payload.request;
 import java.util.UUID;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 public class ClienteEmailRequest {
 
 	private UUID emailUid;
 
+	@NotBlank
 	@Email
 	private String email;
 
