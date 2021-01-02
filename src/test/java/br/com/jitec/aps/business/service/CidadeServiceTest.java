@@ -60,7 +60,7 @@ public class CidadeServiceTest {
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.get(uid),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cidade não encontrada"));
+		Assertions.assertEquals("Cidade não encontrada", thrown.getMessage());
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class CidadeServiceTest {
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
 				() -> service.update(uid, version, "new-city", "UF"), "should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cidade não encontrada para versao especificada"));
+		Assertions.assertEquals("Cidade não encontrada para versao especificada", thrown.getMessage());
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class CidadeServiceTest {
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(uid, version),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cidade não encontrada para versao especificada"));
+		Assertions.assertEquals("Cidade não encontrada para versao especificada", thrown.getMessage());
 	}
 
 }
