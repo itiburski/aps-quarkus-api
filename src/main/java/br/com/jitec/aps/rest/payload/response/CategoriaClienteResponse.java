@@ -6,6 +6,7 @@ public class CategoriaClienteResponse {
 
 	private UUID categoriaClienteUid;
 	private String descricao;
+	private Integer version;
 
 	public UUID getCategoriaClienteUid() {
 		return categoriaClienteUid;
@@ -21,6 +22,14 @@ public class CategoriaClienteResponse {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 }

@@ -60,7 +60,7 @@ public class CategoriaClienteServiceTest {
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.get(uid),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Categoria de cliente não encontrada"));
+		Assertions.assertEquals("Categoria de cliente não encontrada", thrown.getMessage());
 	}
 
 	@Test
@@ -74,9 +74,10 @@ public class CategoriaClienteServiceTest {
 		CategoriaCliente categoria = new CategoriaCliente("old-category");
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
 		categoria.setUid(uid);
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(categoria));
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(categoria));
 
-		CategoriaCliente result = service.update(uid, "new-category");
+		CategoriaCliente result = service.update(uid, version, "new-category");
 
 		Assertions.assertEquals("new-category", result.getDescricao());
 		Assertions.assertEquals("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8", result.getUid().toString());
@@ -85,12 +86,12 @@ public class CategoriaClienteServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenUpdateInexistentUid() {
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
+		Integer version = 0;
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> service.update(uid, "new-category"), "should have thrown DataNotFoundException");
+				() -> service.update(uid, version, "new-category"), "should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Categoria de cliente não encontrada"));
+		Assertions.assertEquals("Categoria de cliente não encontrada para versao especificada", thrown.getMessage());
 	}
 
 	@Test
@@ -98,9 +99,10 @@ public class CategoriaClienteServiceTest {
 		CategoriaCliente categoria = new CategoriaCliente("category");
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
 		categoria.setUid(uid);
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(categoria));
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(categoria));
 
-		service.delete(uid);
+		service.delete(uid, version);
 
 		Mockito.verify(repositoryMock).delete(Mockito.any(CategoriaCliente.class));
 	}
@@ -108,12 +110,12 @@ public class CategoriaClienteServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenDeleteInexistentUid() {
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
+		Integer version = 0;
 
-		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(uid),
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(uid, version),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Categoria de cliente não encontrada"));
+		Assertions.assertEquals("Categoria de cliente não encontrada para versao especificada", thrown.getMessage());
 	}
 
 }

@@ -53,16 +53,16 @@ public class CategoriaClienteResource {
 	}
 
 	@PUT
-	@Path("{categoriaClienteUid}")
-	public CategoriaClienteResponse update(@PathParam UUID categoriaClienteUid,
+	@Path("{categoriaClienteUid}/version/{version}")
+	public CategoriaClienteResponse update(@PathParam UUID categoriaClienteUid, @PathParam Integer version,
 			@Valid @NotNull CategoriaClienteRequest request) {
-		return mapper.toResponse(service.update(categoriaClienteUid, request.getDescricao()));
+		return mapper.toResponse(service.update(categoriaClienteUid, version, request.getDescricao()));
 	}
 
 	@DELETE
-	@Path("{categoriaClienteUid}")
-	public void delete(@PathParam UUID categoriaClienteUid) {
-		service.delete(categoriaClienteUid);
+	@Path("{categoriaClienteUid}/version/{version}")
+	public void delete(@PathParam UUID categoriaClienteUid, @PathParam Integer version) {
+		service.delete(categoriaClienteUid, version);
 	}
 
 }

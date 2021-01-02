@@ -26,6 +26,11 @@ public class CategoriaClienteService {
 				.orElseThrow(() -> new DataNotFoundException("Categoria de cliente não encontrada"));
 	}
 
+	private CategoriaCliente get(UUID categoriaClienteUid, Integer version) {
+		return repository.findByUidVersion(categoriaClienteUid, version).orElseThrow(
+				() -> new DataNotFoundException("Categoria de cliente não encontrada para versao especificada"));
+	}
+
 	@Transactional
 	public CategoriaCliente create(String descricao) {
 		CategoriaCliente categoria = new CategoriaCliente(descricao);
@@ -34,15 +39,15 @@ public class CategoriaClienteService {
 	}
 
 	@Transactional
-	public CategoriaCliente update(UUID categoriaClienteUid, String descricao) {
-		CategoriaCliente categoria = get(categoriaClienteUid);
+	public CategoriaCliente update(UUID categoriaClienteUid, Integer version, String descricao) {
+		CategoriaCliente categoria = get(categoriaClienteUid, version);
 		categoria.setDescricao(descricao);
 		return categoria;
 	}
 
 	@Transactional
-	public void delete(UUID categoriaClienteUid) {
-		CategoriaCliente categoria = get(categoriaClienteUid);
+	public void delete(UUID categoriaClienteUid, Integer version) {
+		CategoriaCliente categoria = get(categoriaClienteUid, version);
 		repository.delete(categoria);
 	}
 }
