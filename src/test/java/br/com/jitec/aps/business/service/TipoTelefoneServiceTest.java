@@ -60,7 +60,7 @@ public class TipoTelefoneServiceTest {
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.get(uid),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Tipo de telefone não encontrado"));
+		Assertions.assertEquals("Tipo de telefone não encontrado", thrown.getMessage());
 	}
 
 	@Test
@@ -74,9 +74,10 @@ public class TipoTelefoneServiceTest {
 		TipoTelefone tipoTelefone = new TipoTelefone("old-tipoTelefone");
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
 		tipoTelefone.setUid(uid);
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(tipoTelefone));
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(tipoTelefone));
 
-		TipoTelefone result = service.update(uid, "new-tipoTelefone");
+		TipoTelefone result = service.update(uid, version, "new-tipoTelefone");
 
 		Assertions.assertEquals("new-tipoTelefone", result.getDescricao());
 		Assertions.assertEquals("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8", result.getUid().toString());
@@ -85,12 +86,12 @@ public class TipoTelefoneServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenUpdateInexistentUid() {
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
+		Integer version = 0;
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> service.update(uid, "new-tipoTelefone"), "should have thrown DataNotFoundException");
+				() -> service.update(uid, version, "new-tipoTelefone"), "should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Tipo de telefone não encontrado"));
+		Assertions.assertEquals("Tipo de telefone não encontrado para versao especificada", thrown.getMessage());
 	}
 
 	@Test
@@ -98,9 +99,10 @@ public class TipoTelefoneServiceTest {
 		TipoTelefone tipoTelefone = new TipoTelefone("tipoTelefone");
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
 		tipoTelefone.setUid(uid);
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(tipoTelefone));
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(tipoTelefone));
 
-		service.delete(uid);
+		service.delete(uid, version);
 
 		Mockito.verify(repositoryMock).delete(Mockito.any(TipoTelefone.class));
 	}
@@ -108,12 +110,12 @@ public class TipoTelefoneServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenDeleteInexistentUid() {
 		UUID uid = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
+		Integer version = 0;
 
-		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(uid),
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(uid, version),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Tipo de telefone não encontrado"));
+		Assertions.assertEquals("Tipo de telefone não encontrado para versao especificada", thrown.getMessage());
 	}
 
 }

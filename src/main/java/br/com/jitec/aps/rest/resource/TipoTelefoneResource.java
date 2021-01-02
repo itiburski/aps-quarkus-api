@@ -25,7 +25,7 @@ import br.com.jitec.aps.rest.payload.request.TipoTelefoneRequest;
 import br.com.jitec.aps.rest.payload.response.TipoTelefoneResponse;
 
 @Tag(name = ApiConstants.TAG_TIPO_TELEFONE)
-@Path("/tipo-telefone")
+@Path("/tipos-telefone")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TipoTelefoneResource {
@@ -53,15 +53,16 @@ public class TipoTelefoneResource {
 	}
 
 	@PUT
-	@Path("{tipoTelefoneUid}")
-	public TipoTelefoneResponse update(@PathParam UUID tipoTelefoneUid, @Valid @NotNull TipoTelefoneRequest request) {
-		return mapper.toResponse(service.update(tipoTelefoneUid, request.getDescricao()));
+	@Path("{tipoTelefoneUid}/version/{version}")
+	public TipoTelefoneResponse update(@PathParam UUID tipoTelefoneUid, @PathParam Integer version,
+			@Valid @NotNull TipoTelefoneRequest request) {
+		return mapper.toResponse(service.update(tipoTelefoneUid, version, request.getDescricao()));
 	}
 
 	@DELETE
-	@Path("{tipoTelefoneUid}")
-	public void delete(@PathParam UUID tipoTelefoneUid) {
-		service.delete(tipoTelefoneUid);
+	@Path("{tipoTelefoneUid}/version/{version}")
+	public void delete(@PathParam UUID tipoTelefoneUid, @PathParam Integer version) {
+		service.delete(tipoTelefoneUid, version);
 	}
 
 }

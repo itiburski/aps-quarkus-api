@@ -6,6 +6,7 @@ public class TipoTelefoneResponse {
 
 	private UUID tipoTelefoneUid;
 	private String descricao;
+	private Integer version;
 
 	public UUID getTipoTelefoneUid() {
 		return tipoTelefoneUid;
@@ -21,6 +22,14 @@ public class TipoTelefoneResponse {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 }
