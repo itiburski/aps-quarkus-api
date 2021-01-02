@@ -29,7 +29,6 @@ import br.com.jitec.aps.data.model.TipoTelefone;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
-import io.quarkus.panache.common.Parameters;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 
@@ -169,15 +168,12 @@ public class ClienteServiceTest {
 	@Test
 	public void getComplete_WhenInexistentUid_ShouldThrowException() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-
-		PanacheQuery<Cliente> query = Mockito.mock(PanacheQuery.class);
-		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Parameters.class))).thenReturn(query);
-		Mockito.when(query.singleResultOptional()).thenReturn(Optional.empty());
+		mockFindSingleResultOptionalEmpty();
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> clienteService.getComplete(uid),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cliente não encontrado"));
+		Assertions.assertEquals("Cliente não encontrado", thrown.getMessage());
 	}
 
 	@Test
@@ -270,13 +266,14 @@ public class ClienteServiceTest {
 	public void updateAll_WhenAllParametersInformed_ShouldUpdateAllFields() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
+		Integer version = 0;
 		mockFindSingleResultOptional(cliente);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 
-		Cliente result = clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.FALSE,
-				"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+		Cliente result = clienteService.updateAll(uid, version, "Nome-updated", "razaoSocial", "contato-updated",
+				Boolean.FALSE, "rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
 
@@ -290,6 +287,7 @@ public class ClienteServiceTest {
 	public void updateAll_WhenChangingEmails_ShouldUpdateEmailsList() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
+		Integer version = 0;
 		cliente.addEmail(ClienteEmail.builder().withEmail("email-one@domain.com")
 				.withUid(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da")).build());
 		cliente.addEmail(ClienteEmail.builder().withEmail("email-two@domain.com")
@@ -303,7 +301,7 @@ public class ClienteServiceTest {
 
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 
-		Cliente result = clienteService.updateAll(uid, "Nome", "razaoSocial", "contato", Boolean.FALSE, "rua",
+		Cliente result = clienteService.updateAll(uid, version, "Nome", "razaoSocial", "contato", Boolean.FALSE, "rua",
 				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
@@ -326,6 +324,7 @@ public class ClienteServiceTest {
 		UUID tipoFoneUid3 = UUID.fromString("c04ed766-f6e5-42ea-8339-6d2098e0101f");
 
 		Cliente cliente = getCliente(clienteUid, 123, "Cliente", "Contato");
+		Integer version = 0;
 		cliente.addTelefone(getTelefone(foneUid1, 222222, tipoFoneUid1, "mock-1"));
 		cliente.addTelefone(getTelefone(foneUid2, 999999, tipoFoneUid1, "mock-2"));
 		cliente.addTelefone(getTelefone(foneUid3, 555555, tipoFoneUid1, "mock-3"));
@@ -345,8 +344,8 @@ public class ClienteServiceTest {
 		Mockito.when(tipoTelefoneServiceMock.get(tipoFoneUid2)).thenReturn(getTipoTelefone(tipoFoneUid2, "mock-2"));
 		Mockito.when(tipoTelefoneServiceMock.get(tipoFoneUid3)).thenReturn(getTipoTelefone(tipoFoneUid3, "mock-3"));
 
-		Cliente result = clienteService.updateAll(clienteUid, "Nome", "razaoSocial", "contato", Boolean.FALSE, "rua",
-				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+		Cliente result = clienteService.updateAll(clienteUid, version, "Nome", "razaoSocial", "contato", Boolean.FALSE,
+				"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
 
@@ -363,12 +362,13 @@ public class ClienteServiceTest {
 	public void updateAll_WhenSomeParameterNull_ShouldUpdateFieldToNull() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
+		Integer version = 0;
 		mockFindSingleResultOptional(cliente);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
-		Cliente result = clienteService.updateAll(uid, "Nome-updated", "razaoSocial", null, null, "rua", "complemento",
-				"bairro", "cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails, telefones);
+		Cliente result = clienteService.updateAll(uid, version, "Nome-updated", "razaoSocial", null, null, "rua",
+				"complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails, telefones);
 
 		Assertions.assertEquals("Nome-updated", result.getNome());
 		Assertions.assertNull(result.getContato());
@@ -381,26 +381,28 @@ public class ClienteServiceTest {
 	@Test
 	public void updateAll_WhenUpdateInexistentUid_ShouldThrowException() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Integer version = 0;
 		mockFindSingleResultOptionalEmpty();
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> clienteService.updateAll(uid, "Nome-updated", "razaoSocial", "contato-updated", Boolean.TRUE,
-						"rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
+				() -> clienteService.updateAll(uid, version, "Nome-updated", "razaoSocial", "contato-updated",
+						Boolean.TRUE, "rua", "complemento", "bairro", "cep", "homepage", "cnpj", "inscricaEstadual",
 						UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null, null),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cliente não encontrado"));
+		Assertions.assertEquals("Cliente não encontrado para versao especificada", thrown.getMessage());
 	}
 
 	@Test
 	public void updateNotNull_WhenValuesNull_ShouldNotUpdateFields() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getClienteWithDefaultValues(uid, 123);
+		Integer version = 0;
 		mockFindSingleResultOptional(cliente);
 
-		Cliente result = clienteService.updateNotNull(uid, null, null, null, null, null, null, null, null, null, null,
-				null, null, null, null, null);
+		Cliente result = clienteService.updateNotNull(uid, version, null, null, null, null, null, null, null, null,
+				null, null, null, null, null, null, null);
 
 		Assertions.assertEquals("e08394a0-324c-428b-9ee8-47d1d9c4eb3c", result.getUid().toString());
 		Assertions.assertEquals("nome", result.getNome());
@@ -419,6 +421,7 @@ public class ClienteServiceTest {
 	public void updateNotNull_WhenValuesInformed_ShouldUpdateFields() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getClienteWithDefaultValues(uid, 123);
+		Integer version = 0;
 		mockFindSingleResultOptional(cliente);
 
 		Mockito.when(categClienteServiceMock.get(Mockito.any(UUID.class)))
@@ -428,8 +431,8 @@ public class ClienteServiceTest {
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 
-		Cliente result = clienteService.updateNotNull(uid, "nome-updated", "razaoSocial-updated", "contato-updated",
-				Boolean.FALSE, "rua-updated", "complemento-updated", "bairro-updated", "cep-updated",
+		Cliente result = clienteService.updateNotNull(uid, version, "nome-updated", "razaoSocial-updated",
+				"contato-updated", Boolean.FALSE, "rua-updated", "complemento-updated", "bairro-updated", "cep-updated",
 				"homepage-updated", "cnpj-updated", "inscricaoEstadual-updated",
 				UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
@@ -453,9 +456,10 @@ public class ClienteServiceTest {
 	public void shouldDelete() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Cliente cliente = getCliente(uid, 123, "Cliente", "Contato");
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(cliente));
 
-		clienteService.delete(uid);
+		clienteService.delete(uid, version);
 
 		Mockito.verify(repositoryMock).delete(Mockito.any(Cliente.class));
 	}
@@ -463,12 +467,13 @@ public class ClienteServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenDeleteInexistentUid() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Integer version = 0;
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
 
-		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> clienteService.delete(uid),
-				"should have thrown DataNotFoundException");
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
+				() -> clienteService.delete(uid, version), "should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cliente não encontrado"));
+		Assertions.assertEquals("Cliente não encontrado para versao especificada", thrown.getMessage());
 	}
 
 	private Cliente getCliente(UUID uid, Integer codigo, String nome, String contato) {
@@ -534,14 +539,14 @@ public class ClienteServiceTest {
 	@SuppressWarnings("unchecked")
 	private void mockFindSingleResultOptional(Cliente cliente) {
 		PanacheQuery<Cliente> query = Mockito.mock(PanacheQuery.class);
-		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Parameters.class))).thenReturn(query);
+		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Map.class))).thenReturn(query);
 		Mockito.when(query.singleResultOptional()).thenReturn(Optional.of(cliente));
 	}
 
 	@SuppressWarnings("unchecked")
 	private void mockFindSingleResultOptionalEmpty() {
 		PanacheQuery<Cliente> query = Mockito.mock(PanacheQuery.class);
-		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Parameters.class))).thenReturn(query);
+		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Map.class))).thenReturn(query);
 		Mockito.when(query.singleResultOptional()).thenReturn(Optional.empty());
 	}
 

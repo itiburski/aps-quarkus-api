@@ -25,11 +25,12 @@ import br.com.jitec.aps.data.model.ClienteTelefone;
 import br.com.jitec.aps.data.repository.ClienteRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
-import io.quarkus.panache.common.Parameters;
 
 @ApplicationScoped
 public class ClienteService {
 
+	private static final String CLIENTE_NAO_ENCONTRADO = "Cliente não encontrado";
+	private static final String CLIENTE_NAO_ENCONTRADO_VERSION = "Cliente não encontrado para versao especificada";
 	private static final List<String> SORTABLE_FIELDS = Arrays.asList("codigo", "nome", "razaoSocial");
 	private static final String DEFAULT_SORT_FIELD = "id";
 
@@ -72,15 +73,30 @@ public class ClienteService {
 	}
 
 	public Cliente get(UUID clienteUid) {
-		return repository.findByUid(clienteUid).orElseThrow(() -> new DataNotFoundException("Cliente não encontrado"));
+		return repository.findByUid(clienteUid).orElseThrow(() -> new DataNotFoundException(CLIENTE_NAO_ENCONTRADO));
+	}
+
+	private Cliente get(UUID clienteUid, Integer version) {
+		return repository.findByUidVersion(clienteUid, version)
+				.orElseThrow(() -> new DataNotFoundException(CLIENTE_NAO_ENCONTRADO_VERSION));
 	}
 
 	public Cliente getComplete(UUID clienteUid) {
+		return getComplete(clienteUid, null);
+	}
+
+	public Cliente getComplete(UUID clienteUid, Integer version) {
+		QueryBuilder builder = new QueryBuilder();
+		builder.addFilter("c.uid = :clienteUid", "clienteUid", clienteUid);
+		builder.addFilter(Objects.nonNull(version), "c.version = :version", "version", version);
+
 		Optional<Cliente> clienteOp = repository.find(
-				"from Cliente c left join fetch c.emails left join fetch c.cidade left join fetch c.categoria where c.uid = :clienteUid",
-				Parameters.with("clienteUid", clienteUid)).singleResultOptional();
+				"from Cliente c left join fetch c.emails left join fetch c.cidade left join fetch c.categoria where "
+						+ builder.getQuery(),
+				builder.getParams()).singleResultOptional();
 		if (clienteOp.isEmpty()) {
-			throw new DataNotFoundException("Cliente não encontrado");
+			throw new DataNotFoundException(
+					Objects.nonNull(version) ? CLIENTE_NAO_ENCONTRADO_VERSION : CLIENTE_NAO_ENCONTRADO);
 		}
 		Cliente cliente = clienteOp.get();
 		cliente.getTelefones(); // solve org.hibernate.LazyInitializationException
@@ -177,12 +193,12 @@ public class ClienteService {
 	 * @return the entity with all updated fields
 	 */
 	@Transactional
-	public Cliente updateAll(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo,
-			String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
+	public Cliente updateAll(UUID clienteUid, Integer version, String nome, String razaoSocial, String contato,
+			Boolean ativo, String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
 			String inscricaoEstadual, UUID cidadeUid, UUID categoriaClienteUid, List<ClienteEmailDTO> emails,
 			List<ClienteTelefoneDTO> telefones) {
 
-		Cliente cliente = getComplete(clienteUid);
+		Cliente cliente = getComplete(clienteUid, version);
 
 		cliente.setNome(nome);
 		cliente.setRazaoSocial(razaoSocial);
@@ -196,7 +212,8 @@ public class ClienteService {
 		cliente.setCnpj(cnpj);
 		cliente.setInscricaoEstadual(inscricaoEstadual);
 		cliente.setCidade(Objects.nonNull(cidadeUid) ? cidadeService.get(cidadeUid) : null);
-		cliente.setCategoria(Objects.nonNull(categoriaClienteUid) ? categClienteService.get(categoriaClienteUid) : null);
+		cliente.setCategoria(
+				Objects.nonNull(categoriaClienteUid) ? categClienteService.get(categoriaClienteUid) : null);
 
 		mergeEmails(cliente, emails);
 		mergeTelefones(cliente, telefones);
@@ -280,12 +297,12 @@ public class ClienteService {
 	 * @return the entity with updated fields
 	 */
 	@Transactional
-	public Cliente updateNotNull(UUID clienteUid, String nome, String razaoSocial, String contato, Boolean ativo,
-			String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
+	public Cliente updateNotNull(UUID clienteUid, Integer version, String nome, String razaoSocial, String contato,
+			Boolean ativo, String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
 			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails,
 			List<ClienteTelefoneDTO> telefones) {
 
-		Cliente cliente = getComplete(clienteUid);
+		Cliente cliente = getComplete(clienteUid, version);
 
 		if (Objects.nonNull(nome)) {
 			cliente.setNome(nome);
@@ -338,8 +355,8 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public void delete(UUID clienteUid) {
-		Cliente cliente = get(clienteUid);
+	public void delete(UUID clienteUid, Integer version) {
+		Cliente cliente = get(clienteUid, version);
 		repository.delete(cliente);
 	}
 

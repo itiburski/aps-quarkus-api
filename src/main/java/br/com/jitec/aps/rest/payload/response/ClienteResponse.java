@@ -24,6 +24,7 @@ public class ClienteResponse {
 	private CategoriaClienteResponse categoriaCliente;
 	private List<ClienteEmailResponse> emails;
 	private List<ClienteTelefoneResponse> telefones;
+	private Integer version;
 
 	public UUID getClienteUid() {
 		return clienteUid;
@@ -167,6 +168,14 @@ public class ClienteResponse {
 
 	public void setTelefones(List<ClienteTelefoneResponse> telefones) {
 		this.telefones = telefones;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 }

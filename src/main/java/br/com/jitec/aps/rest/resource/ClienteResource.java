@@ -89,37 +89,39 @@ public class ClienteResource {
 	}
 
 	@PUT
-	@Path("{clienteUid}")
+	@Path("{clienteUid}/version/{version}")
 	@Operation(summary = "Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased")
-	public ClienteResponse updateAll(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
+	public ClienteResponse updateAll(@PathParam UUID clienteUid, @PathParam Integer version,
+			@Valid @NotNull ClienteUpdateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
 
-		return mapper.toResponse(
-				service.updateAll(clienteUid, request.getNome(), request.getRazaoSocial(), request.getContato(),
-						request.getAtivo(), request.getRua(), request.getComplemento(), request.getBairro(),
-						request.getCep(), request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(),
-						request.getCidadeUid(), request.getCategoriaClienteUid(), emails, telefones));
+		return mapper.toResponse(service.updateAll(clienteUid, version, request.getNome(), request.getRazaoSocial(),
+				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
+				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaClienteUid(), emails,
+				telefones));
 	}
 
 	@PATCH
-	@Path("{clienteUid}")
+	@Path("{clienteUid}/version/{version}")
 	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed")
-	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @Valid @NotNull ClienteUpdateRequest request) {
+	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @PathParam Integer version,
+			@Valid @NotNull ClienteUpdateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
 
-		return mapper.toResponse(
-				service.updateNotNull(clienteUid, request.getNome(), request.getRazaoSocial(), request.getContato(),
-						request.getAtivo(), request.getRua(), request.getComplemento(), request.getBairro(),
-						request.getCep(), request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(),
-						request.getCidadeUid(), request.getCategoriaClienteUid(), emails, telefones));
+		return mapper.toResponse(service.updateNotNull(clienteUid, version, request.getNome(), request.getRazaoSocial(),
+				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
+				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
+				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaClienteUid(), emails,
+				telefones));
 	}
 
 	@DELETE
-	@Path("{clienteUid}")
-	public void delete(@PathParam UUID clienteUid) {
-		service.delete(clienteUid);
+	@Path("{clienteUid}/version/{version}")
+	public void delete(@PathParam UUID clienteUid, @PathParam Integer version) {
+		service.delete(clienteUid, version);
 	}
 
 }
