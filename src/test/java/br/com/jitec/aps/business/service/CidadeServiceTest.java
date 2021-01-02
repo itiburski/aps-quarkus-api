@@ -75,9 +75,10 @@ public class CidadeServiceTest {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		Cidade cidade = new Cidade("old-city", "UF");
 		cidade.setUid(uid);
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cidade));
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(cidade));
 
-		Cidade result = service.update(uid, "new-city", "UF");
+		Cidade result = service.update(uid, version, "new-city", "UF");
 
 		Assertions.assertEquals("new-city", result.getNome());
 		Assertions.assertEquals("UF", result.getUf());
@@ -87,12 +88,13 @@ public class CidadeServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenUpdateInexistentUid() {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.empty());
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> service.update(uid, "new-city", "UF"), "should have thrown DataNotFoundException");
+				() -> service.update(uid, version, "new-city", "UF"), "should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cidade não encontrada"));
+		Assertions.assertTrue(thrown.getMessage().contains("Cidade não encontrada para versao especificada"));
 	}
 
 	@Test
@@ -100,9 +102,10 @@ public class CidadeServiceTest {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		Cidade cidade = new Cidade("old-city", "UF");
 		cidade.setUid(uid);
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cidade));
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(cidade));
 
-		service.delete(uid);
+		service.delete(uid, version);
 
 		Mockito.verify(repositoryMock).delete(Mockito.any(Cidade.class));
 	}
@@ -110,12 +113,13 @@ public class CidadeServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenDeleteInexistentUid() {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.empty());
 
-		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(uid),
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(uid, version),
 				"should have thrown DataNotFoundException");
 
-		Assertions.assertTrue(thrown.getMessage().contains("Cidade não encontrada"));
+		Assertions.assertTrue(thrown.getMessage().contains("Cidade não encontrada para versao especificada"));
 	}
 
 }

@@ -53,15 +53,16 @@ public class CidadeResource {
 	}
 
 	@PUT
-	@Path("{cidadeUid}")
-	public CidadeResponse update(@PathParam UUID cidadeUid, @Valid @NotNull CidadeRequest request) {
-		return mapper.toResponse(service.update(cidadeUid, request.getNome(), request.getUf()));
+	@Path("{cidadeUid}/version/{version}")
+	public CidadeResponse update(@PathParam UUID cidadeUid, @PathParam Integer version,
+			@Valid @NotNull CidadeRequest request) {
+		return mapper.toResponse(service.update(cidadeUid, version, request.getNome(), request.getUf()));
 	}
 
 	@DELETE
-	@Path("{cidadeUid}")
-	public void delete(@PathParam UUID cidadeUid) {
-		service.delete(cidadeUid);
+	@Path("{cidadeUid}/version/{version}")
+	public void delete(@PathParam UUID cidadeUid, @PathParam Integer version) {
+		service.delete(cidadeUid, version);
 	}
 
 }

@@ -7,6 +7,7 @@ public class CidadeResponse {
 	private UUID cidadeUid;
 	private String nome;
 	private String uf;
+	private Integer version;
 
 	public UUID getCidadeUid() {
 		return cidadeUid;
@@ -30,6 +31,14 @@ public class CidadeResponse {
 
 	public void setUf(String uf) {
 		this.uf = uf;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 }

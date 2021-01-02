@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 @MappedSuperclass
 public abstract class APSEntity {
@@ -17,8 +18,7 @@ public abstract class APSEntity {
 	@Column
 	private UUID uid = UUID.randomUUID();
 
-	// TODO not possible while using manual update
-//	@Version
+	@Version
 	@Column
 	private Integer version = 0;
 
