@@ -476,6 +476,50 @@ public class ClienteServiceTest {
 		Assertions.assertEquals("Cliente não encontrado para versao especificada", thrown.getMessage());
 	}
 
+	@Test
+	public void existeClienteComCategoriaCliente_WhenQtdClientePorCategoriaIs0_ShouldReturnFalse() {
+		CategoriaCliente categoriaCliente = new CategoriaCliente();
+		categoriaCliente.setId(2L);
+		Mockito.when(repositoryMock.getQtdClientePorCategoria(Mockito.anyLong())).thenReturn(0L);
+
+		boolean result = clienteService.existeClienteComCategoriaCliente(categoriaCliente);
+
+		Assertions.assertFalse(result);
+	}
+
+	@Test
+	public void existeClienteComCategoriaCliente_WhenQtdClientePorCategoriaIs1_ShouldReturnTrue() {
+		CategoriaCliente categoriaCliente = new CategoriaCliente();
+		categoriaCliente.setId(2L);
+		Mockito.when(repositoryMock.getQtdClientePorCategoria(Mockito.anyLong())).thenReturn(1L);
+
+		boolean result = clienteService.existeClienteComCategoriaCliente(categoriaCliente);
+
+		Assertions.assertTrue(result);
+	}
+
+	@Test
+	public void existeClienteComCidade_WhenQtdClientePorCidadeIs0_ShouldReturnFalse() {
+		Cidade cidade = new Cidade();
+		cidade.setId(3L);
+		Mockito.when(repositoryMock.getQtdClientePorCidade(Mockito.anyLong())).thenReturn(0L);
+
+		boolean result = clienteService.existeClienteComCidade(cidade);
+
+		Assertions.assertFalse(result);
+	}
+
+	@Test
+	public void existeClienteComCidade_WhenQtdClientePorCidadeIs1_ShouldReturnTrue() {
+		Cidade cidade = new Cidade();
+		cidade.setId(3L);
+		Mockito.when(repositoryMock.getQtdClientePorCidade(Mockito.anyLong())).thenReturn(1L);
+
+		boolean result = clienteService.existeClienteComCidade(cidade);
+
+		Assertions.assertTrue(result);
+	}
+
 	private Cliente getCliente(UUID uid, Integer codigo, String nome, String contato) {
 		Cliente cliente = new Cliente();
 		cliente.setUid(uid);

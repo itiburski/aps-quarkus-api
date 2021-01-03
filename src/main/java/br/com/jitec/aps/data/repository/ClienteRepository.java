@@ -17,4 +17,15 @@ public class ClienteRepository implements APSRepository<Cliente> {
 		return (Integer) getEntityManager().createQuery("select max(codigo) from Cliente").getSingleResult();
 	}
 
+	public Long getQtdClientePorCategoria(Long categoriaClienteId) {
+		return (Long) getEntityManager()
+				.createQuery("select count(1) from Cliente where categoria.id = :categoriaClienteId")
+				.setParameter("categoriaClienteId", categoriaClienteId).getSingleResult();
+	}
+
+	public Long getQtdClientePorCidade(Long cidadeId) {
+		return (Long) getEntityManager().createQuery("select count(1) from Cliente where cidade.id = :cidadeId")
+				.setParameter("cidadeId", cidadeId).getSingleResult();
+	}
+
 }

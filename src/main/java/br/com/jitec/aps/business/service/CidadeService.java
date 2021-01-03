@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import br.com.jitec.aps.business.exception.ConstraintException;
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.data.model.Cidade;
 import br.com.jitec.aps.data.repository.CidadeRepository;
@@ -16,6 +17,9 @@ public class CidadeService {
 
 	@Inject
 	CidadeRepository repository;
+
+	@Inject
+	ClienteService clienteService;
 
 	public List<Cidade> getAll() {
 		return repository.list("order by nome");
@@ -48,6 +52,9 @@ public class CidadeService {
 	@Transactional
 	public void delete(UUID cidadeUid, Integer version) {
 		Cidade cidade = get(cidadeUid, version);
+		if (clienteService.existeClienteComCidade(cidade)) {
+			throw new ConstraintException("Exclusão não permitida. Cidade vinculada a algum Cliente");
+		}
 		repository.delete(cidade);
 	}
 

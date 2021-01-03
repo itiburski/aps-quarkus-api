@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import br.com.jitec.aps.business.exception.ConstraintException;
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.data.model.Cidade;
 import br.com.jitec.aps.data.repository.CidadeRepository;
@@ -25,6 +26,9 @@ public class CidadeServiceTest {
 
 	@InjectMock
 	CidadeRepository repositoryMock;
+
+	@InjectMock
+	ClienteService clienteServiceMock;
 
 	@Test
 	public void shouldListAll() {
@@ -104,6 +108,7 @@ public class CidadeServiceTest {
 		cidade.setUid(uid);
 		Integer version = 0;
 		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(cidade));
+		Mockito.when(clienteServiceMock.existeClienteComCidade(Mockito.any(Cidade.class))).thenReturn(Boolean.FALSE);
 
 		service.delete(uid, version);
 
@@ -111,7 +116,7 @@ public class CidadeServiceTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenDeleteInexistentUid() {
+	public void delete_WhenInexistentUid_ShouldThrowException() {
 		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		Integer version = 0;
 		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.empty());
@@ -120,6 +125,21 @@ public class CidadeServiceTest {
 				"should have thrown DataNotFoundException");
 
 		Assertions.assertEquals("Cidade não encontrada para versao especificada", thrown.getMessage());
+	}
+
+	@Test
+	public void delete_WhenCidadeInUse_ShouldThrowException() {
+		UUID uid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
+		Cidade cidade = new Cidade("old-city", "UF");
+		cidade.setUid(uid);
+		Integer version = 0;
+		Mockito.when(repositoryMock.findByUidVersion(uid, version)).thenReturn(Optional.of(cidade));
+		Mockito.when(clienteServiceMock.existeClienteComCidade(Mockito.any(Cidade.class))).thenReturn(Boolean.TRUE);
+
+		Exception thrown = Assertions.assertThrows(ConstraintException.class, () -> service.delete(uid, version),
+				"should have thrown ConstraintException");
+
+		Assertions.assertEquals("Exclusão não permitida. Cidade vinculada a algum Cliente", thrown.getMessage());
 	}
 
 }

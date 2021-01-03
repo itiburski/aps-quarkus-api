@@ -19,6 +19,8 @@ import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.business.exception.InvalidDataException;
 import br.com.jitec.aps.business.util.QueryBuilder;
 import br.com.jitec.aps.business.wrapper.Paged;
+import br.com.jitec.aps.data.model.CategoriaCliente;
+import br.com.jitec.aps.data.model.Cidade;
 import br.com.jitec.aps.data.model.Cliente;
 import br.com.jitec.aps.data.model.ClienteEmail;
 import br.com.jitec.aps.data.model.ClienteTelefone;
@@ -358,6 +360,16 @@ public class ClienteService {
 	public void delete(UUID clienteUid, Integer version) {
 		Cliente cliente = get(clienteUid, version);
 		repository.delete(cliente);
+	}
+
+	public boolean existeClienteComCategoriaCliente(CategoriaCliente categoriaCliente) {
+		Long qtd = repository.getQtdClientePorCategoria(categoriaCliente.getId());
+		return qtd > 0;
+	}
+
+	public boolean existeClienteComCidade(Cidade cidade) {
+		Long qtd = repository.getQtdClientePorCidade(cidade.getId());
+		return qtd > 0;
 	}
 
 }

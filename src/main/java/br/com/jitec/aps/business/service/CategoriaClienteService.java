@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import br.com.jitec.aps.business.exception.ConstraintException;
 import br.com.jitec.aps.business.exception.DataNotFoundException;
 import br.com.jitec.aps.data.model.CategoriaCliente;
 import br.com.jitec.aps.data.repository.CategoriaClienteRepository;
@@ -16,6 +17,9 @@ public class CategoriaClienteService {
 
 	@Inject
 	CategoriaClienteRepository repository;
+
+	@Inject
+	ClienteService clienteService;
 
 	public List<CategoriaCliente> getAll() {
 		return repository.list("order by descricao");
@@ -48,6 +52,9 @@ public class CategoriaClienteService {
 	@Transactional
 	public void delete(UUID categoriaClienteUid, Integer version) {
 		CategoriaCliente categoria = get(categoriaClienteUid, version);
+		if (clienteService.existeClienteComCategoriaCliente(categoria)) {
+			throw new ConstraintException("Exclusão não permitida. Categoria de cliente vinculada a algum Cliente");
+		}
 		repository.delete(categoria);
 	}
 }
