@@ -1,8 +1,9 @@
 version: "3.5"
 
 services:
-  db:
-    image: postgres:12
+  postgres:
+    container_name: postgres_aps
+    image: postgres:12.5
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-aps}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -10,19 +11,10 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
-
-  app:
-    build: 
-      context: .
-      dockerfile: src/main/docker/Dockerfile.jvm
-    image: quarkus/aps-quarkus-api-jvm
-    hostname: app
+    volumes:
+      - postgres_cadastro_data:/var/lib/postgresql/data
     ports:
-      - "8080:8080"
-    tty: true   # same as the "-t" option used in docker build "-t" 
-    depends_on: #Specifies that this container should start up after db is build and has started
-      - db
-    links:  # you will specify this name or the alias name db:<alias> in the java code to connect, note you will not use localhost
-      - db:db
-    environment: #Specifies the environment variables
-      - DATABASE_HOST=db
+      - 5430:5432
+
+volumes:
+  postgres_cadastro_data:
