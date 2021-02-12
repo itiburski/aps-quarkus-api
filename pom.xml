@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>cadastro</module>
+		<module>servico</module>
 	</modules>
 
 	<properties>
