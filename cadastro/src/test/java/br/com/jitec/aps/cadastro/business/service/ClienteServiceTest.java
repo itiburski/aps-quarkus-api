@@ -204,7 +204,7 @@ public class ClienteServiceTest {
 
 	@Test
 	public void create_WhenCodigoNotInformed_ShouldCreateWithNextCodigoAvailable() {
-		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
+		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(Optional.of(25));
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
@@ -222,7 +222,7 @@ public class ClienteServiceTest {
 
 	@Test
 	public void create_WhenFieldsNull_ShouldCreateWithNullValues() {
-		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(25);
+		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(Optional.ofNullable(null));
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
@@ -232,7 +232,7 @@ public class ClienteServiceTest {
 
 		Assertions.assertEquals("Nome", created.getNome());
 		Assertions.assertEquals("contato", created.getContato());
-		Assertions.assertEquals(26, created.getCodigo());
+		Assertions.assertEquals(1, created.getCodigo());
 		Assertions.assertTrue(created.getAtivo());
 		Assertions.assertNull(created.getCategoria());
 		Assertions.assertNull(created.getCidade());

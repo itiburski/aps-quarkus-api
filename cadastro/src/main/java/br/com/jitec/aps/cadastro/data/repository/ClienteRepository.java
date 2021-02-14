@@ -13,8 +13,8 @@ public class ClienteRepository implements APSRepository<Cliente> {
 		return find("codigo", codigo).firstResultOptional();
 	}
 
-	public Integer getMaiorCodigoCliente() {
-		return (Integer) getEntityManager().createQuery("select max(codigo) from Cliente").getSingleResult();
+	public Optional<Integer> getMaiorCodigoCliente() {
+		return Optional.ofNullable((Integer) getEntityManager().createQuery("select max(codigo) from Cliente").getSingleResult());
 	}
 
 	public Long getQtdClientePorCategoria(Long categoriaClienteId) {

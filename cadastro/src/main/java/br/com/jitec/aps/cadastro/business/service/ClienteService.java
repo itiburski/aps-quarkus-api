@@ -158,8 +158,12 @@ public class ClienteService {
 			return codigoRequest;
 		}
 
-		Integer maxCodigoCadastrado = repository.getMaiorCodigoCliente();
-		return maxCodigoCadastrado + 1;
+		Optional<Integer> opMaxCodigoCadastrado = repository.getMaiorCodigoCliente();
+		if (opMaxCodigoCadastrado.isPresent()) {
+			return opMaxCodigoCadastrado.get() + 1;
+		} else {
+			return 1;
+		}
 	}
 
 	private void validateCodigo(Integer codigoRequest) {
