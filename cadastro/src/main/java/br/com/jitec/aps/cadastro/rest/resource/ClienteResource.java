@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -78,14 +79,15 @@ public class ClienteResource {
 	}
 
 	@POST
-	public ClienteResponse create(@Valid @NotNull ClienteCreateRequest request) {
+	public Response create(@Valid @NotNull ClienteCreateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
 
-		return mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
+		ClienteResponse clienteResponse = mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
 				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
 				request.getCategoriaClienteUid(), emails, telefones));
+		return Response.status(Status.CREATED).entity(clienteResponse).build();
 	}
 
 	@PUT

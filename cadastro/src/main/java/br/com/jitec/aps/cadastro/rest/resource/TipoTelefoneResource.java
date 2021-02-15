@@ -14,6 +14,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
@@ -48,8 +50,9 @@ public class TipoTelefoneResource {
 	}
 
 	@POST
-	public TipoTelefoneResponse create(@Valid @NotNull TipoTelefoneRequest request) {
-		return mapper.toResponse(service.create(request.getDescricao()));
+	public Response create(@Valid @NotNull TipoTelefoneRequest request) {
+		TipoTelefoneResponse tipoTelefoneResponse = mapper.toResponse(service.create(request.getDescricao()));
+		return Response.status(Status.CREATED).entity(tipoTelefoneResponse).build();
 	}
 
 	@PUT
