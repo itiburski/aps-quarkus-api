@@ -13,8 +13,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 				@Tag(name = ApiConstants.TAG_CLIENTES, description = "Operações relacionadas a Clientes"),
 				@Tag(name = ApiConstants.TAG_TIPO_TELEFONE, description = "Operações relacionadas a Tipos de Telefone") },
 	    info = @Info(
-				title = "APS API", description = "API para controlar a Automação de Prestação de Serviço - APS",
-				version = "1.0.0",
+				title = "APS-Cadastro", description = "API para controlar o módulo de cadastro do APS - Automação de Prestação de Serviço",
+				version = "0.1.0",
 	        license = @License(
 						name = "MIT License", url = "https://opensource.org/licenses/MIT"))
 	)
