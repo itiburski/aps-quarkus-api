@@ -12,9 +12,9 @@ public abstract class ApiConstants {
 	public static final String STATUS_CODE_UNPROCESSABLE_ENTITY = "O conteúdo da requisição apresenta dados inválidos ou inconsistentes";
 	public static final String STATUS_CODE_SERVER_ERROR = "Ocorreu um erro ao processar a requisição";
 
-	public static final String CATEGORIA_CLIENTE_LIST_OPERATION = "Retorna todas as categorias de cliente";
+	public static final String CATEGORIA_CLIENTE_LIST_OPERATION = "Obtém uma lista de categorias de cliente";
 	public static final String CATEGORIA_CLIENTE_LIST_RESPONSE = "Retorna todas as categorias de cliente";
-	public static final String CATEGORIA_CLIENTE_GET_OPERATION = "Retorna os dados de uma categoria de cliente específica";
+	public static final String CATEGORIA_CLIENTE_GET_OPERATION = "Obtém os dados de uma categoria de cliente específica";
 	public static final String CATEGORIA_CLIENTE_GET_RESPONSE = "Retorna a categoria de cliente correspondente ao categoriaClienteUid informado";
 	public static final String CATEGORIA_CLIENTE_CREATE_OPERATION = "Cadastra uma nova categoria de cliente";
 	public static final String CATEGORIA_CLIENTE_CREATE_RESPONSE = "Retorna a nova categoria de cliente cadastrada";
@@ -23,9 +23,9 @@ public abstract class ApiConstants {
 	public static final String CATEGORIA_CLIENTE_DELETE_OPERATION = "Exclui uma categoria de cliente existente";
 	public static final String CATEGORIA_CLIENTE_DELETE_RESPONSE = "Indica que a categoria de cliente foi excluída. Nenhum conteúdo será retornado";
 
-	public static final String CIDADE_LIST_OPERATION = "Retorna todas as cidades";
+	public static final String CIDADE_LIST_OPERATION = "Obtém uma lista de cidades";
 	public static final String CIDADE_LIST_RESPONSE = "Retorna todas as cidades";
-	public static final String CIDADE_GET_OPERATION = "Retorna os dados de uma cidade específica";
+	public static final String CIDADE_GET_OPERATION = "Obtém os dados de uma cidade específica";
 	public static final String CIDADE_GET_RESPONSE = "Retorna a cidade correspondente ao cidadeUid informado";
 	public static final String CIDADE_CREATE_OPERATION = "Cadastra uma nova cidade";
 	public static final String CIDADE_CREATE_RESPONSE = "Retorna a nova cidade cadastrada";
@@ -58,9 +58,9 @@ public abstract class ApiConstants {
 	public static final String CLIENTE_DELETE_OPERATION = "Exclui um cliente existente";
 	public static final String CLIENTE_DELETE_RESPONSE = "Indica que o cliente foi excluído. Nenhum conteúdo será retornado";
 
-	public static final String TIPO_TELEFONE_LIST_OPERATION = "Retorna todos os tipos de telefone";
+	public static final String TIPO_TELEFONE_LIST_OPERATION = "Obtém uma lista de tipos de telefone";
 	public static final String TIPO_TELEFONE_LIST_RESPONSE = "Retorna todos os tipos de telefone";
-	public static final String TIPO_TELEFONE_GET_OPERATION = "Retorna os dados de um tipo de telefone específico";
+	public static final String TIPO_TELEFONE_GET_OPERATION = "Obtém os dados de um tipo de telefone específico";
 	public static final String TIPO_TELEFONE_GET_RESPONSE = "Retorna o tipo de telefone correspondente ao tipoTelefoneUid informado";
 	public static final String TIPO_TELEFONE_CREATE_OPERATION = "Cadastra um novo tipo de telefone";
 	public static final String TIPO_TELEFONE_CREATE_RESPONSE = "Retorna o novo tipo de telefone cadastrado";
