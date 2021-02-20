@@ -34,6 +34,30 @@ public abstract class ApiConstants {
 	public static final String CIDADE_DELETE_OPERATION = "Exclui uma cidade existente";
 	public static final String CIDADE_DELETE_RESPONSE = "Indica que a cidade foi excluída. Nenhum conteúdo será retornado";
 
+	public static final String CLIENTE_LIST_OPERATION = "Obtém uma lista de clientes, conforme configuração nos parâmetros de request";
+	public static final String CLIENTE_LIST_OPERATION_DESCRIPTION = "Valor default dos parâmetros de request: page=1 | size=25 | sort=id"
+			+ "<br>Valores alternativos aceitos nos parâmetros de request: size={1..100} | sort={codigo, nome, razaoSocial}"
+			+ "<br>Filtro pelos atributos do cliente (codigo, ativo, nomeOuRazaoSocial) serão aplicados quando o parâmetro correspondente for informado:"
+			+ "<br>- codigo= retorna apenas o cliente com o código informado"
+			+ "<br>- ativo= retorna apenas os clientes com a configuração informada (ativo={true | false})"
+			+ "<br>- nomeOuRazaoSocial= retorna clientes cujo Nome ou Razão Social contenha o texto informado"
+			+ "<br>O response indica as configurações de paginação utilizadas nos headers: pagination-page-number, pagination-page-size, pagination-total-pages, pagination-total-items";
+	public static final String CLIENTE_LIST_RESPONSE = "Retorna a {page} requisitada com {size} clientes ordenados por {id} que atendam aos parâmetros informados";
+	public static final String CLIENTE_GET_OPERATION = "Obtém os dados de um cliente específico";
+	public static final String CLIENTE_GET_RESPONSE = "Retorna o cliente correspondente ao clienteUid informado";
+	public static final String CLIENTE_CREATE_OPERATION = "Cadastra um novo cliente";
+	public static final String CLIENTE_CREATE_RESPONSE = "Retorna o novo cliente cadastrado";
+	public static final String CLIENTE_UPDATEALL_OPERATION = "Atualiza os dados de um cliente existente";
+	public static final String CLIENTE_UPDATEALL_OPERATION_DESCRIPTION = "Atualiza todos os atributos do cliente com os valores informados no payload. Se o valor do payload for vazio ou null para um determinado atributo, o conteúdo do atributo será apagado";
+			//"Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased";
+	public static final String CLIENTE_UPDATEALL_RESPONSE = "Retorna o cliente atualizado";
+	public static final String CLIENTE_UPDATENOTNULL_OPERATION = "Atualiza os dados contidos no payload para um cliente existente";
+	public static final String CLIENTE_UPDATENOTNULL_OPERATION_DESCRIPTION = "Atualiza um atributo do cliente apenas quando um valor não nulo for informado no payload para este atributo. Caso contrário, o conteúdo do atributo não será alterado.";
+			//"Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed";
+	public static final String CLIENTE_UPDATENOTNULL_RESPONSE = "Retorna o cliente atualizado";
+	public static final String CLIENTE_DELETE_OPERATION = "Exclui um cliente existente";
+	public static final String CLIENTE_DELETE_RESPONSE = "Indica que o cliente foi excluído. Nenhum conteúdo será retornado";
+
 	public static final String TIPO_TELEFONE_LIST_OPERATION = "Retorna todos os tipos de telefone";
 	public static final String TIPO_TELEFONE_LIST_RESPONSE = "Retorna todos os tipos de telefone";
 	public static final String TIPO_TELEFONE_GET_OPERATION = "Retorna os dados de um tipo de telefone específico";

@@ -20,6 +20,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -56,6 +60,12 @@ public class ClienteResource {
 	@Inject
 	ClienteTelefoneMapper telefoneMapper;
 
+	@Operation(summary = ApiConstants.CLIENTE_LIST_OPERATION, description = ApiConstants.CLIENTE_LIST_OPERATION_DESCRIPTION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_LIST_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteSimplifResponse.class))),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	public Response getClientes(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
 			@QueryParam("codigo") Integer codigo, @QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial,
@@ -72,12 +82,24 @@ public class ClienteResource {
 				.header(Pagination.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
+	@Operation(summary = ApiConstants.CLIENTE_GET_OPERATION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_GET_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	@Path("{clienteUid}")
 	public ClienteResponse get(@PathParam UUID clienteUid) {
 		return mapper.toResponse(service.getComplete(clienteUid));
 	}
 
+	@Operation(summary = ApiConstants.CLIENTE_CREATE_OPERATION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "201", description = ApiConstants.CLIENTE_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteResponse.class))),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull ClienteCreateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
@@ -90,9 +112,15 @@ public class ClienteResource {
 		return Response.status(Status.CREATED).entity(clienteResponse).build();
 	}
 
+	@Operation(summary = ApiConstants.CLIENTE_UPDATEALL_OPERATION, description = ApiConstants.CLIENTE_UPDATEALL_OPERATION_DESCRIPTION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_UPDATEALL_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PUT
 	@Path("{clienteUid}/version/{version}")
-	@Operation(summary = "Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased")
 	public ClienteResponse updateAll(@PathParam UUID clienteUid, @PathParam Integer version,
 			@Valid @NotNull ClienteUpdateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
@@ -105,9 +133,15 @@ public class ClienteResource {
 				telefones));
 	}
 
+	@Operation(summary = ApiConstants.CLIENTE_UPDATENOTNULL_OPERATION, description = ApiConstants.CLIENTE_UPDATENOTNULL_OPERATION_DESCRIPTION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_UPDATENOTNULL_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PATCH
 	@Path("{clienteUid}/version/{version}")
-	@Operation(summary = "Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed")
 	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @PathParam Integer version,
 			@Valid @NotNull ClienteUpdateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
@@ -120,6 +154,12 @@ public class ClienteResource {
 				telefones));
 	}
 
+	@Operation(summary = ApiConstants.CLIENTE_DELETE_OPERATION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "204", description = ApiConstants.CLIENTE_DELETE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@DELETE
 	@Path("{clienteUid}/version/{version}")
 	public void delete(@PathParam UUID clienteUid, @PathParam Integer version) {
