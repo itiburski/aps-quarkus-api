@@ -11,6 +11,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>commons</module>
 		<module>cadastro</module>
 		<module>servico</module>
 	</modules>
