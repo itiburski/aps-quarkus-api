@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.jitec.aps.commons.data.model.APSEntity;
+
 @Entity
 @Table(name = "CLIENTE_FONE")
 public class ClienteTelefone extends APSEntity {

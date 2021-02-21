@@ -15,16 +15,16 @@ import javax.transaction.Transactional;
 
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
-import br.com.jitec.aps.cadastro.business.exception.DataNotFoundException;
-import br.com.jitec.aps.cadastro.business.exception.InvalidDataException;
-import br.com.jitec.aps.cadastro.business.util.QueryBuilder;
-import br.com.jitec.aps.cadastro.business.wrapper.Paged;
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
 import br.com.jitec.aps.cadastro.data.model.Cidade;
 import br.com.jitec.aps.cadastro.data.model.Cliente;
 import br.com.jitec.aps.cadastro.data.model.ClienteEmail;
 import br.com.jitec.aps.cadastro.data.model.ClienteTelefone;
 import br.com.jitec.aps.cadastro.data.repository.ClienteRepository;
+import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
+import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.QueryBuilder;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 

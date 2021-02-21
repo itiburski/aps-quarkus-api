@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import br.com.jitec.aps.cadastro.business.exception.ConstraintException;
-import br.com.jitec.aps.cadastro.business.exception.DataNotFoundException;
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
 import br.com.jitec.aps.cadastro.data.repository.CategoriaClienteRepository;
+import br.com.jitec.aps.commons.business.exception.ConstraintException;
+import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 

@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import br.com.jitec.aps.cadastro.util.validator.OnlyDigits;
+import br.com.jitec.aps.commons.util.validator.OnlyDigits;
 
 public abstract class GenericClienteRequest {
 

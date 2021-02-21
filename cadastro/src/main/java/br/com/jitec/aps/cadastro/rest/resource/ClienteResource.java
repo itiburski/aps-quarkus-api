@@ -31,9 +31,7 @@ import br.com.jitec.aps.cadastro.api.ApiConstants;
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.cadastro.business.service.ClienteService;
-import br.com.jitec.aps.cadastro.business.wrapper.Paged;
 import br.com.jitec.aps.cadastro.data.model.Cliente;
-import br.com.jitec.aps.cadastro.rest.http.Pagination;
 import br.com.jitec.aps.cadastro.rest.payload.mapper.ClienteEmailMapper;
 import br.com.jitec.aps.cadastro.rest.payload.mapper.ClienteMapper;
 import br.com.jitec.aps.cadastro.rest.payload.mapper.ClienteTelefoneMapper;
@@ -41,6 +39,8 @@ import br.com.jitec.aps.cadastro.rest.payload.request.ClienteCreateRequest;
 import br.com.jitec.aps.cadastro.rest.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteResponse;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteSimplifResponse;
+import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.rest.http.Pagination;
 
 @Tag(name = ApiConstants.TAG_CLIENTES)
 @Path("/clientes")

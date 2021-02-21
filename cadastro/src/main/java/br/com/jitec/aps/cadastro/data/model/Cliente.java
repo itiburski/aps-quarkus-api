@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.jitec.aps.commons.data.model.APSEntity;
+
 @Entity
 @Table(name = "CLIENTE")
 public class Cliente extends APSEntity {

@@ -7,9 +7,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import br.com.jitec.aps.cadastro.business.exception.DataNotFoundException;
 import br.com.jitec.aps.cadastro.data.model.TipoTelefone;
 import br.com.jitec.aps.cadastro.data.repository.TipoTelefoneRepository;
+import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 
 @ApplicationScoped
 public class TipoTelefoneService {

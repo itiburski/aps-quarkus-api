@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.com.jitec.aps.commons.data.model.APSEntity;
+
 @Entity
 @Table(name = "CATEGORIA_CLIENTE")
 public class CategoriaCliente extends APSEntity {

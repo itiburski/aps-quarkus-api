@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 
 import br.com.jitec.aps.cadastro.data.model.Cliente;
+import br.com.jitec.aps.commons.data.repository.APSRepository;
 
 @ApplicationScoped
 public class ClienteRepository implements APSRepository<Cliente> {
