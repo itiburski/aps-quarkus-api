@@ -1,20 +1,36 @@
 version: "3.5"
 
 services:
-  postgres:
-    container_name: postgres_aps
+  postgres-cadastro:
+    container_name: aps-postgres-cadastro
     image: postgres:12.5
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-aps}
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_USER: ${POSTGRES_USER:-cadastro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cadastro}
     ports:
       - "5432:5432"
     restart: unless-stopped
     volumes:
-      - postgres_cadastro_data:/var/lib/postgresql/data
+      - postgres-cadastro-data:/var/lib/postgresql/data
     ports:
       - 5430:5432
 
+  postgres-servico:
+    container_name: aps-postgres-servico
+    image: postgres:12.5
+    environment:
+      POSTGRES_DB: aps
+      POSTGRES_USER: servico
+      POSTGRES_PASSWORD: servico
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres-servico-data:/var/lib/postgresql/data
+    ports:
+      - 5431:5432
+
 volumes:
-  postgres_cadastro_data:
+  postgres-cadastro-data:
+  postgres-servico-data:
