@@ -18,6 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 	        license = @License(
 						name = "MIT License", url = "https://opensource.org/licenses/MIT"))
 	)
-public class APSApplication extends Application {
+public class APSCadastroApplication extends Application {
 
 }

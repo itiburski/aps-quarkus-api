@@ -6,7 +6,7 @@ import javax.json.bind.JsonbConfig;
 import io.quarkus.jsonb.JsonbConfigCustomizer;
 
 @Singleton
-public class APSJsonbConfigCustomizer implements JsonbConfigCustomizer {
+public class APSCadastroJsonbConfigCustomizer implements JsonbConfigCustomizer {
 
 	@Override
 	public void customize(JsonbConfig jsonbConfig) {
