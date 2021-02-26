@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
 import br.com.jitec.aps.cadastro.rest.payload.response.CategoriaClienteResponse;
+import br.com.jitec.aps.commons.rest.payload.mapper.QuarkusMapperConfig;
 
 @Mapper(config = QuarkusMapperConfig.class)
 public interface CategoriaClienteMapper {

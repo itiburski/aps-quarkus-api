@@ -1,4 +1,4 @@
-package br.com.jitec.aps.cadastro.rest.payload.mapper;
+package br.com.jitec.aps.commons.rest.payload.mapper;
 
 import org.mapstruct.MapperConfig;
 

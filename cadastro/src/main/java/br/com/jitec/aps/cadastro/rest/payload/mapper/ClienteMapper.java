@@ -15,6 +15,7 @@ import br.com.jitec.aps.cadastro.rest.payload.response.ClienteResponse;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteSimplifResponse;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteTelefoneResponse;
 import br.com.jitec.aps.cadastro.rest.payload.response.TipoTelefoneResponse;
+import br.com.jitec.aps.commons.rest.payload.mapper.QuarkusMapperConfig;
 
 @Mapper(config = QuarkusMapperConfig.class)
 public interface ClienteMapper {
