@@ -1,0 +1,14 @@
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'DINHEIRO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'CHEQUE');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'CHEQUE PRÉ-DATADO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'DEPÓSITO EM DINHEIRO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'DEPÓSITO EM CHEQUE');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'MATERIAL');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'SERVIÇO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'DESCONTO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'ESTORNO DE LÇTO.');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'LANÇAMENTO A CRÉDITO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'PAGAMENTO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'COBRANÇA FATURA');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'BLOQUETO BANCÁRIO');
+INSERT INTO TIPO_BAIXA (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'DOC. CRÉDITO A VISTA');
