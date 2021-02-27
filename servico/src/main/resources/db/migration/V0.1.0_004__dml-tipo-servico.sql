@@ -1,0 +1,11 @@
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'NÃO ATRIBUÍDO');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'ARTE FINAL');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'IMPRESSO OFFSET');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'IMPRESSO PB');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'IMPRESSO COR');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'MATERIAL');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'ASSESSORIA / PROGR.');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'SERVIÇO DE TERCEIROS');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'CÓPIA FILME');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'OUTRAS COBRANÇAS');
+INSERT INTO TIPO_SERVICO (ID, UID, VERSION, NOME) VALUES (nextval ('hibernate_sequence'), uuid_generate_v4(), 0, 'FOTOLITO');
