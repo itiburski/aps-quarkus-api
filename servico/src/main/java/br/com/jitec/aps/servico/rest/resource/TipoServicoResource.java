@@ -20,7 +20,7 @@ import br.com.jitec.aps.servico.rest.payload.mapper.TipoServicoMapper;
 import br.com.jitec.aps.servico.rest.payload.response.TipoServicoResponse;
 
 @Tag(name = ApiConstants.TAG_TIPO_SERVICO)
-@Path("/tipo-servico")
+@Path("/tipos-servico")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TipoServicoResource {
