@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
+import br.com.jitec.aps.cadastro.business.producer.ClienteProducer;
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
 import br.com.jitec.aps.cadastro.data.model.Cidade;
 import br.com.jitec.aps.cadastro.data.model.Cliente;
@@ -52,6 +53,9 @@ public class ClienteServiceTest {
 
 	@InjectMock
 	TipoTelefoneService tipoTelefoneServiceMock;
+
+	@InjectMock
+	ClienteProducer clienteProducerMock;
 
 	@Test
 	public void getClientes_WhenUsingNullFilters_ShouldListAll() {

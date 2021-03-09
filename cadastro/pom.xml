@@ -14,9 +14,9 @@
 
 	<dependencies>
 		<dependency>
-		    <groupId>br.com.jitec.aps</groupId>
-		    <artifactId>commons</artifactId>
-		    <version>0.1.0-SNAPSHOT</version>
+			<groupId>br.com.jitec.aps</groupId>
+			<artifactId>commons</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.quarkus</groupId>
@@ -46,7 +46,6 @@
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-flyway</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
@@ -57,6 +56,10 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>${org.mapstruct.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
 		</dependency>
 
 		<dependency>

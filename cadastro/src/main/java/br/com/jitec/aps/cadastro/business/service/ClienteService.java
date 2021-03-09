@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
+import br.com.jitec.aps.cadastro.business.producer.ClienteProducer;
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
 import br.com.jitec.aps.cadastro.data.model.Cidade;
 import br.com.jitec.aps.cadastro.data.model.Cliente;
@@ -47,6 +48,9 @@ public class ClienteService {
 
 	@Inject
 	TipoTelefoneService tipoTelefoneService;
+
+	@Inject
+	ClienteProducer clienteProducer;
 
 	public Paged<Cliente> getClientes(Integer page, Integer size, Integer codigo, String nomeOuRazaoSocial,
 			Boolean ativo, final String sort) {
@@ -140,6 +144,7 @@ public class ClienteService {
 		}
 
 		repository.persist(cliente);
+		clienteProducer.sendClienteNovo(cliente);
 		return cliente;
 	}
 
@@ -225,6 +230,7 @@ public class ClienteService {
 		mergeTelefones(cliente, telefones);
 
 		repository.persist(cliente);
+		clienteProducer.sendClienteAtualizado(cliente);
 		return cliente;
 	}
 
@@ -357,6 +363,7 @@ public class ClienteService {
 		}
 
 		repository.persist(cliente);
+		clienteProducer.sendClienteAtualizado(cliente);
 		return cliente;
 	}
 
