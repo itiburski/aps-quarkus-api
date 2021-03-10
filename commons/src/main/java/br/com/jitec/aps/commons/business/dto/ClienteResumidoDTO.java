@@ -33,4 +33,9 @@ public class ClienteResumidoDTO {
 		this.ativo = ativo;
 	}
 
+	@Override
+	public String toString() {
+		return "[uid=" + uid + ", ativo=" + ativo + "]";
+	}
+
 }
