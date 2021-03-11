@@ -1,6 +1,6 @@
 
 CREATE TABLE CATEGORIA_CLIENTE (
-  ID                              BIGINT ,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   DESCRICAO                       CHARACTER VARYING(40),
@@ -9,7 +9,7 @@ CREATE TABLE CATEGORIA_CLIENTE (
 );
 
 CREATE TABLE CIDADE (
-  ID                              BIGINT,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   NOME                            CHARACTER VARYING(60),
@@ -19,7 +19,7 @@ CREATE TABLE CIDADE (
 );
 
 CREATE TABLE CLIENTE (
-  ID                              BIGINT,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   CODIGO                          INTEGER Not Null,
@@ -46,7 +46,7 @@ CREATE TABLE CLIENTE (
 
 
 CREATE TABLE CLIENTE_EMAIL (
-  ID                              BIGINT,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   CLIENTE_ID                      BIGINT Not Null,
@@ -57,7 +57,7 @@ CREATE TABLE CLIENTE_EMAIL (
 );
 
 CREATE TABLE TIPO_FONE (
-  ID                              BIGINT,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   DESCRICAO                       CHARACTER VARYING(40),
@@ -66,7 +66,7 @@ CREATE TABLE TIPO_FONE (
 );
 
 CREATE TABLE CLIENTE_FONE (
-  ID                              BIGINT,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   CLIENTE_ID                      BIGINT Not Null,

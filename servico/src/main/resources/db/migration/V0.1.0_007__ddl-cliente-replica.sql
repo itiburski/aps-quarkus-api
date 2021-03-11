@@ -1,5 +1,5 @@
 CREATE TABLE CLIENTE_REPLICA (
-  ID                              BIGINT,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   ATIVO                           BOOLEAN,

@@ -1,5 +1,5 @@
 CREATE TABLE TIPO_SERVICO (
-  ID                              BIGINT,
+  ID                              BIGINT Not Null,
   UID                             UUID Not Null,
   VERSION                         INTEGER Not Null,
   NOME                            CHARACTER VARYING(40),
