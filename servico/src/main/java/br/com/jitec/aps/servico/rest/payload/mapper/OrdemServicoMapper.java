@@ -1,0 +1,25 @@
+package br.com.jitec.aps.servico.rest.payload.mapper;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+
+import br.com.jitec.aps.commons.rest.payload.mapper.QuarkusMapperConfig;
+import br.com.jitec.aps.servico.data.model.OrdemServico;
+import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
+import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSimpleResponse;
+
+@Mapper(config = QuarkusMapperConfig.class)
+public interface OrdemServicoMapper {
+
+	@Mappings({ @Mapping(source = "uid", target = "ordemServicoUid"),
+			@Mapping(source = "cliente.uid", target = "clienteUid"),
+			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid") })
+	OrdemServicoSimpleResponse toSimpleResponse(OrdemServico entity);
+
+	@Mappings({ @Mapping(source = "uid", target = "ordemServicoUid"),
+			@Mapping(source = "cliente.uid", target = "clienteUid"),
+			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid") })
+	OrdemServicoResponse toResponse(OrdemServico entity);
+
+}

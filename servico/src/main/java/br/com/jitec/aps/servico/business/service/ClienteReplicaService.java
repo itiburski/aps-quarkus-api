@@ -1,6 +1,7 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -9,6 +10,7 @@ import javax.transaction.Transactional;
 import org.jboss.logging.Logger;
 
 import br.com.jitec.aps.commons.business.dto.ClienteResumidoDTO;
+import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.repository.ClienteReplicaRepository;
 
@@ -19,6 +21,10 @@ public class ClienteReplicaService {
 
 	@Inject
 	ClienteReplicaRepository repository;
+
+	public ClienteReplica get(UUID clienteReplicaUid) {
+		return repository.findByUid(clienteReplicaUid).orElseThrow(() -> new DataNotFoundException("Cliente não encontrado"));
+	}
 
 	@Transactional
 	public void handleClienteNovo(ClienteResumidoDTO dto) {
