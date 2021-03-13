@@ -11,6 +11,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
+import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
 
@@ -52,7 +54,11 @@ public class OrdemServicoService {
 		os.setNumero(repository.getNextNumeroOS());
 
 		if (Objects.nonNull(clienteUid)) {
-			os.setCliente(clienteService.get(clienteUid));
+			ClienteReplica cliente = clienteService.get(clienteUid);
+			if (!cliente.getAtivo()) {
+					throw new InvalidDataException("Não é possível cadastrar uma ordem de serviço para um cliente inativo");
+			}
+			os.setCliente(cliente);
 		}
 		if (Objects.nonNull(tipoServicoUid)) {
 			os.setTipoServico(tipoServicoService.get(tipoServicoUid));

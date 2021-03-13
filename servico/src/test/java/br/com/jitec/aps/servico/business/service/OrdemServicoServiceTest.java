@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
+import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.model.TipoServico;
@@ -81,7 +82,7 @@ public class OrdemServicoServiceTest {
 
 		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(new BigInteger("7"));
 
-		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(new ClienteReplica());
+		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(getCliente(Boolean.TRUE));
 		Mockito.when(tipoServicoServiceMock.get(tipoServicoUid)).thenReturn(new TipoServico());
 
 		OrdemServico result = service.create(clienteUid, tipoServicoUid, BigDecimal.ONE, "contato", "descricao",
@@ -106,6 +107,28 @@ public class OrdemServicoServiceTest {
 		Assertions.assertEquals("descricao", result.getDescricao());
 		Assertions.assertNull(result.getCliente());
 		Assertions.assertNull(result.getTipoServico());
+	}
+
+	@Test
+	public void create_WithClienteInativo_ShouldThrowException() {
+		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(new BigInteger("7"));
+
+		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(getCliente(Boolean.FALSE));
+
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
+				() -> service.create(clienteUid, null, BigDecimal.ONE, "contato", "descricao", "observacao",
+						OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now()),
+				"should have thrown InvalidDataException");
+
+		Assertions.assertEquals("Não é possível cadastrar uma ordem de serviço para um cliente inativo",
+				thrown.getMessage());
+	}
+
+	private ClienteReplica getCliente(Boolean ativo) {
+		ClienteReplica cliente = new ClienteReplica();
+		cliente.setAtivo(ativo);
+		return cliente;
 	}
 
 	private OrdemServico getOrdemServico(UUID uid, BigInteger numero) {
