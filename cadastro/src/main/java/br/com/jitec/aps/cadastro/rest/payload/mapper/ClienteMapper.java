@@ -23,11 +23,11 @@ public interface ClienteMapper {
 	@Mapping(source = "uid", target = "clienteUid")
 	ClienteSimplifResponse toSimplifResponse(Cliente cliente);
 
-	List<ClienteSimplifResponse> toSimplifListResponse(List<Cliente> cidade);
+	List<ClienteSimplifResponse> toSimplifListResponse(List<Cliente> cliente);
 
 	@Mappings({ @Mapping(source = "uid", target = "clienteUid"),
-			@Mapping(source = "cliente.categoria.uid", target = "categoriaCliente.categoriaClienteUid"),
-			@Mapping(source = "cliente.cidade.uid", target = "cidade.cidadeUid") })
+			@Mapping(source = "categoria.uid", target = "categoriaCliente.categoriaClienteUid"),
+			@Mapping(source = "cidade.uid", target = "cidade.cidadeUid") })
 	ClienteResponse toResponse(Cliente cliente);
 
 	@Mapping(source = "uid", target = "emailUid")
