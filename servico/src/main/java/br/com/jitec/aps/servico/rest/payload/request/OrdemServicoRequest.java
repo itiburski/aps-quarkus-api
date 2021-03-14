@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class OrdemServicoRequest {
 
+	@NotNull
 	private UUID clienteUid;
 
+	@NotNull
 	private UUID tipoServicoUid;
 
 	private BigDecimal valor;
@@ -18,6 +21,7 @@ public class OrdemServicoRequest {
 	@Size(max = 60)
 	private String contato;
 
+	@NotBlank
 	@Size(max = 100)
 	private String descricao;
 
