@@ -1,4 +1,4 @@
-package br.com.jitec.aps.cadastro.rest.exception.mapper;
+package br.com.jitec.aps.commons.rest.exception.handler;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Context;
@@ -11,15 +11,15 @@ import javax.ws.rs.ext.Provider;
 
 import org.jboss.logging.Logger;
 
-import br.com.jitec.aps.cadastro.rest.payload.response.ErrorResponse;
+import br.com.jitec.aps.commons.rest.exception.payload.ErrorResponse;
 
 @Provider
-public class GenericExceptionMapper implements ExceptionMapper<Exception> {
+public class GenericExceptionHandler implements ExceptionMapper<Exception> {
 
 	private static final String INTERNAL_SERVER_ERROR_DETAIL = "Ocorreu um erro ao processar a sua requisição";
 	private static final String BAD_REQUEST_DETAIL = "Erro na requisição: %s";
 
-	private static final Logger LOG = Logger.getLogger(GenericExceptionMapper.class);
+	private static final Logger LOG = Logger.getLogger(GenericExceptionHandler.class);
 
 	@Context
 	private UriInfo uriInfo;

@@ -1,4 +1,4 @@
-package br.com.jitec.aps.cadastro.rest.payload.response;
+package br.com.jitec.aps.commons.rest.exception.payload;
 
 import java.net.URI;
 import java.time.LocalDateTime;

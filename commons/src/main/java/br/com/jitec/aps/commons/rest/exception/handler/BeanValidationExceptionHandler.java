@@ -1,4 +1,4 @@
-package br.com.jitec.aps.cadastro.rest.exception.mapper;
+package br.com.jitec.aps.commons.rest.exception.handler;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,12 +13,12 @@ import javax.ws.rs.ext.Provider;
 
 import org.hibernate.validator.internal.engine.path.PathImpl;
 
-import br.com.jitec.aps.cadastro.rest.payload.response.ErrorResponse;
-import br.com.jitec.aps.cadastro.rest.payload.response.ViolationResponse;
+import br.com.jitec.aps.commons.rest.exception.payload.ErrorResponse;
+import br.com.jitec.aps.commons.rest.exception.payload.ViolationResponse;
 import br.com.jitec.aps.commons.rest.http.AdditionalStatus;
 
 @Provider
-public class BeanValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
+public class BeanValidationExceptionHandler implements ExceptionMapper<ConstraintViolationException> {
 
 	private static final StatusType STATUS = AdditionalStatus.UNPROCESSABLE_ENTITY;
 	private static final String CONSTRAINT_VIOLATION_DETAIL = "Parametros da requisição inválidos";

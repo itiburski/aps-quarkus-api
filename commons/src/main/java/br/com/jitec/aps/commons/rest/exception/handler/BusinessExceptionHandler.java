@@ -1,4 +1,4 @@
-package br.com.jitec.aps.cadastro.rest.exception.mapper;
+package br.com.jitec.aps.commons.rest.exception.handler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,22 +11,22 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import br.com.jitec.aps.cadastro.rest.payload.response.ErrorResponse;
 import br.com.jitec.aps.commons.business.exception.BusinessException;
 import br.com.jitec.aps.commons.business.exception.ConstraintException;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.rest.exception.payload.ErrorResponse;
 import br.com.jitec.aps.commons.rest.http.AdditionalStatus;
 
 @Provider
-public class BusinessExceptionMapper implements ExceptionMapper<BusinessException> {
+public class BusinessExceptionHandler implements ExceptionMapper<BusinessException> {
 
 	private Map<Class<? extends BusinessException>, StatusType> exceptionMapper;
 
 	@Context
 	private UriInfo uriInfo;
 
-	public BusinessExceptionMapper() {
+	public BusinessExceptionHandler() {
 		exceptionMapper = new HashMap<>();
 		exceptionMapper.put(DataNotFoundException.class, Status.NOT_FOUND);
 		exceptionMapper.put(InvalidDataException.class, AdditionalStatus.UNPROCESSABLE_ENTITY);
