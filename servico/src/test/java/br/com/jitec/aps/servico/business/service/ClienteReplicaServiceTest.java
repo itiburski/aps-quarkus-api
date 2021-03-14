@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import br.com.jitec.aps.commons.business.dto.ClienteResumidoDTO;
+import br.com.jitec.aps.commons.business.data.ClienteResumidoDto;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.repository.ClienteReplicaRepository;
@@ -51,7 +51,7 @@ public class ClienteReplicaServiceTest {
 
 	@Test
 	public void handleClienteNovo_ShouldWork() {
-		ClienteResumidoDTO dto = new ClienteResumidoDTO(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
+		ClienteResumidoDto dto = new ClienteResumidoDto(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"), "nome",
 				Boolean.TRUE);
 		service.handleClienteNovo(dto);
 
@@ -61,9 +61,9 @@ public class ClienteReplicaServiceTest {
 	@Test
 	public void handleClienteAtualizado_WhenExist_ShouldUpdate() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		ClienteResumidoDTO dto = new ClienteResumidoDTO(uid, Boolean.TRUE);
+		ClienteResumidoDto dto = new ClienteResumidoDto(uid, "nome", Boolean.TRUE);
 
-		ClienteReplica cliente = new ClienteReplica(uid, Boolean.TRUE);
+		ClienteReplica cliente = new ClienteReplica(uid, "nome", Boolean.TRUE);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
 
 		service.handleClienteAtualizado(dto);
@@ -74,7 +74,7 @@ public class ClienteReplicaServiceTest {
 	@Test
 	public void handleClienteAtualizado_WhenDoesNotExist_ShouldSkipPersist() {
 		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		ClienteResumidoDTO dto = new ClienteResumidoDTO(uid, Boolean.TRUE);
+		ClienteResumidoDto dto = new ClienteResumidoDto(uid, "nome", Boolean.TRUE);
 
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
 

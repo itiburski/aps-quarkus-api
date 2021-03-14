@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 
 import org.jboss.logging.Logger;
 
-import br.com.jitec.aps.commons.business.dto.ClienteResumidoDTO;
+import br.com.jitec.aps.commons.business.data.ClienteResumidoDto;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.repository.ClienteReplicaRepository;
@@ -27,18 +27,19 @@ public class ClienteReplicaService {
 	}
 
 	@Transactional
-	public void handleClienteNovo(ClienteResumidoDTO dto) {
-		ClienteReplica cliente = new ClienteReplica(dto.getUid(), dto.getAtivo());
+	public void handleClienteNovo(ClienteResumidoDto dto) {
+		ClienteReplica cliente = new ClienteReplica(dto.getUid(), dto.getNome(), dto.getAtivo());
 
 		repository.persist(cliente);
 		LOG.infof("Cliente cadastrado/replicado %s", dto);
 	}
 
 	@Transactional
-	public void handleClienteAtualizado(ClienteResumidoDTO dto) {
+	public void handleClienteAtualizado(ClienteResumidoDto dto) {
 		Optional<ClienteReplica> opCliente = repository.findByUid(dto.getUid());
 		if (opCliente.isPresent()) {
 			ClienteReplica cliente = opCliente.get();
+			cliente.setNome(dto.getNome());
 			cliente.setAtivo(dto.getAtivo());
 
 			repository.persist(cliente);

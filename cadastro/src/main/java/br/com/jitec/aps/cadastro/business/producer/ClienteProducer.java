@@ -8,7 +8,7 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.jboss.logging.Logger;
 
 import br.com.jitec.aps.cadastro.data.model.Cliente;
-import br.com.jitec.aps.commons.business.dto.ClienteResumidoDTO;
+import br.com.jitec.aps.commons.business.data.ClienteResumidoDto;
 
 @ApplicationScoped
 public class ClienteProducer {
@@ -21,20 +21,20 @@ public class ClienteProducer {
 
 	@Inject
 	@Channel(TOPIC_CLIENTE_NOVO)
-	Emitter<ClienteResumidoDTO> clienteNovoEmitter;
+	Emitter<ClienteResumidoDto> clienteNovoEmitter;
 
 	@Inject
 	@Channel(TOPIC_CLIENTE_ATUALIZADO)
-	Emitter<ClienteResumidoDTO> clienteAtualizadoEmitter;
+	Emitter<ClienteResumidoDto> clienteAtualizadoEmitter;
 
 	public void sendClienteNovo(Cliente cliente) {
-		ClienteResumidoDTO dto = new ClienteResumidoDTO(cliente.getUid(), cliente.getAtivo());
+		ClienteResumidoDto dto = new ClienteResumidoDto(cliente.getUid(), cliente.getNome(), cliente.getAtivo());
 		clienteNovoEmitter.send(dto);
 		LOG.infof(MSG_LOG, dto.getUid(), TOPIC_CLIENTE_NOVO);
 	}
 
 	public void sendClienteAtualizado(Cliente cliente) {
-		ClienteResumidoDTO dto = new ClienteResumidoDTO(cliente.getUid(), cliente.getAtivo());
+		ClienteResumidoDto dto = new ClienteResumidoDto(cliente.getUid(), cliente.getNome(), cliente.getAtivo());
 		clienteAtualizadoEmitter.send(dto);
 		LOG.infof(MSG_LOG, dto.getUid(), TOPIC_CLIENTE_ATUALIZADO);
 	}

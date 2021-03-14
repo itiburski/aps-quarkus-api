@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.jboss.logging.Logger;
 
-import br.com.jitec.aps.commons.business.dto.ClienteResumidoDTO;
+import br.com.jitec.aps.commons.business.data.ClienteResumidoDto;
 import br.com.jitec.aps.servico.business.service.ClienteReplicaService;
 import io.smallrye.reactive.messaging.annotations.Blocking;
 
@@ -24,14 +24,14 @@ public class ClienteConsumer {
 
 	@Incoming(TOPIC_CLIENTE_NOVO)
 	@Blocking
-	public void receiveClienteNovo(ClienteResumidoDTO dto) {
+	public void receiveClienteNovo(ClienteResumidoDto dto) {
 		LOG.infof(MSG_LOG, dto);
 		service.handleClienteNovo(dto);
 	}
 
 	@Incoming(TOPIC_CLIENTE_ATUALIZADO)
 	@Blocking
-	public void receiveClienteAtualizado(ClienteResumidoDTO dto) {
+	public void receiveClienteAtualizado(ClienteResumidoDto dto) {
 		LOG.infof(MSG_LOG, dto);
 		service.handleClienteAtualizado(dto);
 	}
