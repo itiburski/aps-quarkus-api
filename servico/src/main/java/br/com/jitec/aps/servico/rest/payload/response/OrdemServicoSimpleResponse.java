@@ -11,7 +11,7 @@ public class OrdemServicoSimpleResponse {
 
 	private BigInteger numero;
 
-	private UUID clienteUid;
+	private ClienteResponse cliente;
 
 	private TipoServicoResponse tipoServico;
 
@@ -45,12 +45,12 @@ public class OrdemServicoSimpleResponse {
 		this.numero = numero;
 	}
 
-	public UUID getClienteUid() {
-		return clienteUid;
+	public ClienteResponse getCliente() {
+		return cliente;
 	}
 
-	public void setClienteUid(UUID clienteUid) {
-		this.clienteUid = clienteUid;
+	public void setCliente(ClienteResponse cliente) {
+		this.cliente = cliente;
 	}
 
 	public TipoServicoResponse getTipoServico() {
