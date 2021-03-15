@@ -86,7 +86,7 @@ public class OrdemServicoServiceTest {
 		Mockito.when(tipoServicoServiceMock.get(tipoServicoUid)).thenReturn(new TipoServico());
 
 		OrdemServico result = service.create(clienteUid, tipoServicoUid, BigDecimal.ONE, "contato", "descricao",
-				"observacao", OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
+				"observacao", OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
 
 		Assertions.assertNotNull(result.getUid());
 		Assertions.assertEquals(new BigInteger("7"), result.getNumero());
@@ -100,7 +100,7 @@ public class OrdemServicoServiceTest {
 		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(new BigInteger("7"));
 
 		OrdemServico result = service.create(null, null, BigDecimal.ONE, "contato", "descricao", "observacao",
-				OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
+				OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
 
 		Assertions.assertNotNull(result.getUid());
 		Assertions.assertEquals(new BigInteger("7"), result.getNumero());
@@ -118,11 +118,42 @@ public class OrdemServicoServiceTest {
 
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
 				() -> service.create(clienteUid, null, BigDecimal.ONE, "contato", "descricao", "observacao",
-						OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now()),
+						OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now()),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Não é possível cadastrar uma ordem de serviço para um cliente inativo",
 				thrown.getMessage());
+	}
+
+	@Test
+	public void update_WithExistingUidAndVersion_ShouldUpdateData() {
+		Integer version = 1;
+		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		UUID tipoServicoUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+
+		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
+
+		OrdemServico result = service.update(osUid, version, tipoServicoUid, "contato", "descricao", "observacao",
+				OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
+
+		Assertions.assertEquals("contato", result.getContato());
+	}
+
+	@Test
+	public void update_WithNonexistingUidAndVersion_ShouldThrowException() {
+		Integer version = 1;
+		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		UUID tipoServicoUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+
+		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.empty());
+
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
+				() -> service.update(osUid, version, tipoServicoUid, "contato", "descricao", "observacao",
+						OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now()),
+				"should have thrown DataNotFoundException");
+
+		Assertions.assertEquals("Ordem de Serviço não encontrada para versao especificada", thrown.getMessage());
 	}
 
 	private ClienteReplica getCliente(Boolean ativo) {

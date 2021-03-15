@@ -37,10 +37,14 @@ public class OrdemServicoService {
 				.orElseThrow(() -> new DataNotFoundException("Ordem de Serviço não encontrada"));
 	}
 
+	private OrdemServico get(UUID ordemServicoUid, Integer version) {
+		return repository.findByUidVersion(ordemServicoUid, version).orElseThrow(
+				() -> new DataNotFoundException("Ordem de Serviço não encontrada para versao especificada"));
+	}
+
 	@Transactional
 	public OrdemServico create(UUID clienteUid, UUID tipoServicoUid, BigDecimal valor, String contato, String descricao,
-			String observacao, OffsetDateTime entrada, OffsetDateTime agendadoPara, OffsetDateTime conclusao,
-			OffsetDateTime entrega) {
+			String observacao, OffsetDateTime entrada, OffsetDateTime agendadoPara, OffsetDateTime entrega) {
 		OrdemServico os = new OrdemServico();
 
 		os.setValor(valor);
@@ -49,17 +53,42 @@ public class OrdemServicoService {
 		os.setObservacao(observacao);
 		os.setEntrada(entrada);
 		os.setAgendadoPara(agendadoPara);
-		os.setConclusao(conclusao);
 		os.setEntrega(entrega);
 		os.setNumero(repository.getNextNumeroOS());
 
 		if (Objects.nonNull(clienteUid)) {
-			ClienteReplica cliente = clienteService.get(clienteUid);
-			if (!cliente.getAtivo()) {
-					throw new InvalidDataException("Não é possível cadastrar uma ordem de serviço para um cliente inativo");
-			}
-			os.setCliente(cliente);
+			os.setCliente(getCliente(clienteUid));
 		}
+		if (Objects.nonNull(tipoServicoUid)) {
+			os.setTipoServico(tipoServicoService.get(tipoServicoUid));
+		}
+
+		repository.persist(os);
+
+		return os;
+	}
+
+	private ClienteReplica getCliente(UUID clienteUid) {
+		ClienteReplica cliente = clienteService.get(clienteUid);
+		if (!cliente.getAtivo()) {
+			throw new InvalidDataException("Não é possível cadastrar uma ordem de serviço para um cliente inativo");
+		}
+		return cliente;
+	}
+
+	@Transactional
+	public OrdemServico update(UUID ordemServicoUid, Integer version, UUID tipoServicoUid, String contato,
+			String descricao, String observacao, OffsetDateTime entrada, OffsetDateTime agendadoPara,
+			OffsetDateTime entrega) {
+		OrdemServico os = get(ordemServicoUid, version);
+
+		os.setContato(contato);
+		os.setDescricao(descricao);
+		os.setObservacao(observacao);
+		os.setEntrada(entrada);
+		os.setAgendadoPara(agendadoPara);
+		os.setEntrega(entrega);
+
 		if (Objects.nonNull(tipoServicoUid)) {
 			os.setTipoServico(tipoServicoService.get(tipoServicoUid));
 		}

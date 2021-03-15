@@ -1,6 +1,5 @@
 package br.com.jitec.aps.servico.rest.payload.request;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -8,15 +7,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class OrdemServicoRequest {
-
-	@NotNull
-	private UUID clienteUid;
+public abstract class GenericOrdemServicoRequest {
 
 	@NotNull
 	private UUID tipoServicoUid;
-
-	private BigDecimal valor;
 
 	@Size(max = 60)
 	private String contato;
@@ -33,17 +27,7 @@ public class OrdemServicoRequest {
 
 	private OffsetDateTime agendadoPara;
 
-	private OffsetDateTime conclusao;
-
 	private OffsetDateTime entrega;
-
-	public UUID getClienteUid() {
-		return clienteUid;
-	}
-
-	public void setClienteUid(UUID clienteUid) {
-		this.clienteUid = clienteUid;
-	}
 
 	public UUID getTipoServicoUid() {
 		return tipoServicoUid;
@@ -51,14 +35,6 @@ public class OrdemServicoRequest {
 
 	public void setTipoServicoUid(UUID tipoServicoUid) {
 		this.tipoServicoUid = tipoServicoUid;
-	}
-
-	public BigDecimal getValor() {
-		return valor;
-	}
-
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
 	}
 
 	public String getContato() {
@@ -99,14 +75,6 @@ public class OrdemServicoRequest {
 
 	public void setAgendadoPara(OffsetDateTime agendadoPara) {
 		this.agendadoPara = agendadoPara;
-	}
-
-	public OffsetDateTime getConclusao() {
-		return conclusao;
-	}
-
-	public void setConclusao(OffsetDateTime conclusao) {
-		this.conclusao = conclusao;
 	}
 
 	public OffsetDateTime getEntrega() {

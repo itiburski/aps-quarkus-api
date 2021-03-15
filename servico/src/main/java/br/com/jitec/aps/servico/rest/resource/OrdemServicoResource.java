@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -28,7 +29,8 @@ import br.com.jitec.aps.servico.api.ApiConstants;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.rest.payload.mapper.OrdemServicoMapper;
-import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoRequest;
+import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoCreateRequest;
+import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
 import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSimpleResponse;
 
@@ -72,12 +74,29 @@ public class OrdemServicoResource {
 			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
-	public Response create(@Valid @NotNull OrdemServicoRequest request) {
+	public Response create(@Valid @NotNull OrdemServicoCreateRequest request) {
 		OrdemServico os = osService.create(request.getClienteUid(), request.getTipoServicoUid(), request.getValor(),
 				request.getContato(), request.getDescricao(), request.getObservacao(), request.getEntrada(),
-				request.getAgendadoPara(), request.getConclusao(), request.getEntrega());
+				request.getAgendadoPara(), request.getEntrega());
 		OrdemServicoResponse response = mapper.toResponse(os);
 		return Response.status(Status.CREATED).entity(response).build();
+	}
+
+	@Operation(summary = ApiConstants.ORDEM_SERVICO_UPDATE_OPERATION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_UPDATE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@PUT
+	@Path("/{ordemServicoUid}/version/{version}")
+	public OrdemServicoResponse update(@PathParam("ordemServicoUid") UUID ordemServicoUid,
+			@PathParam("version") Integer version, @Valid @NotNull OrdemServicoUpdateRequest request) {
+		OrdemServico os = osService.update(ordemServicoUid, version, request.getTipoServicoUid(), request.getContato(),
+				request.getDescricao(), request.getObservacao(), request.getEntrada(), request.getAgendadoPara(),
+				request.getEntrega());
+		return mapper.toResponse(os);
 	}
 
 }
