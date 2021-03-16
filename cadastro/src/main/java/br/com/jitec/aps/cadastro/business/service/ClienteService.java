@@ -13,6 +13,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.jboss.logging.Logger;
+
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.cadastro.business.producer.ClienteProducer;
@@ -22,6 +24,7 @@ import br.com.jitec.aps.cadastro.data.model.Cliente;
 import br.com.jitec.aps.cadastro.data.model.ClienteEmail;
 import br.com.jitec.aps.cadastro.data.model.ClienteTelefone;
 import br.com.jitec.aps.cadastro.data.repository.ClienteRepository;
+import br.com.jitec.aps.commons.business.data.ClienteSaldoDto;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
@@ -31,6 +34,8 @@ import io.quarkus.panache.common.Page;
 
 @ApplicationScoped
 public class ClienteService {
+
+	private static final Logger LOG = Logger.getLogger(ClienteService.class);
 
 	private static final String CLIENTE_NAO_ENCONTRADO = "Cliente não encontrado";
 	private static final String CLIENTE_NAO_ENCONTRADO_VERSION = "Cliente não encontrado para versao especificada";
@@ -381,6 +386,22 @@ public class ClienteService {
 	public boolean existeClienteComCidade(Cidade cidade) {
 		Long qtd = repository.getQtdClientePorCidade(cidade.getId());
 		return qtd > 0;
+	}
+
+	@Transactional
+	public void handleSaldoUpdate(ClienteSaldoDto dto) {
+		Optional<Cliente> opCliente = repository.findByUid(dto.getClienteUid());
+
+		if (opCliente.isPresent()) {
+			Cliente cliente = opCliente.get();
+			cliente.setSaldo(cliente.getSaldo().add(dto.getVariacaoSaldo()));
+			repository.persist(cliente);
+
+			LOG.infof("Saldo do cliente %s atualizado", dto);
+		} else {
+			LOG.warnf("Cliente %s nao encontrado, nao foi possivel atualizar o saldo", dto.getClienteUid());
+		}
+
 	}
 
 }

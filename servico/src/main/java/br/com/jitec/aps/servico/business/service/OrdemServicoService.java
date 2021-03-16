@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
@@ -27,6 +28,9 @@ public class OrdemServicoService {
 
 	@Inject
 	TipoServicoService tipoServicoService;
+
+	@Inject
+	ClienteSaldoProducer clienteSaldoProducer;
 
 	public List<OrdemServico> getAll() {
 		return repository.list("order by numero");
@@ -110,7 +114,7 @@ public class OrdemServicoService {
 		os.setConclusao(conclusao);
 		repository.persist(os);
 
-		// send saldoARefletirNoCliente to a kafka topic
+		clienteSaldoProducer.sendUpdateSaldoCliente(os.getCliente().getUid(), saldoARefletirNoCliente);
 
 		return os;
 	}

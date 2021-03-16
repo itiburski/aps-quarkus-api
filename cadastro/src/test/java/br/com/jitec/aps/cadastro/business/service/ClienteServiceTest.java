@@ -25,6 +25,7 @@ import br.com.jitec.aps.cadastro.data.model.ClienteEmail;
 import br.com.jitec.aps.cadastro.data.model.ClienteTelefone;
 import br.com.jitec.aps.cadastro.data.model.TipoTelefone;
 import br.com.jitec.aps.cadastro.data.repository.ClienteRepository;
+import br.com.jitec.aps.commons.business.data.ClienteSaldoDto;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
@@ -522,6 +523,27 @@ public class ClienteServiceTest {
 		boolean result = clienteService.existeClienteComCidade(cidade);
 
 		Assertions.assertTrue(result);
+	}
+
+	@Test
+	public void handleSaldoUpdate_WithExistingUUID_ShouldUpdate() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Cliente cliente = getClienteWithDefaultValues(uid, 123);
+		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(cliente));
+
+		clienteService.handleSaldoUpdate(new ClienteSaldoDto(uid, BigDecimal.TEN));
+
+		Mockito.verify(repositoryMock).persist(Mockito.any(Cliente.class));
+	}
+
+	@Test
+	public void handleSaldoUpdate_WithNonxistingUUID_ShouldSkipPersist() {
+		UUID uid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
+
+		clienteService.handleSaldoUpdate(new ClienteSaldoDto(uid, BigDecimal.TEN));
+
+		Mockito.verify(repositoryMock, Mockito.never()).persist(Mockito.any(Cliente.class));
 	}
 
 	private Cliente getCliente(UUID uid, Integer codigo, String nome, String contato) {
