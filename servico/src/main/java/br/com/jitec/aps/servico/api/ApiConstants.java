@@ -25,5 +25,7 @@ public abstract class ApiConstants {
 	public static final String ORDEM_SERVICO_CREATE_RESPONSE = "Retorna a nova ordem de serviço cadastrada";
 	public static final String ORDEM_SERVICO_UPDATE_OPERATION = "Atualiza os dados de uma ordem de serviço existente";
 	public static final String ORDEM_SERVICO_UPDATE_RESPONSE = "Retorna a ordem de serviço atualizada";
+	public static final String ORDEM_SERVICO_DEFINIR_CONCLUSAO_OPERATION = "Atualiza a data de conclusão e o valor na ordem de serviço especificada";
+	public static final String ORDEM_SERVICO_DEFINIR_CONCLUSAO_RESPONSE = "Retorna a ordem de serviço atualizada";
 
 }

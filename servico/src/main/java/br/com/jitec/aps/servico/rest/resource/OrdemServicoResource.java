@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -29,6 +30,7 @@ import br.com.jitec.aps.servico.api.ApiConstants;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.rest.payload.mapper.OrdemServicoMapper;
+import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoConclusaoRequest;
 import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoCreateRequest;
 import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
@@ -99,4 +101,19 @@ public class OrdemServicoResource {
 		return mapper.toResponse(os);
 	}
 
+	@Operation(summary = ApiConstants.ORDEM_SERVICO_DEFINIR_CONCLUSAO_OPERATION)
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_DEFINIR_CONCLUSAO_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@PATCH
+	@Path("/{ordemServicoUid}/version/{version}/conclusao")
+	public OrdemServicoResponse definirConclusao(@PathParam("ordemServicoUid") UUID ordemServicoUid,
+			@PathParam("version") Integer version, @Valid @NotNull OrdemServicoConclusaoRequest request) {
+		OrdemServico os = osService.definirConclusao(ordemServicoUid, version, request.getConclusao(),
+				request.getValor());
+		return mapper.toResponse(os);
+	}
 }

@@ -3,6 +3,7 @@ package br.com.jitec.aps.servico.business.service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -151,6 +152,39 @@ public class OrdemServicoServiceTest {
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
 				() -> service.update(osUid, version, tipoServicoUid, "contato", "descricao", "observacao",
 						OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now()),
+				"should have thrown DataNotFoundException");
+
+		Assertions.assertEquals("Ordem de Serviço não encontrada para versao especificada", thrown.getMessage());
+	}
+
+	@Test
+	public void definirConclusao_WithExistingUidAndVersion_ShouldUpdateData() {
+		Integer version = 1;
+		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		os.setCliente(new ClienteReplica());
+
+		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
+
+		OrdemServico result = service.definirConclusao(osUid, version,
+				OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")), new BigDecimal("123"));
+
+		Assertions.assertEquals(new BigDecimal("123"), result.getValor());
+		Assertions.assertEquals(OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")),
+				result.getConclusao());
+	}
+
+	@Test
+	public void definirConclusao_WithNonexistingUidAndVersion_ShouldThrowException() {
+		Integer version = 1;
+		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		os.setCliente(new ClienteReplica());
+
+		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.empty());
+
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
+				() -> service.definirConclusao(osUid, version, OffsetDateTime.now(), new BigDecimal("123")),
 				"should have thrown DataNotFoundException");
 
 		Assertions.assertEquals("Ordem de Serviço não encontrada para versao especificada", thrown.getMessage());

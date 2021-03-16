@@ -98,4 +98,21 @@ public class OrdemServicoService {
 		return os;
 	}
 
+	@Transactional
+	public OrdemServico definirConclusao(UUID ordemServicoUid, Integer version, OffsetDateTime conclusao,
+			BigDecimal valor) {
+		OrdemServico os = get(ordemServicoUid, version);
+
+		BigDecimal vlAnterior = os.getConclusao() != null ? os.getValor() : BigDecimal.ZERO;
+		BigDecimal saldoARefletirNoCliente = vlAnterior.subtract(valor);
+
+		os.setValor(valor);
+		os.setConclusao(conclusao);
+		repository.persist(os);
+
+		// send saldoARefletirNoCliente to a kafka topic
+
+		return os;
+	}
+
 }
