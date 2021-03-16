@@ -28,6 +28,7 @@ import br.com.jitec.aps.commons.business.data.ClienteSaldoDto;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.business.util.QueryBuilder;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
@@ -57,7 +58,7 @@ public class ClienteService {
 	@Inject
 	ClienteProducer clienteProducer;
 
-	public Paged<Cliente> getClientes(Integer page, Integer size, Integer codigo, String nomeOuRazaoSocial,
+	public Paged<Cliente> getClientes(Pagination pagination, Integer codigo, String nomeOuRazaoSocial,
 			Boolean ativo, final String sort) {
 		String field = DEFAULT_SORT_FIELD;
 
@@ -79,7 +80,7 @@ public class ClienteService {
 		}
 
 		PanacheQuery<Cliente> query = repository.find(builder.getQuery(), builder.getParams())
-				.page(Page.of(page, size));
+				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));
 		return new Paged<Cliente>(query.list(), query.pageCount(), query.count());
 	}
 

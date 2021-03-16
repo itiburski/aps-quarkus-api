@@ -29,6 +29,7 @@ import br.com.jitec.aps.commons.business.data.ClienteSaldoDto;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.Pagination;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
@@ -39,6 +40,7 @@ public class ClienteServiceTest {
 
 	private static final Integer PAGE = 1;
 	private static final Integer SIZE = 10;
+	private static final Pagination PAGINATION = Pagination.builder().withPage(PAGE).withSize(SIZE).build();
 
 	@Inject
 	ClienteService clienteService;
@@ -73,7 +75,7 @@ public class ClienteServiceTest {
 		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, null, null, null, null);
+		Paged<Cliente> result = clienteService.getClientes(PAGINATION, null, null, null, null);
 
 		Assertions.assertEquals(2, result.getContent().size());
 		Mockito.verify(repositoryMock).find(query, params);
@@ -99,7 +101,7 @@ public class ClienteServiceTest {
 		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, codigo, nomeOuRazaoSocial, ativo, null);
+		Paged<Cliente> result = clienteService.getClientes(PAGINATION, codigo, nomeOuRazaoSocial, ativo, null);
 
 		Assertions.assertEquals(1, result.getContent().size());
 		Mockito.verify(repositoryMock).find(query, params);
@@ -119,7 +121,7 @@ public class ClienteServiceTest {
 		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<Cliente> result = clienteService.getClientes(PAGE, SIZE, null, null, null, "nome");
+		Paged<Cliente> result = clienteService.getClientes(PAGINATION, null, null, null, "nome");
 
 		Assertions.assertEquals(2, result.getContent().size());
 		Mockito.verify(repositoryMock).find(query, params);
@@ -128,7 +130,7 @@ public class ClienteServiceTest {
 	@Test
 	public void getClientes_WhenOrderIsInvalid_ShouldThrowException() {
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.getClientes(PAGE, SIZE, null, null, null, "campoInexistente"),
+				() -> clienteService.getClientes(PAGINATION, null, null, null, "campoInexistente"),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Campo para ordenação inválido", thrown.getMessage());

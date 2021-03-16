@@ -40,7 +40,8 @@ import br.com.jitec.aps.cadastro.rest.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteResponse;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteSimplifResponse;
 import br.com.jitec.aps.commons.business.util.Paged;
-import br.com.jitec.aps.commons.rest.http.Pagination;
+import br.com.jitec.aps.commons.business.util.Pagination;
+import br.com.jitec.aps.commons.rest.http.Headers;
 
 @Tag(name = ApiConstants.TAG_CLIENTES)
 @Path("/clientes")
@@ -71,15 +72,14 @@ public class ClienteResource {
 			@QueryParam("codigo") Integer codigo, @QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial,
 			@QueryParam("ativo") Boolean ativo, @QueryParam("sort") String sort) {
 
-		Integer pageReq = Pagination.handlePage(page);
-		Integer sizeReq = Pagination.handleSize(size);
+		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
 
-		Paged<Cliente> query = service.getClientes((pageReq - 1), sizeReq, codigo, nomeOuRazaoSocial, ativo, sort);
+		Paged<Cliente> query = service.getClientes(pagination, codigo, nomeOuRazaoSocial, ativo, sort);
 		List<ClienteSimplifResponse> clientes = mapper.toSimplifListResponse(query.getContent());
 
-		return Response.ok(clientes).header(Pagination.PAGE_NUMBER, pageReq).header(Pagination.PAGE_SIZE, sizeReq)
-				.header(Pagination.TOTAL_PAGES, query.getPageCount())
-				.header(Pagination.TOTAL_ITEMS, query.getItemCount()).build();
+		return Response.ok(clientes).header(Headers.PAGE_NUMBER, pagination.getPage())
+				.header(Headers.PAGE_SIZE, pagination.getSize()).header(Headers.TOTAL_PAGES, query.getPageCount())
+				.header(Headers.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
 	@Operation(summary = ApiConstants.CLIENTE_GET_OPERATION)

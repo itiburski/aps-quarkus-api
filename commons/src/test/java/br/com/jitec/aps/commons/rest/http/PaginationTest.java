@@ -4,58 +4,59 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.business.util.Pagination;
 
 public class PaginationTest {
 
 	@Test
-	public void handlePage_WhenNull_ShouldReturnDefaultPageNumber() {
-		Assertions.assertEquals(1, Pagination.handlePage(null));
+	public void build_WhenPageNull_ShouldReturnDefaultPage() {
+		Assertions.assertEquals(1, Pagination.builder().withPage(null).build().getPage());
 	}
 
 	@Test
-	public void handlePage_WhenValid_ShouldReturnRequestedPage() {
-		Assertions.assertEquals(1, Pagination.handlePage(1));
-		Assertions.assertEquals(15, Pagination.handlePage(15));
-		Assertions.assertEquals(100, Pagination.handlePage(100));
+	public void build_WhenValidPage_ShouldReturnRequestedPage() {
+		Assertions.assertEquals(1, Pagination.builder().withPage(1).build().getPage());
+		Assertions.assertEquals(15, Pagination.builder().withPage(15).build().getPage());
+		Assertions.assertEquals(100, Pagination.builder().withPage(100).build().getPage());
 	}
 
 	@Test
-	public void handlePage_WhenInvalid_ShouldThrowException() {
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> Pagination.handlePage(0),
+	public void build_WhenPageIsInvalid_ShouldThrowException() {
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
+				() -> Pagination.builder().withPage(0).build(), "should have thrown InvalidDataException");
+		Assertions.assertEquals("page deve ser maior que 0", thrown.getMessage());
+		thrown = Assertions.assertThrows(InvalidDataException.class, () -> Pagination.builder().withPage(-1).build(),
 				"should have thrown InvalidDataException");
 		Assertions.assertEquals("page deve ser maior que 0", thrown.getMessage());
-		thrown = Assertions.assertThrows(InvalidDataException.class, () -> Pagination.handlePage(-1),
-				"should have thrown InvalidDataException");
-		Assertions.assertEquals("page deve ser maior que 0", thrown.getMessage());
 	}
 
 	@Test
-	public void handleSize_WhenNull_ShouldReturnDefaultPageNumber() {
-		Assertions.assertEquals(25, Pagination.handleSize(null));
+	public void build_WhenSizeNull_ShouldReturnDefaultPage() {
+		Assertions.assertEquals(25, Pagination.builder().withSize(null).build().getSize());
 	}
 
 	@Test
-	public void handleSize_WhenValid_ShouldReturnRequestedSize() {
-		Assertions.assertEquals(1, Pagination.handleSize(1));
-		Assertions.assertEquals(15, Pagination.handleSize(15));
-		Assertions.assertEquals(100, Pagination.handleSize(100));
+	public void build_WhenValidSize_ShouldReturnRequestedSize() {
+		Assertions.assertEquals(1, Pagination.builder().withSize(1).build().getSize());
+		Assertions.assertEquals(15, Pagination.builder().withSize(15).build().getSize());
+		Assertions.assertEquals(100, Pagination.builder().withSize(100).build().getSize());
 	}
 
 	@Test
-	public void handleSize_WhenInvalid_ShouldThrowException() {
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> Pagination.handleSize(0),
-				"should have thrown InvalidDataException");
+	public void build_WhenSizeIsInvalid_ShouldThrowException() {
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
+				() -> Pagination.builder().withSize(0).build(), "should have thrown InvalidDataException");
 		Assertions.assertEquals("size deve ser maior que 0", thrown.getMessage());
-		thrown = Assertions.assertThrows(InvalidDataException.class, () -> Pagination.handleSize(-1),
+		thrown = Assertions.assertThrows(InvalidDataException.class, () -> Pagination.builder().withSize(-1).build(),
 				"should have thrown InvalidDataException");
 		Assertions.assertEquals("size deve ser maior que 0", thrown.getMessage());
 	}
 
 	@Test
-	public void handleSize_WhenGreaterThan100_ShouldReturnMaxSize() {
-		Assertions.assertEquals(100, Pagination.handleSize(101));
-		Assertions.assertEquals(100, Pagination.handleSize(150));
-		Assertions.assertEquals(100, Pagination.handleSize(999));
+	public void build_WhenSizeGreaterThan100_ShouldReturnMaxSize() {
+		Assertions.assertEquals(100, Pagination.builder().withSize(101).build().getSize());
+		Assertions.assertEquals(100, Pagination.builder().withSize(150).build().getSize());
+		Assertions.assertEquals(100, Pagination.builder().withSize(999).build().getSize());
 	}
 
 }
