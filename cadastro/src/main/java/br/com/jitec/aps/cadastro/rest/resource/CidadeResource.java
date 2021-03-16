@@ -12,6 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,7 +24,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.cadastro.api.ApiConstants;
 import br.com.jitec.aps.cadastro.business.service.CidadeService;
@@ -44,8 +44,7 @@ public class CidadeResource {
 	CidadeMapper mapper;
 
 	@Operation(summary = ApiConstants.CIDADE_LIST_OPERATION)
-	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.CIDADE_LIST_RESPONSE),
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CIDADE_LIST_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
@@ -54,14 +53,13 @@ public class CidadeResource {
 	}
 
 	@Operation(summary = ApiConstants.CIDADE_GET_OPERATION)
-	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.CIDADE_GET_RESPONSE),
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CIDADE_GET_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	@Path("{cidadeUid}")
-	public CidadeResponse get(@PathParam UUID cidadeUid) {
+	public CidadeResponse get(@PathParam("cidadeUid") UUID cidadeUid) {
 		return mapper.toResponse(service.get(cidadeUid));
 	}
 
@@ -78,28 +76,26 @@ public class CidadeResource {
 	}
 
 	@Operation(summary = ApiConstants.CIDADE_UPDATE_OPERATION)
-	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.CIDADE_UPDATE_RESPONSE),
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CIDADE_UPDATE_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PUT
 	@Path("{cidadeUid}/version/{version}")
-	public CidadeResponse update(@PathParam UUID cidadeUid, @PathParam Integer version,
+	public CidadeResponse update(@PathParam("cidadeUid") UUID cidadeUid, @PathParam("version") Integer version,
 			@Valid @NotNull CidadeRequest request) {
 		return mapper.toResponse(service.update(cidadeUid, version, request.getNome(), request.getUf()));
 	}
 
 	@Operation(summary = ApiConstants.CIDADE_DELETE_OPERATION)
-	@APIResponses(value = {
-			@APIResponse(responseCode = "204", description = ApiConstants.CIDADE_DELETE_RESPONSE),
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.CIDADE_DELETE_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@DELETE
 	@Path("{cidadeUid}/version/{version}")
-	public void delete(@PathParam UUID cidadeUid, @PathParam Integer version) {
+	public void delete(@PathParam("cidadeUid") UUID cidadeUid, @PathParam("version") Integer version) {
 		service.delete(cidadeUid, version);
 	}
 
