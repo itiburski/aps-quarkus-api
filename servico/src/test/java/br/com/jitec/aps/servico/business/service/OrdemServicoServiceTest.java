@@ -18,16 +18,24 @@ import org.mockito.Mockito;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.model.TipoServico;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class OrdemServicoServiceTest {
+
+	private static final Integer PAGE = 1;
+	private static final Integer SIZE = 10;
+	private static final Pagination PAGINATION = Pagination.builder().withPage(PAGE).withSize(SIZE).build();
 
 	@Inject
 	OrdemServicoService service;
@@ -51,11 +59,15 @@ public class OrdemServicoServiceTest {
 		OrdemServico os2 = getOrdemServico(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"),
 				new BigInteger("456"));
 		List<OrdemServico> oss = Arrays.asList(os1, os2);
-		Mockito.when(repositoryMock.list("order by numero")).thenReturn(oss);
 
-		List<OrdemServico> result = service.getAll();
+		String query = "order by numero";
+		PanacheQuery<OrdemServico> panacheQuery = mockListPanacheQuery(oss);
+		Mockito.when(repositoryMock.find(query)).thenReturn(panacheQuery);
 
-		Assertions.assertEquals(2, result.size());
+		Paged<OrdemServico> result = service.getAll(PAGINATION);
+
+		Assertions.assertEquals(2, result.getContent().size());
+		Mockito.verify(repositoryMock).find(query);
 	}
 
 	@Test
@@ -259,6 +271,14 @@ public class OrdemServicoServiceTest {
 		os.setUid(uid);
 		os.setNumero(numero);
 		return os;
+	}
+
+	@SuppressWarnings("unchecked")
+	private PanacheQuery<OrdemServico> mockListPanacheQuery(List<OrdemServico> clientes) {
+		PanacheQuery<OrdemServico> query = Mockito.mock(PanacheQuery.class);
+		Mockito.when(query.page(Mockito.any(Page.class))).thenReturn(query);
+		Mockito.when(query.list()).thenReturn(clientes);
+		return query;
 	}
 
 }

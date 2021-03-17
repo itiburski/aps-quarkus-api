@@ -2,7 +2,6 @@ package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -12,10 +11,14 @@ import javax.transaction.Transactional;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 
 @ApplicationScoped
 public class OrdemServicoService {
@@ -32,8 +35,10 @@ public class OrdemServicoService {
 	@Inject
 	ClienteSaldoProducer clienteSaldoProducer;
 
-	public List<OrdemServico> getAll() {
-		return repository.list("order by numero");
+	public Paged<OrdemServico> getAll(Pagination pagination) {
+		PanacheQuery<OrdemServico> query = repository.find("order by numero")
+				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));
+		return new Paged<OrdemServico>(query.list(), query.pageCount(), query.count());
 	}
 
 	public OrdemServico get(UUID ordemServicoUid) {

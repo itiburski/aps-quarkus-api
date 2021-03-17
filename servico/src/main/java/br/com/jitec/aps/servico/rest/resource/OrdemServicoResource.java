@@ -15,6 +15,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -26,6 +27,9 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.Pagination;
+import br.com.jitec.aps.commons.rest.http.Headers;
 import br.com.jitec.aps.servico.api.ApiConstants;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
@@ -53,9 +57,16 @@ public class OrdemServicoResource {
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public List<OrdemServicoSimpleResponse> getAll() {
-		List<OrdemServico> all = osService.getAll();
-		return all.stream().map(os -> mapper.toSimpleResponse(os)).collect(Collectors.toList());
+	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size) {
+		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
+
+		Paged<OrdemServico> query = osService.getAll(pagination);
+		List<OrdemServicoSimpleResponse> ordensServico = query.getContent().stream().map(os -> mapper.toSimpleResponse(os))
+				.collect(Collectors.toList());
+
+		return Response.ok(ordensServico).header(Headers.PAGE_NUMBER, pagination.getPage())
+				.header(Headers.PAGE_SIZE, pagination.getSize()).header(Headers.TOTAL_PAGES, query.getPageCount())
+				.header(Headers.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
 	@Operation(summary = ApiConstants.ORDEM_SERVICO_GET_OPERATION)
