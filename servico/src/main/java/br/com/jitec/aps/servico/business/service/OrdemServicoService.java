@@ -1,7 +1,9 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -13,6 +15,8 @@ import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
+import br.com.jitec.aps.commons.business.util.QueryBuilder;
+import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
@@ -22,6 +26,8 @@ import io.quarkus.panache.common.Page;
 
 @ApplicationScoped
 public class OrdemServicoService {
+
+	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
 
 	@Inject
 	OrdemServicoRepository repository;
@@ -35,8 +41,25 @@ public class OrdemServicoService {
 	@Inject
 	ClienteSaldoProducer clienteSaldoProducer;
 
-	public Paged<OrdemServico> getAll(Pagination pagination) {
-		PanacheQuery<OrdemServico> query = repository.find("order by numero")
+	public Paged<OrdemServico> getAll(Pagination pagination, OrdemServicoFilter filter) {
+		QueryBuilder builder = new QueryBuilder();
+		builder.setSortBy("numero");
+
+		builder.addFilter(Objects.nonNull(filter.getClienteUid()), "cliente.uid = :clienteUid", "clienteUid",
+				filter.getClienteUid());
+		if (Objects.nonNull(filter.getEntradaFrom())) {
+			builder.addFilter("entrada >= :entradaFrom", "entradaFrom",
+					OffsetDateTime.of(filter.getEntradaFrom(), LocalTime.MIN, OFFSET));
+		}
+		if (Objects.nonNull(filter.getEntradaTo())) {
+			builder.addFilter("entrada <= :entradaTo", "entradaTo",
+					OffsetDateTime.of(filter.getEntradaTo(), LocalTime.MAX, OFFSET));
+		}
+		if (Objects.nonNull(filter.getEntregue())) {
+			builder.addFilter(Boolean.TRUE.equals(filter.getEntregue()) ? "entrega is not null" : "entrega is null");
+		}
+
+		PanacheQuery<OrdemServico> query = repository.find(builder.getQuery(), builder.getParams())
 				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));
 		return new Paged<OrdemServico>(query.list(), query.pageCount(), query.count());
 	}

@@ -2,10 +2,14 @@ package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +24,7 @@ import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
+import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
@@ -36,6 +41,7 @@ public class OrdemServicoServiceTest {
 	private static final Integer PAGE = 1;
 	private static final Integer SIZE = 10;
 	private static final Pagination PAGINATION = Pagination.builder().withPage(PAGE).withSize(SIZE).build();
+	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
 
 	@Inject
 	OrdemServicoService service;
@@ -53,7 +59,7 @@ public class OrdemServicoServiceTest {
 	ClienteSaldoProducer clienteSaldoProducerMock;
 
 	@Test
-	public void getAll_ShouldListAll() {
+	public void getAll_WhenUsingNoFilter_ShouldListAll() {
 		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
 				new BigInteger("123"));
 		OrdemServico os2 = getOrdemServico(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"),
@@ -61,13 +67,66 @@ public class OrdemServicoServiceTest {
 		List<OrdemServico> oss = Arrays.asList(os1, os2);
 
 		String query = "order by numero";
+		Map<String, Object> params = new LinkedHashMap<>();
 		PanacheQuery<OrdemServico> panacheQuery = mockListPanacheQuery(oss);
-		Mockito.when(repositoryMock.find(query)).thenReturn(panacheQuery);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<OrdemServico> result = service.getAll(PAGINATION);
+		Paged<OrdemServico> result = service.getAll(PAGINATION, new OrdemServicoFilter());
 
 		Assertions.assertEquals(2, result.getContent().size());
-		Mockito.verify(repositoryMock).find(query);
+		Mockito.verify(repositoryMock).find(query, params);
+	}
+
+	@Test
+	public void getAll_WhenUsingSomeFilter_ShouldListUsingFilter() {
+		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
+		LocalDate entradaFrom = LocalDate.of(2021, 2, 1);
+		LocalDate entradaTo = LocalDate.of(2021, 2, 28);
+		Boolean entregue = Boolean.TRUE;
+		OrdemServicoFilter filter = new OrdemServicoFilter(clienteUid, entradaFrom, entradaTo, entregue);
+
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("clienteUid", clienteUid);
+		params.put("entradaFrom", OffsetDateTime.of(entradaFrom, LocalTime.MIN, OFFSET));
+		params.put("entradaTo", OffsetDateTime.of(entradaTo, LocalTime.MAX, OFFSET));
+
+		String query = "cliente.uid = :clienteUid and entrada >= :entradaFrom and entrada <= :entradaTo and entrega is not null order by numero";
+
+		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
+				new BigInteger("123"));
+		List<OrdemServico> oss = Arrays.asList(os1);
+
+		PanacheQuery<OrdemServico> panacheQuery = mockListPanacheQuery(oss);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
+
+		Paged<OrdemServico> result = service.getAll(PAGINATION, filter);
+
+		Assertions.assertEquals(1, result.getContent().size());
+		Mockito.verify(repositoryMock).find(query, params);
+	}
+
+	@Test
+	public void getAll_WhenUsingFilterEntregueFalse_ShouldListUsingThisFilter() {
+		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
+		Boolean entregue = Boolean.FALSE;
+		OrdemServicoFilter filter = new OrdemServicoFilter(clienteUid, null, null, entregue);
+
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("clienteUid", clienteUid);
+
+		String query = "cliente.uid = :clienteUid and entrega is null order by numero";
+
+		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
+				new BigInteger("123"));
+		List<OrdemServico> oss = Arrays.asList(os1);
+
+		PanacheQuery<OrdemServico> panacheQuery = mockListPanacheQuery(oss);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
+
+		Paged<OrdemServico> result = service.getAll(PAGINATION, filter);
+
+		Assertions.assertEquals(1, result.getContent().size());
+		Mockito.verify(repositoryMock).find(query, params);
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 package br.com.jitec.aps.servico.rest.resource;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
 import br.com.jitec.aps.servico.api.ApiConstants;
+import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.rest.payload.mapper.OrdemServicoMapper;
@@ -52,17 +54,21 @@ public class OrdemServicoResource {
 	@Inject
 	OrdemServicoMapper mapper;
 
-	@Operation(summary = ApiConstants.ORDEM_SERVICO_LIST_OPERATION)
+	@Operation(summary = ApiConstants.ORDEM_SERVICO_LIST_OPERATION, description = ApiConstants.ORDEM_SERVICO_LIST_OPERATION_DESCRIPTION)
 	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_LIST_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size) {
-		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
+	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
+			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("entradaFrom") LocalDate entradaFrom,
+			@QueryParam("entradaTo") LocalDate entradaTo, @QueryParam("entregue") Boolean entregue) {
 
-		Paged<OrdemServico> query = osService.getAll(pagination);
-		List<OrdemServicoSimpleResponse> ordensServico = query.getContent().stream().map(os -> mapper.toSimpleResponse(os))
-				.collect(Collectors.toList());
+		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
+		OrdemServicoFilter filter = new OrdemServicoFilter(clienteUid, entradaFrom, entradaTo, entregue);
+
+		Paged<OrdemServico> query = osService.getAll(pagination, filter);
+		List<OrdemServicoSimpleResponse> ordensServico = query.getContent().stream()
+				.map(os -> mapper.toSimpleResponse(os)).collect(Collectors.toList());
 
 		return Response.ok(ordensServico).header(Headers.PAGE_NUMBER, pagination.getPage())
 				.header(Headers.PAGE_SIZE, pagination.getSize()).header(Headers.TOTAL_PAGES, query.getPageCount())

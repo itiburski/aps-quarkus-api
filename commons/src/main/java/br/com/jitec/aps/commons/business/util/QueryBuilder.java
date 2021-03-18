@@ -12,6 +12,10 @@ public class QueryBuilder {
 	List<String> where = new LinkedList<>();
 	Map<String, Object> params = new LinkedHashMap<>();
 
+	public void addFilter(String whereClause) {
+		where.add(whereClause);
+	}
+
 	public void addFilter(String whereClause, String paramName, Object paramValue) {
 		where.add(whereClause);
 		params.put(paramName, paramValue);

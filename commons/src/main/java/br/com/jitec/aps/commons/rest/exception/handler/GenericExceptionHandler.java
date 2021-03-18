@@ -1,5 +1,6 @@
 package br.com.jitec.aps.commons.rest.exception.handler;
 
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -26,7 +27,7 @@ public class GenericExceptionHandler implements ExceptionMapper<Exception> {
 
 	@Override
 	public Response toResponse(Exception exception) {
-		if (exception instanceof ProcessingException) {
+		if (exception instanceof ProcessingException || exception instanceof ClientErrorException) {
 			String message = getExceptionMessage(exception);
 			return handleException(exception, Status.BAD_REQUEST, String.format(BAD_REQUEST_DETAIL, message));
 		}

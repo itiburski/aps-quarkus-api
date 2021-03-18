@@ -35,6 +35,14 @@ public class QueryBuilderTest {
 	}
 
 	@Test
+	public void getQuery_whenAddFilterWithoutParams_ThenShouldReturnQueryAndEmptyParams() {
+		QueryBuilder queryBuilder = new QueryBuilder();
+		queryBuilder.addFilter("someField is null");
+		Assertions.assertEquals("someField is null", queryBuilder.getQuery());
+		Assertions.assertTrue(queryBuilder.getParams().isEmpty());
+	}
+
+	@Test
 	public void getQuery_whenSortBy_ThenShouldReturnQuery() {
 		QueryBuilder queryBuilder = new QueryBuilder();
 		queryBuilder.setSortBy("sortField");
