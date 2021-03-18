@@ -131,15 +131,15 @@ public class OrdemServicoService {
 	}
 
 	@Transactional
-	public OrdemServico definirConclusao(UUID ordemServicoUid, Integer version, OffsetDateTime conclusao,
+	public OrdemServico definirLancamento(UUID ordemServicoUid, Integer version, OffsetDateTime lancamento,
 			BigDecimal valor) {
 		OrdemServico os = get(ordemServicoUid, version);
 
-		BigDecimal vlAnterior = os.getConclusao() != null ? os.getValor() : BigDecimal.ZERO;
+		BigDecimal vlAnterior = os.getLancamento() != null ? os.getValor() : BigDecimal.ZERO;
 		BigDecimal saldoARefletirNoCliente = vlAnterior.subtract(valor);
 
 		os.setValor(valor);
-		os.setConclusao(conclusao);
+		os.setLancamento(lancamento);
 		repository.persist(os);
 
 		clienteSaldoProducer.sendUpdateSaldoCliente(os.getCliente().getUid(), saldoARefletirNoCliente);

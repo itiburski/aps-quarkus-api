@@ -25,7 +25,7 @@ public class OrdemServicoSimpleResponse {
 
 	private OffsetDateTime agendadoPara;
 
-	private OffsetDateTime conclusao;
+	private OffsetDateTime lancamento;
 
 	private OffsetDateTime entrega;
 
@@ -101,12 +101,12 @@ public class OrdemServicoSimpleResponse {
 		this.agendadoPara = agendadoPara;
 	}
 
-	public OffsetDateTime getConclusao() {
-		return conclusao;
+	public OffsetDateTime getLancamento() {
+		return lancamento;
 	}
 
-	public void setConclusao(OffsetDateTime conclusao) {
-		this.conclusao = conclusao;
+	public void setLancamento(OffsetDateTime lancamento) {
+		this.lancamento = lancamento;
 	}
 
 	public OffsetDateTime getEntrega() {

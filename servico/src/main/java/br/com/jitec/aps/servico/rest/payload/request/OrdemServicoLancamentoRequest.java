@@ -6,21 +6,21 @@ import java.time.OffsetDateTime;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-public class OrdemServicoConclusaoRequest {
+public class OrdemServicoLancamentoRequest {
 
 	@NotNull
-	private OffsetDateTime conclusao;
+	private OffsetDateTime lancamento;
 
 	@NotNull
 	@Positive
 	private BigDecimal valor;
 
-	public OffsetDateTime getConclusao() {
-		return conclusao;
+	public OffsetDateTime getLancamento() {
+		return lancamento;
 	}
 
-	public void setConclusao(OffsetDateTime conclusao) {
-		this.conclusao = conclusao;
+	public void setLancamento(OffsetDateTime lancamento) {
+		this.lancamento = lancamento;
 	}
 
 	public BigDecimal getValor() {

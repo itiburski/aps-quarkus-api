@@ -45,8 +45,8 @@ public class OrdemServico extends APSEntity {
 	@Column(name = "DT_AGENDA")
 	private OffsetDateTime agendadoPara;
 
-	@Column(name = "DT_CONCLUSAO")
-	private OffsetDateTime conclusao;
+	@Column(name = "DT_LANCAMENTO")
+	private OffsetDateTime lancamento;
 
 	@Column(name = "DT_ENTREGA")
 	private OffsetDateTime entrega;
@@ -126,12 +126,12 @@ public class OrdemServico extends APSEntity {
 		this.agendadoPara = agendadoPara;
 	}
 
-	public OffsetDateTime getConclusao() {
-		return conclusao;
+	public OffsetDateTime getLancamento() {
+		return lancamento;
 	}
 
-	public void setConclusao(OffsetDateTime conclusao) {
-		this.conclusao = conclusao;
+	public void setLancamento(OffsetDateTime lancamento) {
+		this.lancamento = lancamento;
 	}
 
 	public OffsetDateTime getEntrega() {

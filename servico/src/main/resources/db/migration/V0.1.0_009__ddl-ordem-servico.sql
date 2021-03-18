@@ -13,7 +13,7 @@ CREATE TABLE ORDEM_SERVICO (
   OBSERVACAO                      CHARACTER VARYING(8192),
   DT_ENTRADA                      TIMESTAMPTZ Not Null,
   DT_AGENDA                       TIMESTAMPTZ,
-  DT_CONCLUSAO                    TIMESTAMPTZ,
+  DT_LANCAMENTO                   TIMESTAMPTZ,
   DT_ENTREGA                      TIMESTAMPTZ,
   FATURA_ID                       BIGINT,
   CONSTRAINT ORDEM_SERVICO_PK PRIMARY KEY (ID),

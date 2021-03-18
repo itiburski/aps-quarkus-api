@@ -36,7 +36,7 @@ import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.rest.payload.mapper.OrdemServicoMapper;
-import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoConclusaoRequest;
+import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoLancamentoRequest;
 import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoCreateRequest;
 import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
@@ -118,18 +118,18 @@ public class OrdemServicoResource {
 		return mapper.toResponse(os);
 	}
 
-	@Operation(summary = ApiConstants.ORDEM_SERVICO_DEFINIR_CONCLUSAO_OPERATION)
+	@Operation(summary = ApiConstants.ORDEM_SERVICO_DEFINIR_LANCAMENTO_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_DEFINIR_CONCLUSAO_RESPONSE),
+			@APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_DEFINIR_LANCAMENTO_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PATCH
-	@Path("/{ordemServicoUid}/version/{version}/conclusao")
-	public OrdemServicoResponse definirConclusao(@PathParam("ordemServicoUid") UUID ordemServicoUid,
-			@PathParam("version") Integer version, @Valid @NotNull OrdemServicoConclusaoRequest request) {
-		OrdemServico os = osService.definirConclusao(ordemServicoUid, version, request.getConclusao(),
+	@Path("/{ordemServicoUid}/version/{version}/lancamento")
+	public OrdemServicoResponse definirLancamento(@PathParam("ordemServicoUid") UUID ordemServicoUid,
+			@PathParam("version") Integer version, @Valid @NotNull OrdemServicoLancamentoRequest request) {
+		OrdemServico os = osService.definirLancamento(ordemServicoUid, version, request.getLancamento(),
 				request.getValor());
 		return mapper.toResponse(os);
 	}
