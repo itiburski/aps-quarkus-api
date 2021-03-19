@@ -132,6 +132,18 @@ public class OrdemServicoServiceTest {
 	@Test
 	public void get_WithExistingUUID_ShouldReturnOS() {
 		UUID uid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+		OrdemServico os1 = getOrdemServico(uid, new BigInteger("123"));
+		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(os1));
+
+		OrdemServico result = service.get(uid);
+
+		Assertions.assertEquals("66a1f5d6-f838-450e-b186-542f52413e4b", result.getUid().toString());
+		Assertions.assertEquals(new BigInteger("123"), result.getNumero());
+	}
+
+	@Test
+	public void get_WithNonexistingUUID_ShouldThrowException() {
+		UUID uid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.empty());
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.get(uid),
@@ -141,15 +153,36 @@ public class OrdemServicoServiceTest {
 	}
 
 	@Test
-	public void get_WithNonexistingUUID_ShouldThrowException() {
-		UUID uid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		OrdemServico os1 = getOrdemServico(uid, new BigInteger("123"));
-		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(os1));
+	public void get_WithListOfUUIDs_ShouldReturnListOfOS() {
+		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+		List<UUID> uids = Arrays.asList(uid1, uid2);
+		OrdemServico os1 = getOrdemServico(uid1, new BigInteger("123"));
+		OrdemServico os2 = getOrdemServico(uid2, new BigInteger("456"));
+		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
-		OrdemServico result = service.get(uid);
+		Mockito.when(repositoryMock.findByUids(uids)).thenReturn(ordensServico);
 
-		Assertions.assertEquals("66a1f5d6-f838-450e-b186-542f52413e4b", result.getUid().toString());
-		Assertions.assertEquals(new BigInteger("123"), result.getNumero());
+		List<OrdemServico> result = service.get(uids);
+
+		Assertions.assertEquals(2, result.size());
+	}
+
+	@Test
+	public void get_WithListOfUUIDsWhichOneIsInvalid_ShouldThrowException() {
+		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+		List<UUID> uids = Arrays.asList(uid1, uid2);
+		OrdemServico os1 = getOrdemServico(uid1, new BigInteger("123"));
+		List<OrdemServico> ordensServico = Arrays.asList(os1);
+
+		Mockito.when(repositoryMock.findByUids(uids)).thenReturn(ordensServico);
+
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.get(uids),
+				"should have thrown DataNotFoundException");
+
+		Assertions.assertEquals("Uma ou mais ordens de serviço não foram encontradas para os parâmetros informados",
+				thrown.getMessage());
 	}
 
 	@Test

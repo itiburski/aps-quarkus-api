@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -62,6 +63,15 @@ public class OrdemServicoService {
 		PanacheQuery<OrdemServico> query = repository.find(builder.getQuery(), builder.getParams())
 				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));
 		return new Paged<OrdemServico>(query.list(), query.pageCount(), query.count());
+	}
+
+	public List<OrdemServico> get(List<UUID> ordensServicoUid) {
+		List<OrdemServico> ordensServico = repository.findByUids(ordensServicoUid);
+		if (ordensServico.size() != ordensServicoUid.size()) {
+			throw new DataNotFoundException(
+					"Uma ou mais ordens de serviço não foram encontradas para os parâmetros informados");
+		}
+		return ordensServico;
 	}
 
 	public OrdemServico get(UUID ordemServicoUid) {

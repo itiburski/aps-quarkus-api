@@ -3,6 +3,7 @@ package br.com.jitec.aps.servico.data.model;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,8 +52,9 @@ public class OrdemServico extends APSEntity {
 	@Column(name = "DT_ENTREGA")
 	private OffsetDateTime entrega;
 
-	// TODO
-	// FATURA_ID BIGINT
+	@ManyToOne
+	@JoinColumn(name = "FATURA_ID")
+	private Fatura fatura;
 
 	public BigInteger getNumero() {
 		return numero;
@@ -140,6 +142,55 @@ public class OrdemServico extends APSEntity {
 
 	public void setEntrega(OffsetDateTime entrega) {
 		this.entrega = entrega;
+	}
+
+	public Fatura getFatura() {
+		return fatura;
+	}
+
+	public void setFatura(Fatura fatura) {
+		this.fatura = fatura;
+	}
+
+	public static OrdemServico.Builder builder() {
+		return new OrdemServico.Builder();
+	}
+
+	public static class Builder {
+		private OrdemServico instance;
+
+		public Builder() {
+			instance = new OrdemServico();
+		}
+
+		public Builder withUid(UUID uid) { 
+			instance.setUid(uid);
+			return this;
+		}
+		
+		public Builder withCliente(ClienteReplica cliente) {
+			instance.setCliente(cliente);
+			return this;
+		}
+		
+		public Builder withLancamento(OffsetDateTime lancamento) {
+			instance.setLancamento(lancamento);
+			return this;
+		}
+		
+		public Builder withValor(BigDecimal valor) {
+			instance.setValor(valor);
+			return this;
+		}
+		
+		public Builder withFatura(Fatura fatura) {
+			instance.setFatura(fatura);
+			return this;
+		}
+
+		public OrdemServico build() {
+			return instance;
+		}
 	}
 
 }

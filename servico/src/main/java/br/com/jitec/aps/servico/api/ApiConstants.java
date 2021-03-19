@@ -5,6 +5,7 @@ public abstract class ApiConstants {
 	public static final String TAG_TIPO_SERVICO = "Tipo de Serviço";
 	public static final String TAG_TIPO_BAIXA = "Tipo de Baixa";
 	public static final String TAG_ORDEM_SERVICO = "Ordem de Serviço";
+	public static final String TAG_FATURA = "Fatura";
 
 	public static final String STATUS_CODE_BAD_REQUEST = "Parâmetros inválidos na requisição";
 	public static final String STATUS_CODE_NOT_FOUND = "O recurso não foi encontrado com os parâmetros informados";
@@ -36,5 +37,8 @@ public abstract class ApiConstants {
 	public static final String ORDEM_SERVICO_UPDATE_RESPONSE = "Retorna a ordem de serviço atualizada";
 	public static final String ORDEM_SERVICO_DEFINIR_LANCAMENTO_OPERATION = "Atualiza a data de lançamento e o valor na ordem de serviço especificada";
 	public static final String ORDEM_SERVICO_DEFINIR_LANCAMENTO_RESPONSE = "Retorna a ordem de serviço atualizada";
+
+	public static final String FATURA_CREATE_OPERATION = "Cadastra uma nova fatura";
+	public static final String FATURA_CREATE_RESPONSE = "Retorna a nova fatura cadastrada";
 
 }
