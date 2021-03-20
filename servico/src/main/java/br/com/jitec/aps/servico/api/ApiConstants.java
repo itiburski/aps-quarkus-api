@@ -38,6 +38,8 @@ public abstract class ApiConstants {
 	public static final String ORDEM_SERVICO_DEFINIR_LANCAMENTO_OPERATION = "Atualiza a data de lançamento e o valor na ordem de serviço especificada";
 	public static final String ORDEM_SERVICO_DEFINIR_LANCAMENTO_RESPONSE = "Retorna a ordem de serviço atualizada";
 
+	public static final String FATURA_LIST_OPERATION = "Obtém uma lista de faturas";
+	public static final String FATURA_LIST_RESPONSE = "Retorna todas as faturas";
 	public static final String FATURA_CREATE_OPERATION = "Cadastra uma nova fatura";
 	public static final String FATURA_CREATE_RESPONSE = "Retorna a nova fatura cadastrada";
 

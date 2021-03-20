@@ -1,5 +1,7 @@
 package br.com.jitec.aps.servico.rest.payload.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -14,5 +16,7 @@ public interface FaturaMapper {
 	@Mappings({ @Mapping(source = "uid", target = "faturaUid"),
 			@Mapping(source = "cliente.uid", target = "cliente.clienteUid") })
 	FaturaResponse toResponse(Fatura entity);
+
+	List<FaturaResponse> toListResponse(List<Fatura> entities);
 
 }

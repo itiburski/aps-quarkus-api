@@ -28,6 +28,10 @@ public class FaturaService {
 	@Inject
 	OrdemServicoRepository osRepository;
 
+	public List<Fatura> getAll() {
+		return repository.list("order by codigo");
+	}
+
 	@Transactional
 	public Fatura create(OffsetDateTime data, List<UUID> ordensServicoUid) {
 		List<OrdemServico> ordensServico = ordemServicoService.get(ordensServicoUid);

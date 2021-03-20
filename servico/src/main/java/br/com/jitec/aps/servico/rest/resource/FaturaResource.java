@@ -1,9 +1,12 @@
 package br.com.jitec.aps.servico.rest.resource;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,7 +27,6 @@ import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.rest.payload.mapper.FaturaMapper;
 import br.com.jitec.aps.servico.rest.payload.request.FaturaRequest;
 import br.com.jitec.aps.servico.rest.payload.response.FaturaResponse;
-import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
 
 @Tag(name = ApiConstants.TAG_FATURA)
 @Path("/faturas")
@@ -37,6 +39,16 @@ public class FaturaResource {
 
 	@Inject
 	FaturaMapper faturaMapper;
+
+	@Operation(summary = ApiConstants.FATURA_LIST_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.FATURA_LIST_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@GET
+	public List<FaturaResponse> getAll() {
+		List<Fatura> faturas = service.getAll();
+		return faturaMapper.toListResponse(faturas);
+	}
 
 	@Operation(summary = ApiConstants.FATURA_CREATE_OPERATION)
 	@APIResponses(value = {

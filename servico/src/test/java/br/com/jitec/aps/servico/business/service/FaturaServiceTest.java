@@ -1,6 +1,7 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,21 @@ public class FaturaServiceTest {
 	@InjectMock
 	OrdemServicoRepository osRepositoryMock;
 
+	@Test
+	public void getAll_shouldListAll() {
+		Fatura fatura1 = buildFatura(BigInteger.valueOf(1L));
+		Fatura fatura2 = buildFatura(BigInteger.valueOf(2L));
+		List<Fatura> faturas = Arrays.asList(fatura1, fatura2);
+		Mockito.when(repositoryMock.list("order by codigo")).thenReturn(faturas);
+
+		List<Fatura> result = service.getAll();
+
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals(BigInteger.valueOf(1L), result.get(0).getCodigo());
+		Assertions.assertEquals(BigInteger.valueOf(2L), result.get(1).getCodigo());
+	}
+
+	@SuppressWarnings("unchecked")
 	@Test
 	public void create_WithCorrectData_ShouldReturnFatura() {
 		OffsetDateTime dataFatura = OffsetDateTime.now();
@@ -100,8 +116,8 @@ public class FaturaServiceTest {
 
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		ClienteReplica cliente = new ClienteReplica(clienteUid, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServico.builder().withUid(uid1).withCliente(cliente)
-				.withLancamento(null).withValor(BigDecimal.valueOf(70L)).build();
+		OrdemServico os1 = OrdemServico.builder().withUid(uid1).withCliente(cliente).withLancamento(null)
+				.withValor(BigDecimal.valueOf(70L)).build();
 		OrdemServico os2 = OrdemServico.builder().withUid(uid2).withCliente(cliente)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
@@ -111,7 +127,8 @@ public class FaturaServiceTest {
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(dataFatura, uids),
 				"should have thrown InvalidDataException");
 
-		Assertions.assertEquals("Uma ou mais ordens de serviço informadas ainda não foram lançadas", thrown.getMessage());
+		Assertions.assertEquals("Uma ou mais ordens de serviço informadas ainda não foram lançadas",
+				thrown.getMessage());
 	}
 
 	@Test
@@ -137,6 +154,12 @@ public class FaturaServiceTest {
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Uma ou mais ordens de serviço informadas já foram faturadas", thrown.getMessage());
+	}
+
+	private Fatura buildFatura(BigInteger codigo) {
+		Fatura fatura = new Fatura();
+		fatura.setCodigo(codigo);
+		return fatura;
 	}
 
 }
