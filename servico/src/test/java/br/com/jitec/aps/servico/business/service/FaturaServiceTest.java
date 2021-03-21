@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -13,12 +15,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 
@@ -49,6 +53,30 @@ public class FaturaServiceTest {
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertEquals(BigInteger.valueOf(1L), result.get(0).getCodigo());
 		Assertions.assertEquals(BigInteger.valueOf(2L), result.get(1).getCodigo());
+	}
+
+	@Test
+	public void getComplete_whenValidUid_shouldReturnFaturaWithOrdensServico() {
+		UUID faturaUid = UUID.fromString("677a195f-f239-4897-906c-a0a184af3dd9");
+
+		Fatura fatura = buildFatura(BigInteger.valueOf(3L), faturaUid);
+		mockFindSingleResultOptional(fatura);
+
+		Fatura result = service.getComplete(faturaUid);
+
+		Assertions.assertEquals("677a195f-f239-4897-906c-a0a184af3dd9", result.getUid().toString());
+		Assertions.assertEquals(BigInteger.valueOf(3L), result.getCodigo());
+	}
+
+	@Test
+	public void getComplete_whenInvalidUid_shouldThrowException() {
+		UUID faturaUid = UUID.fromString("677a195f-f239-4897-906c-a0a184af3dd9");
+		mockFindSingleResultOptionalEmpty();
+
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.getComplete(faturaUid),
+				"should have thrown DataNotFoundException");
+
+		Assertions.assertEquals("Fatura não encontrada", thrown.getMessage());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -160,6 +188,26 @@ public class FaturaServiceTest {
 		Fatura fatura = new Fatura();
 		fatura.setCodigo(codigo);
 		return fatura;
+	}
+
+	private Fatura buildFatura(BigInteger codigo, UUID uid) {
+		Fatura fatura = buildFatura(codigo);
+		fatura.setUid(uid);
+		return fatura;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void mockFindSingleResultOptional(Fatura fatura) {
+		PanacheQuery<Fatura> query = Mockito.mock(PanacheQuery.class);
+		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Map.class))).thenReturn(query);
+		Mockito.when(query.singleResultOptional()).thenReturn(Optional.of(fatura));
+	}
+
+	@SuppressWarnings("unchecked")
+	private void mockFindSingleResultOptionalEmpty() {
+		PanacheQuery<Fatura> query = Mockito.mock(PanacheQuery.class);
+		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Map.class))).thenReturn(query);
+		Mockito.when(query.singleResultOptional()).thenReturn(Optional.empty());
 	}
 
 }

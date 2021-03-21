@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.business.util.QueryBuilder;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
@@ -30,6 +33,20 @@ public class FaturaService {
 
 	public List<Fatura> getAll() {
 		return repository.list("order by codigo");
+	}
+
+	public Fatura getComplete(UUID faturaUid) {
+		QueryBuilder builder = new QueryBuilder();
+		builder.addFilter("f.uid = :faturaUid", "faturaUid", faturaUid);
+
+		Optional<Fatura> faturaOp = repository
+				.find("from Fatura f left join fetch f.ordensServico where " + builder.getQuery(), builder.getParams())
+				.singleResultOptional();
+		if (faturaOp.isEmpty()) {
+			throw new DataNotFoundException("Fatura não encontrada");
+		}
+		Fatura fatura = faturaOp.get();
+		return fatura;
 	}
 
 	@Transactional

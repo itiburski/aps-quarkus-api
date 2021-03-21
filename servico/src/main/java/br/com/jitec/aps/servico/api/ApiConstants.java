@@ -40,6 +40,8 @@ public abstract class ApiConstants {
 
 	public static final String FATURA_LIST_OPERATION = "Obtém uma lista de faturas";
 	public static final String FATURA_LIST_RESPONSE = "Retorna todas as faturas";
+	public static final String FATURA_GET_OPERATION = "Obtém os dados de uma fatura específica";
+	public static final String FATURA_GET_RESPONSE = "Retorna a fatura correspondente ao faturaUid informado";
 	public static final String FATURA_CREATE_OPERATION = "Cadastra uma nova fatura";
 	public static final String FATURA_CREATE_RESPONSE = "Retorna a nova fatura cadastrada";
 

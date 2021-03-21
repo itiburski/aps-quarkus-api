@@ -1,6 +1,8 @@
 package br.com.jitec.aps.servico.rest.resource;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -9,6 +11,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,6 +30,7 @@ import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.rest.payload.mapper.FaturaMapper;
 import br.com.jitec.aps.servico.rest.payload.request.FaturaRequest;
 import br.com.jitec.aps.servico.rest.payload.response.FaturaResponse;
+import br.com.jitec.aps.servico.rest.payload.response.FaturaSimpleResponse;
 
 @Tag(name = ApiConstants.TAG_FATURA)
 @Path("/faturas")
@@ -45,21 +49,35 @@ public class FaturaResource {
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public List<FaturaResponse> getAll() {
+	public List<FaturaSimpleResponse> getAll() {
 		List<Fatura> faturas = service.getAll();
-		return faturaMapper.toListResponse(faturas);
+		List<FaturaSimpleResponse> faturasSimpleResponse = faturas.stream()
+				.map(fatura -> faturaMapper.toSimpleResponse(fatura)).collect(Collectors.toList());
+		return faturasSimpleResponse;
+	}
+
+	@Operation(summary = ApiConstants.FATURA_GET_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.FATURA_GET_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@GET
+	@Path("/{faturaUid}")
+	public FaturaResponse get(@PathParam("faturaUid") UUID faturaUid) {
+		Fatura fatura = service.getComplete(faturaUid);
+		return faturaMapper.toResponse(fatura);
 	}
 
 	@Operation(summary = ApiConstants.FATURA_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ApiConstants.FATURA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = FaturaResponse.class))),
+			@APIResponse(responseCode = "201", description = ApiConstants.FATURA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = FaturaSimpleResponse.class))),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull FaturaRequest request) {
 		Fatura fatura = service.create(request.getData(), request.getOrdensServicoUid());
-		FaturaResponse response = faturaMapper.toResponse(fatura);
+		FaturaSimpleResponse response = faturaMapper.toSimpleResponse(fatura);
 
 		return Response.status(Status.CREATED).entity(response).build();
 	}
