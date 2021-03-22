@@ -13,11 +13,15 @@ import javax.transaction.Transactional;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.business.util.QueryBuilder;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 
 @ApplicationScoped
 public class FaturaService {
@@ -31,8 +35,13 @@ public class FaturaService {
 	@Inject
 	OrdemServicoRepository osRepository;
 
-	public List<Fatura> getAll() {
-		return repository.list("order by codigo");
+	public Paged<Fatura> getAll(Pagination pagination) {
+		QueryBuilder builder = new QueryBuilder();
+		builder.setSortBy("codigo");
+
+		PanacheQuery<Fatura> query = repository.find(builder.getQuery(), builder.getParams())
+				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));
+		return new Paged<Fatura>(query.list(), query.pageCount(), query.count());
 	}
 
 	public Fatura getComplete(UUID faturaUid) {

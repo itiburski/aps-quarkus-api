@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,17 +18,24 @@ import org.mockito.Mockito;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
+import br.com.jitec.aps.commons.business.util.Paged;
+import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class FaturaServiceTest {
+
+	private static final Integer PAGE = 1;
+	private static final Integer SIZE = 10;
+	private static final Pagination PAGINATION = Pagination.builder().withPage(PAGE).withSize(SIZE).build();
 
 	@Inject
 	FaturaService service;
@@ -46,13 +54,17 @@ public class FaturaServiceTest {
 		Fatura fatura1 = buildFatura(BigInteger.valueOf(1L));
 		Fatura fatura2 = buildFatura(BigInteger.valueOf(2L));
 		List<Fatura> faturas = Arrays.asList(fatura1, fatura2);
-		Mockito.when(repositoryMock.list("order by codigo")).thenReturn(faturas);
 
-		List<Fatura> result = service.getAll();
+		String query = "order by codigo";
+		Map<String, Object> params = new LinkedHashMap<>();
+		PanacheQuery<Fatura> panacheQuery = mockListPanacheQuery(faturas);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
+		
+		Paged<Fatura> result = service.getAll(PAGINATION);
 
-		Assertions.assertEquals(2, result.size());
-		Assertions.assertEquals(BigInteger.valueOf(1L), result.get(0).getCodigo());
-		Assertions.assertEquals(BigInteger.valueOf(2L), result.get(1).getCodigo());
+		Assertions.assertEquals(2, result.getContent().size());
+		Assertions.assertEquals(BigInteger.valueOf(1L), result.getContent().get(0).getCodigo());
+		Assertions.assertEquals(BigInteger.valueOf(2L), result.getContent().get(1).getCodigo());
 	}
 
 	@Test
@@ -208,6 +220,14 @@ public class FaturaServiceTest {
 		PanacheQuery<Fatura> query = Mockito.mock(PanacheQuery.class);
 		Mockito.when(repositoryMock.find(Mockito.anyString(), Mockito.any(Map.class))).thenReturn(query);
 		Mockito.when(query.singleResultOptional()).thenReturn(Optional.empty());
+	}
+
+	@SuppressWarnings("unchecked")
+	private PanacheQuery<Fatura> mockListPanacheQuery(List<Fatura> faturas) {
+		PanacheQuery<Fatura> query = Mockito.mock(PanacheQuery.class);
+		Mockito.when(query.page(Mockito.any(Page.class))).thenReturn(query);
+		Mockito.when(query.list()).thenReturn(faturas);
+		return query;
 	}
 
 }
