@@ -82,15 +82,16 @@ public class OrdemServicoServiceTest {
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		LocalDate entradaFrom = LocalDate.of(2021, 2, 1);
 		LocalDate entradaTo = LocalDate.of(2021, 2, 28);
-		Boolean entregue = Boolean.TRUE;
-		OrdemServicoFilter filter = new OrdemServicoFilter(clienteUid, entradaFrom, entradaTo, entregue);
+		OrdemServicoFilter filter = OrdemServicoFilter.builder().withClienteUid(clienteUid).withEntradaFrom(entradaFrom)
+				.withEntradaTo(entradaTo).withLancado(Boolean.TRUE).withEntregue(Boolean.TRUE)
+				.withFaturado(Boolean.TRUE).build();
 
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("clienteUid", clienteUid);
 		params.put("entradaFrom", OffsetDateTime.of(entradaFrom, LocalTime.MIN, OFFSET));
 		params.put("entradaTo", OffsetDateTime.of(entradaTo, LocalTime.MAX, OFFSET));
 
-		String query = "cliente.uid = :clienteUid and entrada >= :entradaFrom and entrada <= :entradaTo and entrega is not null order by numero";
+		String query = "cliente.uid = :clienteUid and entrada >= :entradaFrom and entrada <= :entradaTo and entrega is not null and lancamento is not null and fatura is not null order by numero";
 
 		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
 				new BigInteger("123"));
@@ -108,13 +109,13 @@ public class OrdemServicoServiceTest {
 	@Test
 	public void getAll_WhenUsingFilterEntregueFalse_ShouldListUsingThisFilter() {
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
-		Boolean entregue = Boolean.FALSE;
-		OrdemServicoFilter filter = new OrdemServicoFilter(clienteUid, null, null, entregue);
+		OrdemServicoFilter filter = OrdemServicoFilter.builder().withClienteUid(clienteUid).withLancado(Boolean.FALSE)
+				.withEntregue(Boolean.FALSE).withFaturado(Boolean.FALSE).build();
 
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("clienteUid", clienteUid);
 
-		String query = "cliente.uid = :clienteUid and entrega is null order by numero";
+		String query = "cliente.uid = :clienteUid and entrega is null and lancamento is null and fatura is null order by numero";
 
 		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
 				new BigInteger("123"));

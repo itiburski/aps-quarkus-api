@@ -9,17 +9,11 @@ public class OrdemServicoFilter {
 	private LocalDate entradaFrom;
 	private LocalDate entradaTo;
 	private Boolean entregue;
+	private Boolean lancado;
+	private Boolean faturado;
 
 	public OrdemServicoFilter() {
 		// Default constructor
-	}
-
-	public OrdemServicoFilter(UUID clienteUid, LocalDate entradaFrom, LocalDate entradaTo, Boolean entregue) {
-		super();
-		this.clienteUid = clienteUid;
-		this.entradaFrom = entradaFrom;
-		this.entradaTo = entradaTo;
-		this.entregue = entregue;
 	}
 
 	public UUID getClienteUid() {
@@ -52,6 +46,68 @@ public class OrdemServicoFilter {
 
 	public void setEntregue(Boolean entregue) {
 		this.entregue = entregue;
+	}
+
+	public Boolean getLancado() {
+		return lancado;
+	}
+
+	public void setLancado(Boolean lancado) {
+		this.lancado = lancado;
+	}
+
+	public Boolean getFaturado() {
+		return faturado;
+	}
+
+	public void setFaturado(Boolean faturado) {
+		this.faturado = faturado;
+	}
+
+	public static OrdemServicoFilter.Builder builder() {
+		return new OrdemServicoFilter.Builder();
+	}
+
+	public static class Builder {
+		private OrdemServicoFilter instance;
+
+		public Builder() {
+			instance = new OrdemServicoFilter();
+		}
+
+		public Builder withClienteUid(UUID clienteUid) {
+			instance.setClienteUid(clienteUid);
+			return this;
+		}
+
+		public Builder withEntradaFrom(LocalDate entradaFrom) {
+			instance.setEntradaFrom(entradaFrom);
+			return this;
+		}
+
+		public Builder withEntradaTo(LocalDate entradaTo) {
+			instance.setEntradaTo(entradaTo);
+			return this;
+		}
+
+		public Builder withEntregue(Boolean entregue) {
+			instance.setEntregue(entregue);
+			return this;
+		}
+
+		public Builder withLancado(Boolean lancado) {
+			instance.setLancado(lancado);
+			return this;
+		}
+
+		public Builder withFaturado(Boolean faturado) {
+			instance.setFaturado(faturado);
+			return this;
+		}
+
+		public OrdemServicoFilter build() {
+			return instance;
+		}
 	}
 
 }

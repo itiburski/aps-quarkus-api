@@ -61,10 +61,12 @@ public class OrdemServicoResource {
 	@GET
 	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
 			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("entradaFrom") LocalDate entradaFrom,
-			@QueryParam("entradaTo") LocalDate entradaTo, @QueryParam("entregue") Boolean entregue) {
+			@QueryParam("entradaTo") LocalDate entradaTo, @QueryParam("entregue") Boolean entregue,
+			@QueryParam("lancado") Boolean lancado, @QueryParam("faturado") Boolean faturado) {
 
 		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
-		OrdemServicoFilter filter = new OrdemServicoFilter(clienteUid, entradaFrom, entradaTo, entregue);
+		OrdemServicoFilter filter = OrdemServicoFilter.builder().withClienteUid(clienteUid).withEntradaFrom(entradaFrom)
+				.withEntradaTo(entradaTo).withLancado(lancado).withEntregue(entregue).withFaturado(faturado).build();
 
 		Paged<OrdemServico> query = osService.getAll(pagination, filter);
 		List<OrdemServicoSimpleResponse> ordensServico = query.getContent().stream()

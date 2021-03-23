@@ -26,8 +26,9 @@ public abstract class ApiConstants {
 			+ "<br>- entradaFrom= retorna apenas ordens de serviço com data de entrada maior ou igual à data informada (formato YYYY-MM-DD)"
 			+ "<br>- entradaTo= retorna apenas ordens de serviço com data de entrada menor ou igual à data informada (formato YYYY-MM-DD)"
 			+ "<br>- entregue= se TRUE, retorna apenas ordens de serviço com data de entrega preenchida; se FALSE, retorna apenas ordens de serviço com data de entrega vazia"
+			+ "<br>- lancado= se TRUE, retorna apenas ordens de serviço com data de lançamento preenchida; se FALSE, retorna apenas ordens de serviço com data de lançamento vazia"
+			+ "<br>- faturado= se TRUE, retorna apenas ordens de serviço com fatura associada; se FALSE, retorna apenas ordens de serviço sem fatura associada"
 			+ "<br>O response indica as configurações de paginação utilizadas nos headers: pagination-page-number, pagination-page-size, pagination-total-pages, pagination-total-items";
-
 	public static final String ORDEM_SERVICO_LIST_RESPONSE = "Retorna todas as ordens de serviço";
 	public static final String ORDEM_SERVICO_GET_OPERATION = "Obtém os dados de uma ordem de serviço específica";
 	public static final String ORDEM_SERVICO_GET_RESPONSE = "Retorna a ordem de serviço correspondente ao ordemServicoUid informado";

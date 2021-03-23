@@ -59,6 +59,13 @@ public class OrdemServicoService {
 		if (Objects.nonNull(filter.getEntregue())) {
 			builder.addFilter(Boolean.TRUE.equals(filter.getEntregue()) ? "entrega is not null" : "entrega is null");
 		}
+		if (Objects.nonNull(filter.getLancado())) {
+			builder.addFilter(
+					Boolean.TRUE.equals(filter.getLancado()) ? "lancamento is not null" : "lancamento is null");
+		}
+		if (Objects.nonNull(filter.getFaturado())) {
+			builder.addFilter(Boolean.TRUE.equals(filter.getFaturado()) ? "fatura is not null" : "fatura is null");
+		}
 
 		PanacheQuery<OrdemServico> query = repository.find(builder.getQuery(), builder.getParams())
 				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));
