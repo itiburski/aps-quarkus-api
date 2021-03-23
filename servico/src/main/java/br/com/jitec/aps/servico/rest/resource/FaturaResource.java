@@ -1,5 +1,7 @@
 package br.com.jitec.aps.servico.rest.resource;
 
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,6 +31,7 @@ import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
 import br.com.jitec.aps.servico.api.ApiConstants;
+import br.com.jitec.aps.servico.business.data.FaturaFilter;
 import br.com.jitec.aps.servico.business.service.FaturaService;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.rest.payload.mapper.FaturaMapper;
@@ -48,16 +51,19 @@ public class FaturaResource {
 	@Inject
 	FaturaMapper faturaMapper;
 
-	@Operation(summary = ApiConstants.FATURA_LIST_OPERATION)
+	@Operation(summary = ApiConstants.FATURA_LIST_OPERATION, description = ApiConstants.FATURA_LIST_OPERATION_DESCRIPTION)
 	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.FATURA_LIST_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size) {
+	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
+			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("codigo") BigInteger codigo,
+			@QueryParam("dataFrom") LocalDate dataFrom, @QueryParam("dataTo") LocalDate dataTo) {
 
 		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
+		FaturaFilter filter = new FaturaFilter(clienteUid, codigo, dataFrom, dataTo);
 
-		Paged<Fatura> query = service.getAll(pagination);
+		Paged<Fatura> query = service.getAll(pagination, filter);
 		List<FaturaSimpleResponse> faturasSimpleResponse = query.getContent().stream()
 				.map(fatura -> faturaMapper.toSimpleResponse(fatura)).collect(Collectors.toList());
 

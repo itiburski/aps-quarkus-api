@@ -1,7 +1,9 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.business.util.QueryBuilder;
+import br.com.jitec.aps.servico.business.data.FaturaFilter;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
@@ -26,6 +29,8 @@ import io.quarkus.panache.common.Page;
 @ApplicationScoped
 public class FaturaService {
 
+	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
+
 	@Inject
 	OrdemServicoService ordemServicoService;
 
@@ -35,9 +40,21 @@ public class FaturaService {
 	@Inject
 	OrdemServicoRepository osRepository;
 
-	public Paged<Fatura> getAll(Pagination pagination) {
+	public Paged<Fatura> getAll(Pagination pagination, FaturaFilter filter) {
 		QueryBuilder builder = new QueryBuilder();
 		builder.setSortBy("codigo");
+
+		builder.addFilter(Objects.nonNull(filter.getClienteUid()), "cliente.uid = :clienteUid", "clienteUid",
+				filter.getClienteUid());
+		builder.addFilter(Objects.nonNull(filter.getCodigo()), "codigo = :codigo", "codigo", filter.getCodigo());
+		if (Objects.nonNull(filter.getDataFrom())) {
+			builder.addFilter("data >= :dataFrom", "dataFrom",
+					OffsetDateTime.of(filter.getDataFrom(), LocalTime.MIN, OFFSET));
+		}
+		if (Objects.nonNull(filter.getDataTo())) {
+			builder.addFilter("data <= :dataTo", "dataTo",
+					OffsetDateTime.of(filter.getDataTo(), LocalTime.MAX, OFFSET));
+		}
 
 		PanacheQuery<Fatura> query = repository.find(builder.getQuery(), builder.getParams())
 				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));

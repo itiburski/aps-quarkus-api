@@ -38,7 +38,15 @@ public abstract class ApiConstants {
 	public static final String ORDEM_SERVICO_DEFINIR_LANCAMENTO_OPERATION = "Atualiza a data de lançamento e o valor na ordem de serviço especificada";
 	public static final String ORDEM_SERVICO_DEFINIR_LANCAMENTO_RESPONSE = "Retorna a ordem de serviço atualizada";
 
-	public static final String FATURA_LIST_OPERATION = "Obtém uma lista de faturas";
+	public static final String FATURA_LIST_OPERATION = "Obtém uma lista de faturas, conforme configuração nos parâmetros de request";
+	public static final String FATURA_LIST_OPERATION_DESCRIPTION = "Valor default dos parâmetros de request: page=1 | size=25"
+			+ "<br>Valores alternativos aceitos nos parâmetros de request: size={1..100}"
+			+ "<br>Filtro pelos atributos da fatura (clienteUid, codigo, dataFrom, dataTo) serão aplicados quando o parâmetro correspondente for informado:"
+			+ "<br>- clienteUid= retorna apenas faturas vinculadas ao cliente informado"
+			+ "<br>- codigo= retorna apenas a fatura com o código informado"
+			+ "<br>- dataFrom= retorna apenas faturas com data maior ou igual à data informada (formato YYYY-MM-DD)"
+			+ "<br>- dataTo= retorna apenas faturas com data menor ou igual à data informada (formato YYYY-MM-DD)"
+			+ "<br>O response indica as configurações de paginação utilizadas nos headers: pagination-page-number, pagination-page-size, pagination-total-pages, pagination-total-items";
 	public static final String FATURA_LIST_RESPONSE = "Retorna todas as faturas";
 	public static final String FATURA_GET_OPERATION = "Obtém os dados de uma fatura específica";
 	public static final String FATURA_GET_RESPONSE = "Retorna a fatura correspondente ao faturaUid informado";

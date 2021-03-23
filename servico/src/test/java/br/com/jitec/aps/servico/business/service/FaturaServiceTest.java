@@ -2,7 +2,10 @@ package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +23,7 @@ import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
+import br.com.jitec.aps.servico.business.data.FaturaFilter;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
@@ -36,6 +40,7 @@ public class FaturaServiceTest {
 	private static final Integer PAGE = 1;
 	private static final Integer SIZE = 10;
 	private static final Pagination PAGINATION = Pagination.builder().withPage(PAGE).withSize(SIZE).build();
+	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
 
 	@Inject
 	FaturaService service;
@@ -50,7 +55,7 @@ public class FaturaServiceTest {
 	OrdemServicoRepository osRepositoryMock;
 
 	@Test
-	public void getAll_shouldListAll() {
+	public void getAll_WhenUsingNoFilter_shouldListAll() {
 		Fatura fatura1 = buildFatura(BigInteger.valueOf(1L));
 		Fatura fatura2 = buildFatura(BigInteger.valueOf(2L));
 		List<Fatura> faturas = Arrays.asList(fatura1, fatura2);
@@ -59,12 +64,38 @@ public class FaturaServiceTest {
 		Map<String, Object> params = new LinkedHashMap<>();
 		PanacheQuery<Fatura> panacheQuery = mockListPanacheQuery(faturas);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
-		
-		Paged<Fatura> result = service.getAll(PAGINATION);
+
+		Paged<Fatura> result = service.getAll(PAGINATION, new FaturaFilter());
 
 		Assertions.assertEquals(2, result.getContent().size());
 		Assertions.assertEquals(BigInteger.valueOf(1L), result.getContent().get(0).getCodigo());
 		Assertions.assertEquals(BigInteger.valueOf(2L), result.getContent().get(1).getCodigo());
+	}
+
+	@Test
+	public void getAll_WhenUsingSomeFilter_ShouldListUsingFilter() {
+		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
+		BigInteger codigo = BigInteger.valueOf(2L);
+		LocalDate dataFrom = LocalDate.of(2021, 2, 1);
+		LocalDate dataTo = LocalDate.of(2021, 2, 28);
+		FaturaFilter filter = new FaturaFilter(clienteUid, codigo, dataFrom, dataTo);
+
+		Fatura fatura1 = buildFatura(BigInteger.valueOf(1L));
+		List<Fatura> faturas = Arrays.asList(fatura1);
+
+		String query = "cliente.uid = :clienteUid and codigo = :codigo and data >= :dataFrom and data <= :dataTo order by codigo";
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("clienteUid", clienteUid);
+		params.put("codigo", codigo);
+		params.put("dataFrom", OffsetDateTime.of(dataFrom, LocalTime.MIN, OFFSET));
+		params.put("dataTo", OffsetDateTime.of(dataTo, LocalTime.MAX, OFFSET));
+		PanacheQuery<Fatura> panacheQuery = mockListPanacheQuery(faturas);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
+
+		Paged<Fatura> result = service.getAll(PAGINATION, filter);
+
+		Assertions.assertEquals(1, result.getContent().size());
+		Assertions.assertEquals(BigInteger.valueOf(1L), result.getContent().get(0).getCodigo());
 	}
 
 	@Test
