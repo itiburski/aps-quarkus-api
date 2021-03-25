@@ -15,11 +15,13 @@ import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSimpleResponse
 public interface OrdemServicoMapper {
 
 	@Mappings({ @Mapping(source = "uid", target = "ordemServicoUid"),
-			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid") })
+			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid"),
+			@Mapping(source = "fatura.codigo", target = "codigoFatura") })
 	OrdemServicoSimpleResponse toSimpleResponse(OrdemServico entity);
 
 	@Mappings({ @Mapping(source = "uid", target = "ordemServicoUid"),
-			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid") })
+			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid"),
+			@Mapping(source = "fatura.codigo", target = "codigoFatura") })
 	OrdemServicoResponse toResponse(OrdemServico entity);
 
 	@Mapping(source = "uid", target = "clienteUid")

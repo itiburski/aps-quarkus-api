@@ -29,6 +29,8 @@ public class OrdemServicoSimpleResponse {
 
 	private OffsetDateTime entrega;
 
+	private BigInteger codigoFatura;
+
 	public UUID getOrdemServicoUid() {
 		return ordemServicoUid;
 	}
@@ -115,6 +117,14 @@ public class OrdemServicoSimpleResponse {
 
 	public void setEntrega(OffsetDateTime entrega) {
 		this.entrega = entrega;
+	}
+
+	public BigInteger getCodigoFatura() {
+		return codigoFatura;
+	}
+
+	public void setCodigoFatura(BigInteger codigoFatura) {
+		this.codigoFatura = codigoFatura;
 	}
 
 }
