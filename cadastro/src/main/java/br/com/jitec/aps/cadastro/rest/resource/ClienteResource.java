@@ -105,7 +105,7 @@ public class ClienteResource {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
 		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
 
-		ClienteResponse clienteResponse = mapper.toResponse(service.create(request.getCodigo(), request.getNome(), request.getRazaoSocial(),
+		ClienteResponse clienteResponse = mapper.toResponse(service.create(request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
 				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
 				request.getCategoriaClienteUid(), emails, telefones));

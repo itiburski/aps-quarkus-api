@@ -184,7 +184,9 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void create_WhenCodigoInformed_ShouldCreateUsingCodigo() {
+	public void create_WhenValuesInformed_ShouldCreateUsingValues() {
+		Mockito.when(repositoryMock.getNextCodigoCliente()).thenReturn(123);
+
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		emails.add(ClienteEmailDTO.builder().withEmail("email@email.com").build());
 
@@ -194,7 +196,7 @@ public class ClienteServiceTest {
 
 		Mockito.when(tipoTelefoneServiceMock.get(Mockito.any(UUID.class))).thenReturn(new TipoTelefone("mock"));
 
-		Cliente created = clienteService.create(123, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
+		Cliente created = clienteService.create("Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
 				"cep", "homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
 
@@ -210,31 +212,13 @@ public class ClienteServiceTest {
 	}
 
 	@Test
-	public void create_WhenCodigoNotInformed_ShouldCreateWithNextCodigoAvailable() {
-		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(Optional.of(25));
-
-		List<ClienteEmailDTO> emails = new ArrayList<>();
-		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
-		telefones.add(ClienteTelefoneDTO.builder().withNumero(111222333).build());
-
-		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
-				"cep", "homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
-
-		Assertions.assertEquals("Nome", created.getNome());
-		Assertions.assertEquals("contato", created.getContato());
-		Assertions.assertEquals(26, created.getCodigo());
-		Assertions.assertTrue(created.getAtivo());
-	}
-
-	@Test
 	public void create_WhenFieldsNull_ShouldCreateWithNullValues() {
-		Mockito.when(repositoryMock.getMaiorCodigoCliente()).thenReturn(Optional.ofNullable(null));
+		Mockito.when(repositoryMock.getNextCodigoCliente()).thenReturn(1);
 
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 
-		Cliente created = clienteService.create(null, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
+		Cliente created = clienteService.create("Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
 				"cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails, telefones);
 
 		Assertions.assertEquals("Nome", created.getNome());
@@ -243,30 +227,6 @@ public class ClienteServiceTest {
 		Assertions.assertTrue(created.getAtivo());
 		Assertions.assertNull(created.getCategoria());
 		Assertions.assertNull(created.getCidade());
-	}
-
-	@Test
-	public void create_WhenCodigoZeroInformed_ShouldThrowException() {
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.create(0, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro", "cep",
-						"homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null, null),
-				"should have thrown InvalidDataException");
-
-		Assertions.assertEquals("O código deve ser maior que 0", thrown.getMessage());
-	}
-
-	@Test
-	public void create_WhenCreateWithCodigoAlreadyAssigned_ShouldThrowException() {
-		Mockito.when(repositoryMock.findByCodigo(Mockito.anyInt())).thenReturn(Optional.of(new Cliente()));
-
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.create(15, "Nome", "razaoSocial", "contato", "rua", "complemento", "bairro", "cep",
-						"homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
-						UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), null, null),
-				"should have thrown InvalidDataException");
-
-		Assertions.assertEquals("Já existe um cliente associado ao código informado", thrown.getMessage());
 	}
 
 	@Test

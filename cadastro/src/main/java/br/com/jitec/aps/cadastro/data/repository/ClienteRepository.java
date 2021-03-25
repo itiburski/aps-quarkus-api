@@ -1,6 +1,6 @@
 package br.com.jitec.aps.cadastro.data.repository;
 
-import java.util.Optional;
+import java.math.BigInteger;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -10,12 +10,9 @@ import br.com.jitec.aps.commons.data.repository.APSRepository;
 @ApplicationScoped
 public class ClienteRepository implements APSRepository<Cliente> {
 
-	public Optional<Cliente> findByCodigo(Integer codigo) {
-		return find("codigo", codigo).firstResultOptional();
-	}
-
-	public Optional<Integer> getMaiorCodigoCliente() {
-		return Optional.ofNullable((Integer) getEntityManager().createQuery("select max(codigo) from Cliente").getSingleResult());
+	public Integer getNextCodigoCliente() {
+		BigInteger codigo = (BigInteger) getEntityManager().createNativeQuery("SELECT nextval('CLIENTE_CODIGO')").getSingleResult();
+		return codigo.intValue();
 	}
 
 	public Long getQtdClientePorCategoria(Long categoriaClienteId) {

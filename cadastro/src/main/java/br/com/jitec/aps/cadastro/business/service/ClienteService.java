@@ -116,12 +116,12 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public Cliente create(Integer codigo, String nome, String razaoSocial, String contato, String rua,
+	public Cliente create(String nome, String razaoSocial, String contato, String rua,
 			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
 			UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails, List<ClienteTelefoneDTO> telefones) {
 
 		Cliente cliente = new Cliente();
-		cliente.setCodigo(getCodigo(codigo));
+		cliente.setCodigo(repository.getNextCodigoCliente());
 		cliente.setNome(nome);
 		cliente.setRazaoSocial(razaoSocial);
 		cliente.setContato(contato);
@@ -161,30 +161,6 @@ public class ClienteService {
 			telefone.setTipoTelefone(tipoTelefoneService.get(dto.getTipoTelefoneUid()));
 		}
 		return telefone;
-	}
-
-	private Integer getCodigo(Integer codigoRequest) {
-		if (codigoRequest != null) {
-			validateCodigo(codigoRequest);
-			return codigoRequest;
-		}
-
-		Optional<Integer> opMaxCodigoCadastrado = repository.getMaiorCodigoCliente();
-		if (opMaxCodigoCadastrado.isPresent()) {
-			return opMaxCodigoCadastrado.get() + 1;
-		} else {
-			return 1;
-		}
-	}
-
-	private void validateCodigo(Integer codigoRequest) {
-		if (codigoRequest <= 0) {
-			throw new InvalidDataException("O código deve ser maior que 0");
-		}
-		Optional<Cliente> op = repository.findByCodigo(codigoRequest);
-		if (op.isPresent()) {
-			throw new InvalidDataException("Já existe um cliente associado ao código informado");
-		}
 	}
 
 	/**
