@@ -14,9 +14,10 @@ import br.com.jitec.aps.servico.data.model.OrdemServico;
 @ApplicationScoped
 public class OrdemServicoRepository implements APSRepository<OrdemServico> {
 
-	public BigInteger getNextNumeroOS() {
-		return (BigInteger) getEntityManager().createNativeQuery("SELECT nextval('ORDEM_SERVICO_NUMERO')")
+	public Integer getNextNumeroOS() {
+		BigInteger numero = (BigInteger) getEntityManager().createNativeQuery("SELECT nextval('ORDEM_SERVICO_NUMERO')")
 				.getSingleResult();
+		return numero.intValue();
 	}
 
 	public List<OrdemServico> findByUids(List<UUID> uids) {

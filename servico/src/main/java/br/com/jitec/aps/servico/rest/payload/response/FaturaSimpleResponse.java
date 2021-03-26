@@ -1,7 +1,6 @@
 package br.com.jitec.aps.servico.rest.payload.response;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -9,7 +8,7 @@ public class FaturaSimpleResponse {
 
 	private UUID faturaUid;
 
-	private BigInteger codigo;
+	private Integer codigo;
 
 	private BigDecimal valorTotal;
 
@@ -25,11 +24,11 @@ public class FaturaSimpleResponse {
 		this.faturaUid = faturaUid;
 	}
 
-	public BigInteger getCodigo() {
+	public Integer getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(BigInteger codigo) {
+	public void setCodigo(Integer codigo) {
 		this.codigo = codigo;
 	}
 

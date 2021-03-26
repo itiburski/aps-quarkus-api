@@ -1,6 +1,5 @@
 package br.com.jitec.aps.servico.rest.resource;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -57,7 +56,7 @@ public class FaturaResource {
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
-			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("codigo") BigInteger codigo,
+			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("codigo") Integer codigo,
 			@QueryParam("dataFrom") LocalDate dataFrom, @QueryParam("dataTo") LocalDate dataTo) {
 
 		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();

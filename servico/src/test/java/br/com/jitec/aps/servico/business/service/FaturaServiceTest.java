@@ -1,7 +1,6 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -56,8 +55,8 @@ public class FaturaServiceTest {
 
 	@Test
 	public void getAll_WhenUsingNoFilter_shouldListAll() {
-		Fatura fatura1 = buildFatura(BigInteger.valueOf(1L));
-		Fatura fatura2 = buildFatura(BigInteger.valueOf(2L));
+		Fatura fatura1 = buildFatura(123);
+		Fatura fatura2 = buildFatura(456);
 		List<Fatura> faturas = Arrays.asList(fatura1, fatura2);
 
 		String query = "order by codigo";
@@ -68,19 +67,19 @@ public class FaturaServiceTest {
 		Paged<Fatura> result = service.getAll(PAGINATION, new FaturaFilter());
 
 		Assertions.assertEquals(2, result.getContent().size());
-		Assertions.assertEquals(BigInteger.valueOf(1L), result.getContent().get(0).getCodigo());
-		Assertions.assertEquals(BigInteger.valueOf(2L), result.getContent().get(1).getCodigo());
+		Assertions.assertEquals(123, result.getContent().get(0).getCodigo());
+		Assertions.assertEquals(456, result.getContent().get(1).getCodigo());
 	}
 
 	@Test
 	public void getAll_WhenUsingSomeFilter_ShouldListUsingFilter() {
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
-		BigInteger codigo = BigInteger.valueOf(2L);
+		Integer codigo = 456;
 		LocalDate dataFrom = LocalDate.of(2021, 2, 1);
 		LocalDate dataTo = LocalDate.of(2021, 2, 28);
 		FaturaFilter filter = new FaturaFilter(clienteUid, codigo, dataFrom, dataTo);
 
-		Fatura fatura1 = buildFatura(BigInteger.valueOf(1L));
+		Fatura fatura1 = buildFatura(123);
 		List<Fatura> faturas = Arrays.asList(fatura1);
 
 		String query = "cliente.uid = :clienteUid and codigo = :codigo and data >= :dataFrom and data <= :dataTo order by codigo";
@@ -95,20 +94,20 @@ public class FaturaServiceTest {
 		Paged<Fatura> result = service.getAll(PAGINATION, filter);
 
 		Assertions.assertEquals(1, result.getContent().size());
-		Assertions.assertEquals(BigInteger.valueOf(1L), result.getContent().get(0).getCodigo());
+		Assertions.assertEquals(123, result.getContent().get(0).getCodigo());
 	}
 
 	@Test
 	public void getComplete_whenValidUid_shouldReturnFaturaWithOrdensServico() {
 		UUID faturaUid = UUID.fromString("677a195f-f239-4897-906c-a0a184af3dd9");
 
-		Fatura fatura = buildFatura(BigInteger.valueOf(3L), faturaUid);
+		Fatura fatura = buildFatura(3, faturaUid);
 		mockFindSingleResultOptional(fatura);
 
 		Fatura result = service.getComplete(faturaUid);
 
 		Assertions.assertEquals("677a195f-f239-4897-906c-a0a184af3dd9", result.getUid().toString());
-		Assertions.assertEquals(BigInteger.valueOf(3L), result.getCodigo());
+		Assertions.assertEquals(3, result.getCodigo());
 	}
 
 	@Test
@@ -227,13 +226,13 @@ public class FaturaServiceTest {
 		Assertions.assertEquals("Uma ou mais ordens de serviço informadas já foram faturadas", thrown.getMessage());
 	}
 
-	private Fatura buildFatura(BigInteger codigo) {
+	private Fatura buildFatura(Integer codigo) {
 		Fatura fatura = new Fatura();
 		fatura.setCodigo(codigo);
 		return fatura;
 	}
 
-	private Fatura buildFatura(BigInteger codigo, UUID uid) {
+	private Fatura buildFatura(Integer codigo, UUID uid) {
 		Fatura fatura = buildFatura(codigo);
 		fatura.setUid(uid);
 		return fatura;

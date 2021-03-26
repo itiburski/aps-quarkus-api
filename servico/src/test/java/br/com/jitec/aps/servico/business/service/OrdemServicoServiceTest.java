@@ -1,7 +1,6 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -60,10 +59,8 @@ public class OrdemServicoServiceTest {
 
 	@Test
 	public void getAll_WhenUsingNoFilter_ShouldListAll() {
-		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
-				new BigInteger("123"));
-		OrdemServico os2 = getOrdemServico(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"),
-				new BigInteger("456"));
+		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"), 123);
+		OrdemServico os2 = getOrdemServico(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"), 456);
 		List<OrdemServico> oss = Arrays.asList(os1, os2);
 
 		String query = "order by numero";
@@ -93,8 +90,7 @@ public class OrdemServicoServiceTest {
 
 		String query = "cliente.uid = :clienteUid and entrada >= :entradaFrom and entrada <= :entradaTo and entrega is not null and lancamento is not null and fatura is not null order by numero";
 
-		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
-				new BigInteger("123"));
+		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"), 123);
 		List<OrdemServico> oss = Arrays.asList(os1);
 
 		PanacheQuery<OrdemServico> panacheQuery = mockListPanacheQuery(oss);
@@ -117,8 +113,7 @@ public class OrdemServicoServiceTest {
 
 		String query = "cliente.uid = :clienteUid and entrega is null and lancamento is null and fatura is null order by numero";
 
-		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"),
-				new BigInteger("123"));
+		OrdemServico os1 = getOrdemServico(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"), 123);
 		List<OrdemServico> oss = Arrays.asList(os1);
 
 		PanacheQuery<OrdemServico> panacheQuery = mockListPanacheQuery(oss);
@@ -133,13 +128,13 @@ public class OrdemServicoServiceTest {
 	@Test
 	public void get_WithExistingUUID_ShouldReturnOS() {
 		UUID uid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		OrdemServico os1 = getOrdemServico(uid, new BigInteger("123"));
+		OrdemServico os1 = getOrdemServico(uid, 123);
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(os1));
 
 		OrdemServico result = service.get(uid);
 
 		Assertions.assertEquals("66a1f5d6-f838-450e-b186-542f52413e4b", result.getUid().toString());
-		Assertions.assertEquals(new BigInteger("123"), result.getNumero());
+		Assertions.assertEquals(123, result.getNumero());
 	}
 
 	@Test
@@ -158,8 +153,8 @@ public class OrdemServicoServiceTest {
 		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 		List<UUID> uids = Arrays.asList(uid1, uid2);
-		OrdemServico os1 = getOrdemServico(uid1, new BigInteger("123"));
-		OrdemServico os2 = getOrdemServico(uid2, new BigInteger("456"));
+		OrdemServico os1 = getOrdemServico(uid1, 123);
+		OrdemServico os2 = getOrdemServico(uid2, 456);
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
 		Mockito.when(repositoryMock.findByUids(uids)).thenReturn(ordensServico);
@@ -174,7 +169,7 @@ public class OrdemServicoServiceTest {
 		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 		List<UUID> uids = Arrays.asList(uid1, uid2);
-		OrdemServico os1 = getOrdemServico(uid1, new BigInteger("123"));
+		OrdemServico os1 = getOrdemServico(uid1, 123);
 		List<OrdemServico> ordensServico = Arrays.asList(os1);
 
 		Mockito.when(repositoryMock.findByUids(uids)).thenReturn(ordensServico);
@@ -191,7 +186,7 @@ public class OrdemServicoServiceTest {
 		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		UUID tipoServicoUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 
-		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(new BigInteger("7"));
+		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(7);
 
 		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(getCliente(Boolean.TRUE));
 		Mockito.when(tipoServicoServiceMock.get(tipoServicoUid)).thenReturn(new TipoServico());
@@ -200,7 +195,7 @@ public class OrdemServicoServiceTest {
 				"observacao", OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
 
 		Assertions.assertNotNull(result.getUid());
-		Assertions.assertEquals(new BigInteger("7"), result.getNumero());
+		Assertions.assertEquals(7, result.getNumero());
 		Assertions.assertEquals("descricao", result.getDescricao());
 		Assertions.assertNotNull(result.getCliente());
 		Assertions.assertNotNull(result.getTipoServico());
@@ -208,13 +203,13 @@ public class OrdemServicoServiceTest {
 
 	@Test
 	public void create_WithNullAllFields_ShouldCreateWithNullValues() {
-		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(new BigInteger("7"));
+		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(7);
 
 		OrdemServico result = service.create(null, null, BigDecimal.ONE, "contato", "descricao", "observacao",
 				OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
 
 		Assertions.assertNotNull(result.getUid());
-		Assertions.assertEquals(new BigInteger("7"), result.getNumero());
+		Assertions.assertEquals(7, result.getNumero());
 		Assertions.assertEquals("descricao", result.getDescricao());
 		Assertions.assertNull(result.getCliente());
 		Assertions.assertNull(result.getTipoServico());
@@ -222,7 +217,7 @@ public class OrdemServicoServiceTest {
 
 	@Test
 	public void create_WithClienteInativo_ShouldThrowException() {
-		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(new BigInteger("7"));
+		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(7);
 
 		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(getCliente(Boolean.FALSE));
@@ -240,7 +235,7 @@ public class OrdemServicoServiceTest {
 	public void update_WithExistingUidAndVersion_ShouldUpdateData() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		OrdemServico os = getOrdemServico(osUid, 123);
 		UUID tipoServicoUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
@@ -271,7 +266,7 @@ public class OrdemServicoServiceTest {
 	public void definirLancamento_WithEmptyValorEmptyDtLancamento_ShouldUpdateData() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		OrdemServico os = getOrdemServico(osUid, 123);
 		os.setCliente(new ClienteReplica());
 		UUID clienteUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 		os.getCliente().setUid(clienteUid);
@@ -292,7 +287,7 @@ public class OrdemServicoServiceTest {
 	public void definirLancamento_WithExistingValorEmptyDtLancamento_ShouldUpdateData() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		OrdemServico os = getOrdemServico(osUid, 123);
 		os.setValor(new BigDecimal("100"));
 		os.setCliente(new ClienteReplica());
 		UUID clienteUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
@@ -314,7 +309,7 @@ public class OrdemServicoServiceTest {
 	public void definirLancamento_WithExistingDtLancamento_ShouldUpdateData() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		OrdemServico os = getOrdemServico(osUid, 123);
 		os.setLancamento(OffsetDateTime.now());
 		os.setValor(new BigDecimal("50"));
 		os.setCliente(new ClienteReplica());
@@ -337,7 +332,7 @@ public class OrdemServicoServiceTest {
 	public void definirLancamento_WithNonexistingUidAndVersion_ShouldThrowException() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, new BigInteger("123"));
+		OrdemServico os = getOrdemServico(osUid, 123);
 		os.setCliente(new ClienteReplica());
 		os.getCliente().setUid(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"));
 
@@ -359,7 +354,7 @@ public class OrdemServicoServiceTest {
 		return cliente;
 	}
 
-	private OrdemServico getOrdemServico(UUID uid, BigInteger numero) {
+	private OrdemServico getOrdemServico(UUID uid, Integer numero) {
 		OrdemServico os = new OrdemServico();
 		os.setUid(uid);
 		os.setNumero(numero);

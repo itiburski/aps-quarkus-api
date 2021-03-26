@@ -1,13 +1,12 @@
 package br.com.jitec.aps.servico.business.data;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class FaturaFilter {
 
 	private UUID clienteUid;
-	private BigInteger codigo;
+	private Integer codigo;
 	private LocalDate dataFrom;
 	private LocalDate dataTo;
 
@@ -15,7 +14,7 @@ public class FaturaFilter {
 		// Default constructor
 	}
 
-	public FaturaFilter(UUID clienteUid, BigInteger codigo, LocalDate dataFrom, LocalDate dataTo) {
+	public FaturaFilter(UUID clienteUid, Integer codigo, LocalDate dataFrom, LocalDate dataTo) {
 		super();
 		this.clienteUid = clienteUid;
 		this.codigo = codigo;
@@ -31,11 +30,11 @@ public class FaturaFilter {
 		this.clienteUid = clienteUid;
 	}
 
-	public BigInteger getCodigo() {
+	public Integer getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(BigInteger codigo) {
+	public void setCodigo(Integer codigo) {
 		this.codigo = codigo;
 	}
 

@@ -1,7 +1,6 @@
 package br.com.jitec.aps.servico.data.model;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -18,7 +17,7 @@ import br.com.jitec.aps.commons.data.model.APSEntity;
 public class OrdemServico extends APSEntity {
 
 	@Column(name = "NUMERO")
-	private BigInteger numero;
+	private Integer numero;
 
 	@ManyToOne
 	@JoinColumn(name = "CLIENTE_REPLICA_ID")
@@ -56,11 +55,11 @@ public class OrdemServico extends APSEntity {
 	@JoinColumn(name = "FATURA_ID")
 	private Fatura fatura;
 
-	public BigInteger getNumero() {
+	public Integer getNumero() {
 		return numero;
 	}
 
-	public void setNumero(BigInteger numero) {
+	public void setNumero(Integer numero) {
 		this.numero = numero;
 	}
 
@@ -163,26 +162,26 @@ public class OrdemServico extends APSEntity {
 			instance = new OrdemServico();
 		}
 
-		public Builder withUid(UUID uid) { 
+		public Builder withUid(UUID uid) {
 			instance.setUid(uid);
 			return this;
 		}
-		
+
 		public Builder withCliente(ClienteReplica cliente) {
 			instance.setCliente(cliente);
 			return this;
 		}
-		
+
 		public Builder withLancamento(OffsetDateTime lancamento) {
 			instance.setLancamento(lancamento);
 			return this;
 		}
-		
+
 		public Builder withValor(BigDecimal valor) {
 			instance.setValor(valor);
 			return this;
 		}
-		
+
 		public Builder withFatura(Fatura fatura) {
 			instance.setFatura(fatura);
 			return this;

@@ -1,7 +1,6 @@
 package br.com.jitec.aps.servico.data.model;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ import br.com.jitec.aps.commons.data.model.APSEntity;
 public class Fatura extends APSEntity {
 
 	@Column(name = "CODIGO")
-	private BigInteger codigo;
+	private Integer codigo;
 
 	@ManyToOne
 	@JoinColumn(name = "CLIENTE_REPLICA_ID")
@@ -36,11 +35,11 @@ public class Fatura extends APSEntity {
 	@OneToMany(mappedBy = "fatura", fetch = FetchType.LAZY)
 	private List<OrdemServico> ordensServico = new ArrayList<>();
 
-	public BigInteger getCodigo() {
+	public Integer getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(BigInteger codigo) {
+	public void setCodigo(Integer codigo) {
 		this.codigo = codigo;
 	}
 

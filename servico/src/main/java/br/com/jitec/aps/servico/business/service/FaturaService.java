@@ -102,7 +102,7 @@ public class FaturaService {
 		Fatura fatura = new Fatura();
 		fatura.setCliente(ordensServico.get(0).getCliente());
 		fatura.setValorTotal(totalFatura);
-		fatura.setCodigo(repository.getNextNumeroFatura());
+		fatura.setCodigo(repository.getNextCodigoFatura());
 		fatura.setData(data);
 		repository.persist(fatura);
 
