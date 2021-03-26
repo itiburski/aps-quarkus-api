@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import org.jboss.logging.Logger;
 
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
+import br.com.jitec.aps.cadastro.business.data.ClienteFilter;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.cadastro.business.producer.ClienteProducer;
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
@@ -58,8 +59,7 @@ public class ClienteService {
 	@Inject
 	ClienteProducer clienteProducer;
 
-	public Paged<Cliente> getClientes(Pagination pagination, Integer codigo, String nomeOuRazaoSocial,
-			Boolean ativo, final String sort) {
+	public Paged<Cliente> getClientes(Pagination pagination, ClienteFilter filter, final String sort) {
 		String field = DEFAULT_SORT_FIELD;
 
 		if (Objects.nonNull(sort)) {
@@ -72,11 +72,11 @@ public class ClienteService {
 		QueryBuilder builder = new QueryBuilder();
 		builder.setSortBy(field);
 
-		builder.addFilter(Objects.nonNull(codigo), "codigo = :codigo", "codigo", codigo);
-		builder.addFilter(Objects.nonNull(ativo), "ativo = :ativo", "ativo", ativo);
-		if (Objects.nonNull(nomeOuRazaoSocial)) {
+		builder.addFilter(Objects.nonNull(filter.getCodigo()), "codigo = :codigo", "codigo", filter.getCodigo());
+		builder.addFilter(Objects.nonNull(filter.getAtivo()), "ativo = :ativo", "ativo", filter.getAtivo());
+		if (Objects.nonNull(filter.getNomeOuRazaoSocial())) {
 			builder.addFilter("(upper(nome) like :nomeOuRazaoSocial OR upper(razaoSocial) like :nomeOuRazaoSocial)",
-					"nomeOuRazaoSocial", "%" + nomeOuRazaoSocial.toUpperCase() + "%");
+					"nomeOuRazaoSocial", "%" + filter.getNomeOuRazaoSocial().toUpperCase() + "%");
 		}
 
 		PanacheQuery<Cliente> query = repository.find(builder.getQuery(), builder.getParams())
@@ -116,9 +116,9 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public Cliente create(String nome, String razaoSocial, String contato, String rua,
-			String complemento, String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual,
-			UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails, List<ClienteTelefoneDTO> telefones) {
+	public Cliente create(String nome, String razaoSocial, String contato, String rua, String complemento,
+			String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual, UUID cidadeUid,
+			UUID categoriaUid, List<ClienteEmailDTO> emails, List<ClienteTelefoneDTO> telefones) {
 
 		Cliente cliente = new Cliente();
 		cliente.setCodigo(repository.getNextCodigoCliente());

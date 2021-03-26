@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
+import br.com.jitec.aps.cadastro.business.data.ClienteFilter;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.cadastro.business.producer.ClienteProducer;
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
@@ -75,7 +76,7 @@ public class ClienteServiceTest {
 		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<Cliente> result = clienteService.getClientes(PAGINATION, null, null, null, null);
+		Paged<Cliente> result = clienteService.getClientes(PAGINATION, new ClienteFilter(), null);
 
 		Assertions.assertEquals(2, result.getContent().size());
 		Mockito.verify(repositoryMock).find(query, params);
@@ -86,6 +87,7 @@ public class ClienteServiceTest {
 		int codigo = 123;
 		String nomeOuRazaoSocial = "cliente";
 		Boolean ativo = Boolean.TRUE;
+		ClienteFilter filter = new ClienteFilter(codigo, nomeOuRazaoSocial, ativo);
 
 		Map<String, Object> params = new LinkedHashMap<>();
 		params.put("codigo", codigo);
@@ -101,7 +103,7 @@ public class ClienteServiceTest {
 		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<Cliente> result = clienteService.getClientes(PAGINATION, codigo, nomeOuRazaoSocial, ativo, null);
+		Paged<Cliente> result = clienteService.getClientes(PAGINATION, filter, null);
 
 		Assertions.assertEquals(1, result.getContent().size());
 		Mockito.verify(repositoryMock).find(query, params);
@@ -121,7 +123,7 @@ public class ClienteServiceTest {
 		PanacheQuery<Cliente> panacheQuery = mockListPanacheQuery(clientes);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<Cliente> result = clienteService.getClientes(PAGINATION, null, null, null, "nome");
+		Paged<Cliente> result = clienteService.getClientes(PAGINATION, new ClienteFilter(), "nome");
 
 		Assertions.assertEquals(2, result.getContent().size());
 		Mockito.verify(repositoryMock).find(query, params);
@@ -130,7 +132,7 @@ public class ClienteServiceTest {
 	@Test
 	public void getClientes_WhenOrderIsInvalid_ShouldThrowException() {
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> clienteService.getClientes(PAGINATION, null, null, null, "campoInexistente"),
+				() -> clienteService.getClientes(PAGINATION, new ClienteFilter(), "campoInexistente"),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Campo para ordenação inválido", thrown.getMessage());
@@ -196,8 +198,8 @@ public class ClienteServiceTest {
 
 		Mockito.when(tipoTelefoneServiceMock.get(Mockito.any(UUID.class))).thenReturn(new TipoTelefone("mock"));
 
-		Cliente created = clienteService.create("Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
-				"cep", "homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
+		Cliente created = clienteService.create("Nome", "razaoSocial", "contato", "rua", "complemento", "bairro", "cep",
+				"homepage", "cnpj", "inscricaEstadual", UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"),
 				UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), emails, telefones);
 
 		Assertions.assertEquals("Nome", created.getNome());
@@ -218,8 +220,8 @@ public class ClienteServiceTest {
 		List<ClienteEmailDTO> emails = new ArrayList<>();
 		List<ClienteTelefoneDTO> telefones = new ArrayList<>();
 
-		Cliente created = clienteService.create("Nome", "razaoSocial", "contato", "rua", "complemento", "bairro",
-				"cep", "homepage", "cnpj", "inscricaEstadual", null, null, emails, telefones);
+		Cliente created = clienteService.create("Nome", "razaoSocial", "contato", "rua", "complemento", "bairro", "cep",
+				"homepage", "cnpj", "inscricaEstadual", null, null, emails, telefones);
 
 		Assertions.assertEquals("Nome", created.getNome());
 		Assertions.assertEquals("contato", created.getContato());

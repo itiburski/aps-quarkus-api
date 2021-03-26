@@ -29,6 +29,7 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.cadastro.api.ApiConstants;
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
+import br.com.jitec.aps.cadastro.business.data.ClienteFilter;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.cadastro.business.service.ClienteService;
 import br.com.jitec.aps.cadastro.data.model.Cliente;
@@ -73,8 +74,9 @@ public class ClienteResource {
 			@QueryParam("ativo") Boolean ativo, @QueryParam("sort") String sort) {
 
 		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
+		ClienteFilter filter = new ClienteFilter(codigo, nomeOuRazaoSocial, ativo);
 
-		Paged<Cliente> query = service.getClientes(pagination, codigo, nomeOuRazaoSocial, ativo, sort);
+		Paged<Cliente> query = service.getClientes(pagination, filter, sort);
 		List<ClienteSimplifResponse> clientes = mapper.toSimplifListResponse(query.getContent());
 
 		return Response.ok(clientes).header(Headers.PAGE_NUMBER, pagination.getPage())
@@ -83,8 +85,7 @@ public class ClienteResource {
 	}
 
 	@Operation(summary = ApiConstants.CLIENTE_GET_OPERATION)
-	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_GET_RESPONSE),
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_GET_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
@@ -113,8 +114,7 @@ public class ClienteResource {
 	}
 
 	@Operation(summary = ApiConstants.CLIENTE_UPDATEALL_OPERATION, description = ApiConstants.CLIENTE_UPDATEALL_OPERATION_DESCRIPTION)
-	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_UPDATEALL_RESPONSE),
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_UPDATEALL_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
@@ -155,8 +155,7 @@ public class ClienteResource {
 	}
 
 	@Operation(summary = ApiConstants.CLIENTE_DELETE_OPERATION)
-	@APIResponses(value = {
-			@APIResponse(responseCode = "204", description = ApiConstants.CLIENTE_DELETE_RESPONSE),
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.CLIENTE_DELETE_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
