@@ -226,6 +226,34 @@ public class FaturaServiceTest {
 		Assertions.assertEquals("Uma ou mais ordens de serviço informadas já foram faturadas", thrown.getMessage());
 	}
 
+	@Test
+	public void delete_WhenExistingData_ShouldDelete() {
+		UUID faturaUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Integer version = 4;
+
+		Fatura fatura = buildFatura(3, faturaUid);
+		mockFindSingleResultOptional(fatura);
+
+		service.delete(faturaUid, version);
+
+		Mockito.verify(repositoryMock).delete(Mockito.any(Fatura.class));
+	}
+
+	@Test
+	public void delete_WhenNonexistingData_ShouldThrowException() {
+		UUID faturaUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Integer version = 4;
+
+		mockFindSingleResultOptionalEmpty();
+
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(faturaUid, version),
+				"should have thrown DataNotFoundException");
+
+		Assertions.assertEquals("Fatura não encontrada para versão especificada", thrown.getMessage());
+
+		Mockito.verify(repositoryMock, Mockito.never()).delete(Mockito.any(Fatura.class));
+	}
+
 	private Fatura buildFatura(Integer codigo) {
 		Fatura fatura = new Fatura();
 		fatura.setCodigo(codigo);

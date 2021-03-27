@@ -53,5 +53,7 @@ public abstract class ApiConstants {
 	public static final String FATURA_GET_RESPONSE = "Retorna a fatura correspondente ao faturaUid informado";
 	public static final String FATURA_CREATE_OPERATION = "Cadastra uma nova fatura";
 	public static final String FATURA_CREATE_RESPONSE = "Retorna a nova fatura cadastrada";
+	public static final String FATURA_DELETE_OPERATION = "Exclui uma fatura existente";
+	public static final String FATURA_DELETE_RESPONSE = "Indica que a fatura foi excluída. Nenhum conteúdo será retornado";
 
 }

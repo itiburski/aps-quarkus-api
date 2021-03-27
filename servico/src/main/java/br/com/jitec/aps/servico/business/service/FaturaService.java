@@ -29,6 +29,9 @@ import io.quarkus.panache.common.Page;
 @ApplicationScoped
 public class FaturaService {
 
+	private static final String FATURA_NAO_ENCONTRADA = "Fatura não encontrada";
+	private static final String FATURA_NAO_ENCONTRADA_VERSION = "Fatura não encontrada para versão especificada";
+
 	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
 
 	@Inject
@@ -62,14 +65,20 @@ public class FaturaService {
 	}
 
 	public Fatura getComplete(UUID faturaUid) {
+		return getComplete(faturaUid, null);
+	}
+
+	private Fatura getComplete(UUID faturaUid, Integer version) {
 		QueryBuilder builder = new QueryBuilder();
 		builder.addFilter("f.uid = :faturaUid", "faturaUid", faturaUid);
+		builder.addFilter(Objects.nonNull(version), "f.version = :version", "version", version);
 
 		Optional<Fatura> faturaOp = repository
 				.find("from Fatura f left join fetch f.ordensServico where " + builder.getQuery(), builder.getParams())
 				.singleResultOptional();
 		if (faturaOp.isEmpty()) {
-			throw new DataNotFoundException("Fatura não encontrada");
+			throw new DataNotFoundException(
+					Objects.nonNull(version) ? FATURA_NAO_ENCONTRADA_VERSION : FATURA_NAO_ENCONTRADA);
 		}
 		Fatura fatura = faturaOp.get();
 		return fatura;
@@ -110,6 +119,13 @@ public class FaturaService {
 		osRepository.persist(ordensServico);
 
 		return fatura;
+	}
+
+	@Transactional
+	public void delete(UUID faturaUid, Integer version) {
+		Fatura fatura = getComplete(faturaUid, version);
+		fatura.getOrdensServico().forEach(os -> os.setFatura(null));
+		repository.delete(fatura);
 	}
 
 }

@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -95,6 +96,17 @@ public class FaturaResource {
 		FaturaSimpleResponse response = faturaMapper.toSimpleResponse(fatura);
 
 		return Response.status(Status.CREATED).entity(response).build();
+	}
+
+	@Operation(summary = ApiConstants.FATURA_DELETE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.FATURA_DELETE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@DELETE
+	@Path("/{faturaUid}/version/{version}")
+	public void delete(@PathParam("faturaUid") UUID faturaUid, @PathParam("version") Integer version) {
+		service.delete(faturaUid, version);
 	}
 
 }
