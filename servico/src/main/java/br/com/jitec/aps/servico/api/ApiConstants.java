@@ -6,6 +6,7 @@ public abstract class ApiConstants {
 	public static final String TAG_TIPO_BAIXA = "Tipo de Baixa";
 	public static final String TAG_ORDEM_SERVICO = "Ordem de Serviço";
 	public static final String TAG_FATURA = "Fatura";
+	public static final String TAG_BAIXA = "Baixa";
 
 	public static final String STATUS_CODE_BAD_REQUEST = "Parâmetros inválidos na requisição";
 	public static final String STATUS_CODE_NOT_FOUND = "O recurso não foi encontrado com os parâmetros informados";
@@ -55,5 +56,8 @@ public abstract class ApiConstants {
 	public static final String FATURA_CREATE_RESPONSE = "Retorna a nova fatura cadastrada";
 	public static final String FATURA_DELETE_OPERATION = "Exclui uma fatura existente";
 	public static final String FATURA_DELETE_RESPONSE = "Indica que a fatura foi excluída. Nenhum conteúdo será retornado";
+
+	public static final String BAIXA_CREATE_OPERATION = "Cadastra uma nova baixa";
+	public static final String BAIXA_CREATE_RESPONSE = "Retorna a nova baixa cadastrada";
 
 }
