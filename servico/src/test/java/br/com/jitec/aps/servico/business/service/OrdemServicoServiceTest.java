@@ -26,6 +26,7 @@ import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
+import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.model.TipoServico;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
@@ -344,6 +345,28 @@ public class OrdemServicoServiceTest {
 
 		Assertions.assertEquals("Ordem de Serviço não encontrada para versao especificada", thrown.getMessage());
 
+		Mockito.verify(clienteSaldoProducerMock, Mockito.never())
+				.sendUpdateSaldoCliente(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any(BigDecimal.class));
+	}
+
+	@Test
+	public void definirLancamento_WithOrdemServicoJaFaturada_ShouldThrowException() {
+		Integer version = 1;
+		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		OrdemServico os = getOrdemServico(osUid, 123);
+		os.setCliente(new ClienteReplica());
+		os.setFatura(new Fatura());
+		os.getCliente().setUid(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"));
+
+		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
+
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
+				() -> service.definirLancamento(osUid, version, OffsetDateTime.now(), new BigDecimal("123")),
+				"should have thrown InvalidDataException");
+
+		Assertions.assertEquals("Ordem de serviço já foi faturada", thrown.getMessage());
+
+		Mockito.verify(repositoryMock, Mockito.never()).persist(os);
 		Mockito.verify(clienteSaldoProducerMock, Mockito.never())
 				.sendUpdateSaldoCliente(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any(BigDecimal.class));
 	}

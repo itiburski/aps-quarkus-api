@@ -152,6 +152,10 @@ public class OrdemServicoService {
 			BigDecimal valor) {
 		OrdemServico os = get(ordemServicoUid, version);
 
+		if (Objects.nonNull(os.getFatura())) {
+			throw new InvalidDataException("Ordem de serviço já foi faturada");
+		}
+
 		BigDecimal vlAnterior = os.getLancamento() != null ? os.getValor() : BigDecimal.ZERO;
 		BigDecimal saldoARefletirNoCliente = vlAnterior.subtract(valor);
 
