@@ -57,6 +57,10 @@ public abstract class ApiConstants {
 	public static final String FATURA_DELETE_OPERATION = "Exclui uma fatura existente";
 	public static final String FATURA_DELETE_RESPONSE = "Indica que a fatura foi excluída. Nenhum conteúdo será retornado";
 
+	public static final String BAIXA_LIST_OPERATION = "Obtém uma lista de baixas, conforme configuração nos parâmetros de request";
+	public static final String BAIXA_LIST_RESPONSE = "Retorna todas as baixas";
+	public static final String BAIXA_GET_OPERATION = "Obtém os dados de uma baixa específica";
+	public static final String BAIXA_GET_RESPONSE = "Retorna a baixa correspondente ao baixaUid informado";
 	public static final String BAIXA_CREATE_OPERATION = "Cadastra uma nova baixa";
 	public static final String BAIXA_CREATE_RESPONSE = "Retorna a nova baixa cadastrada";
 
