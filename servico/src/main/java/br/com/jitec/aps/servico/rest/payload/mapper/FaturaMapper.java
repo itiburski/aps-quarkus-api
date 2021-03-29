@@ -24,7 +24,8 @@ public interface FaturaMapper {
 
 	@Mappings({ @Mapping(source = "uid", target = "ordemServicoUid"),
 			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid"),
-			@Mapping(source = "cliente.uid", target = "cliente.clienteUid") })
+			@Mapping(source = "cliente.uid", target = "cliente.clienteUid"),
+		@Mapping(source = "fatura.codigo", target = "codigoFatura") })	
 	OrdemServicoSimpleResponse toSimpleResponse(OrdemServico entity);
 
 }
