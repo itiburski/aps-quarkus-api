@@ -46,6 +46,11 @@ public class BaixaService {
 		return repository.findByUid(baixaUid).orElseThrow(() -> new DataNotFoundException("Baixa não encontrada"));
 	}
 
+	private Baixa get(UUID baixaUid, Integer version) {
+		return repository.findByUidVersion(baixaUid, version)
+				.orElseThrow(() -> new DataNotFoundException("Baixa não encontrada para versao especificada"));
+	}
+
 	@Transactional
 	public Baixa create(UUID tipoBaixaUid, OffsetDateTime data, BigDecimal valor, String observacao, UUID clienteUid) {
 		Baixa baixa = new Baixa();
@@ -63,4 +68,33 @@ public class BaixaService {
 		return baixa;
 	}
 
+	@Transactional
+	public Baixa update(UUID baixaUid, Integer version, UUID tipoBaixaUid, OffsetDateTime data, BigDecimal valor,
+			String observacao) {
+		Baixa baixa = get(baixaUid, version);
+
+		BigDecimal saldoARefletirNoCliente = valor.subtract(baixa.getValor());
+
+		baixa.setData(data);
+		baixa.setValor(valor);
+		baixa.setObservacao(observacao);
+		baixa.setTipoBaixa(tipoBaixaService.get(tipoBaixaUid));
+
+		repository.persist(baixa);
+
+		clienteSaldoProducer.sendUpdateSaldoCliente(baixa.getCliente().getUid(), saldoARefletirNoCliente);
+
+		return baixa;
+	}
+
+	@Transactional
+	public void delete(UUID baixaUid, Integer version) {
+		Baixa baixa = get(baixaUid, version);
+
+		BigDecimal saldoARefletirNoCliente = baixa.getValor().negate();
+
+		repository.delete(baixa);
+
+		clienteSaldoProducer.sendUpdateSaldoCliente(baixa.getCliente().getUid(), saldoARefletirNoCliente);
+	}
 }

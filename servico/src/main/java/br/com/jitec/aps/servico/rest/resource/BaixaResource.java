@@ -8,8 +8,10 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -33,6 +35,7 @@ import br.com.jitec.aps.servico.business.service.BaixaService;
 import br.com.jitec.aps.servico.data.model.Baixa;
 import br.com.jitec.aps.servico.rest.payload.mapper.BaixaMapper;
 import br.com.jitec.aps.servico.rest.payload.request.BaixaCreateRequest;
+import br.com.jitec.aps.servico.rest.payload.request.BaixaUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.BaixaResponse;
 import br.com.jitec.aps.servico.rest.payload.response.BaixaSimpleResponse;
 
@@ -90,6 +93,32 @@ public class BaixaResource {
 				request.getObservacao(), request.getClienteUid());
 		BaixaResponse response = mapper.toResponse(baixa);
 		return Response.status(Status.CREATED).entity(response).build();
+	}
+
+	@Operation(summary = ApiConstants.BAIXA_UPDATE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.BAIXA_UPDATE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@PUT
+	@Path("/{baixaUid}/version/{version}")
+	public BaixaResponse update(@PathParam("baixaUid") UUID baixaUid, @PathParam("version") Integer version,
+			@Valid @NotNull BaixaUpdateRequest request) {
+		Baixa baixa = service.update(baixaUid, version, request.getTipoBaixaUid(), request.getData(),
+				request.getValor(), request.getObservacao());
+		return mapper.toResponse(baixa);
+	}
+
+	@Operation(summary = ApiConstants.BAIXA_DELETE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.BAIXA_DELETE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@DELETE
+	@Path("/{baixaUid}/version/{version}")
+	public void delete(@PathParam("baixaUid") UUID baixaUid, @PathParam("version") Integer version) {
+		service.delete(baixaUid, version);
 	}
 
 }

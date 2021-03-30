@@ -63,5 +63,9 @@ public abstract class ApiConstants {
 	public static final String BAIXA_GET_RESPONSE = "Retorna a baixa correspondente ao baixaUid informado";
 	public static final String BAIXA_CREATE_OPERATION = "Cadastra uma nova baixa";
 	public static final String BAIXA_CREATE_RESPONSE = "Retorna a nova baixa cadastrada";
+	public static final String BAIXA_UPDATE_OPERATION = "Atualiza os dados de uma baixa existente";
+	public static final String BAIXA_UPDATE_RESPONSE = "Retorna a baixa atualizada";
+	public static final String BAIXA_DELETE_OPERATION = "Exclui uma baixa existente";
+	public static final String BAIXA_DELETE_RESPONSE = "Indica que a baixa foi excluída. Nenhum conteúdo será retornado";
 
 }

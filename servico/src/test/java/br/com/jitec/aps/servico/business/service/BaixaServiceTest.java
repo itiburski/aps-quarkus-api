@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
@@ -128,9 +129,97 @@ public class BaixaServiceTest {
 		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, BigDecimal.TEN);
 	}
 
+	@Test
+	public void update_WithExistingUidAndVersion_ShouldUpdateData() {
+		UUID baixaUid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
+		Integer version = 3;
+		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		UUID tipoBaixaUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+		Baixa baixa = buildBaixa(baixaUid, BigDecimal.TEN, clienteUid);
+
+		Mockito.when(repositoryMock.findByUidVersion(baixaUid, version)).thenReturn(Optional.of(baixa));
+		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(new ClienteReplica());
+		Mockito.when(tipoBaixaServiceMock.get(tipoBaixaUid)).thenReturn(new TipoBaixa());
+
+		Baixa result = service.update(baixaUid, version, tipoBaixaUid, OffsetDateTime.now(), BigDecimal.ONE,
+				"observacao-alterada");
+
+		Assertions.assertNotNull(result.getUid());
+		Assertions.assertNotNull(result.getCliente());
+		Assertions.assertNotNull(result.getTipoBaixa());
+		Assertions.assertEquals(BigDecimal.ONE, result.getValor());
+		Assertions.assertEquals("observacao-alterada", result.getObservacao());
+
+		Mockito.verify(repositoryMock).persist(result);
+		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, BigDecimal.valueOf(9).negate());
+		Mockito.verify(clienteServiceMock, Mockito.never()).get(clienteUid);
+	}
+
+	@Test
+	public void update_WithNonexistingUidAndVersion_ShouldThrowException() {
+		UUID baixaUid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
+		Integer version = 3;
+		UUID tipoBaixaUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+
+		Mockito.when(repositoryMock.findByUidVersion(baixaUid, version)).thenReturn(Optional.empty());
+
+		Exception thrown = Assertions
+				.assertThrows(
+						DataNotFoundException.class, () -> service.update(baixaUid, version, tipoBaixaUid,
+								OffsetDateTime.now(), BigDecimal.ONE, "observacao-alterada"),
+						"should have thrown DataNotFoundException");
+
+		Assertions.assertEquals("Baixa não encontrada para versao especificada", thrown.getMessage());
+
+		Mockito.verify(repositoryMock, Mockito.never()).persist(ArgumentMatchers.any(Baixa.class));
+		Mockito.verify(clienteSaldoProducerMock, Mockito.never())
+				.sendUpdateSaldoCliente(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any(BigDecimal.class));
+		Mockito.verify(clienteServiceMock, Mockito.never()).get(ArgumentMatchers.any(UUID.class));
+	}
+
+	@Test
+	public void delete_WithExistingUidAndVersion_ShouldDelete() {
+		UUID baixaUid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
+		Integer version = 3;
+		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
+		Baixa baixa = buildBaixa(baixaUid, BigDecimal.TEN, clienteUid);
+
+		Mockito.when(repositoryMock.findByUidVersion(baixaUid, version)).thenReturn(Optional.of(baixa));
+
+		service.delete(baixaUid, version);
+
+		Mockito.verify(repositoryMock).delete(baixa);
+		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, BigDecimal.TEN.negate());
+		Mockito.verify(clienteServiceMock, Mockito.never()).get(clienteUid);
+	}
+
+	@Test
+	public void delete_WithNonexistingUidAndVersion_ShouldThrowException() {
+		UUID baixaUid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
+		Integer version = 3;
+		Mockito.when(repositoryMock.findByUidVersion(baixaUid, version)).thenReturn(Optional.empty());
+
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(baixaUid, version),
+				"should have thrown DataNotFoundException");
+
+		Assertions.assertEquals("Baixa não encontrada para versao especificada", thrown.getMessage());
+
+		Mockito.verify(repositoryMock, Mockito.never()).delete(ArgumentMatchers.any(Baixa.class));
+		Mockito.verify(clienteSaldoProducerMock, Mockito.never())
+				.sendUpdateSaldoCliente(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any(BigDecimal.class));
+	}
+
 	private Baixa buildBaixa(UUID uid) {
 		Baixa baixa = new Baixa();
 		baixa.setUid(uid);
+		return baixa;
+	}
+
+	private Baixa buildBaixa(UUID uid, BigDecimal valor, UUID clienteUid) {
+		Baixa baixa = buildBaixa(uid);
+		baixa.setValor(valor);
+		baixa.setCliente(new ClienteReplica());
+		baixa.getCliente().setUid(clienteUid);
 		return baixa;
 	}
 
