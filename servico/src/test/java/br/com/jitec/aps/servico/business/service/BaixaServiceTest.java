@@ -1,7 +1,10 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +22,7 @@ import org.mockito.Mockito;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
+import br.com.jitec.aps.servico.business.data.BaixaFilter;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.Baixa;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
@@ -35,6 +39,7 @@ public class BaixaServiceTest {
 	private static final Integer PAGE = 1;
 	private static final Integer SIZE = 10;
 	private static final Pagination PAGINATION = Pagination.builder().withPage(PAGE).withSize(SIZE).build();
+	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
 
 	@Inject
 	BaixaService service;
@@ -61,12 +66,38 @@ public class BaixaServiceTest {
 		PanacheQuery<Baixa> panacheQuery = mockListPanacheQuery(baixas);
 		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
 
-		Paged<Baixa> result = service.getAll(PAGINATION);
+		Paged<Baixa> result = service.getAll(PAGINATION, new BaixaFilter());
 
 		Assertions.assertEquals(2, result.getContent().size());
 		Mockito.verify(repositoryMock).find(query, params);
 	}
 
+	@Test
+	public void getAll_WhenUsingSomeFilter_ShouldListUsingFilter() {
+		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
+		UUID tipoBaixaUid = UUID.fromString("02bc413d-83b9-41ec-9bfe-26b56a6d2732");
+		LocalDate dataFrom = LocalDate.of(2021, 2, 1);
+		LocalDate dataTo = LocalDate.of(2021, 2, 28);
+		BaixaFilter filter = new BaixaFilter(clienteUid, tipoBaixaUid, dataFrom, dataTo);
+
+		Baixa baixa1 = buildBaixa(UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f"));
+		List<Baixa> baixas = Arrays.asList(baixa1);
+
+		String query = "cliente.uid = :clienteUid and tipoBaixa.uid = :tipoBaixaUid and data >= :dataFrom and data <= :dataTo order by id";
+		Map<String, Object> params = new LinkedHashMap<>();
+		params.put("clienteUid", clienteUid);
+		params.put("tipoBaixaUid", tipoBaixaUid);
+		params.put("dataFrom", OffsetDateTime.of(dataFrom, LocalTime.MIN, OFFSET));
+		params.put("dataTo", OffsetDateTime.of(dataTo, LocalTime.MAX, OFFSET));
+		PanacheQuery<Baixa> panacheQuery = mockListPanacheQuery(baixas);
+		Mockito.when(repositoryMock.find(query, params)).thenReturn(panacheQuery);
+
+		Paged<Baixa> result = service.getAll(PAGINATION, filter);
+
+		Assertions.assertEquals(1, result.getContent().size());
+		Mockito.verify(repositoryMock).find(query, params);		
+	}
+	
 	@Test
 	public void get_WithExistingUUID_ShouldReturnBaixa() {
 		UUID uid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");

@@ -58,6 +58,14 @@ public abstract class ApiConstants {
 	public static final String FATURA_DELETE_RESPONSE = "Indica que a fatura foi excluída. Nenhum conteúdo será retornado";
 
 	public static final String BAIXA_LIST_OPERATION = "Obtém uma lista de baixas, conforme configuração nos parâmetros de request";
+	public static final String BAIXA_LIST_OPERATION_DESCRIPTION = "Valor default dos parâmetros de request: page=1 | size=25"
+			+ "<br>Valores alternativos aceitos nos parâmetros de request: size={1..100}"
+			+ "<br>Filtro pelos atributos da baixa (clienteUid, tipoBaixaUid, dataFrom, dataTo) serão aplicados quando o parâmetro correspondente for informado:"
+			+ "<br>- clienteUid= retorna apenas baixas vinculadas ao cliente informado"
+			+ "<br>- tipoBaixaUid= retorna apenas baixas vinculadas ao tipo de baixa informado"
+			+ "<br>- dataFrom= retorna apenas baixas com data maior ou igual à data informada (formato YYYY-MM-DD)"
+			+ "<br>- dataTo= retorna apenas baixas com data menor ou igual à data informada (formato YYYY-MM-DD)"
+			+ "<br>O response indica as configurações de paginação utilizadas nos headers: pagination-page-number, pagination-page-size, pagination-total-pages, pagination-total-items";
 	public static final String BAIXA_LIST_RESPONSE = "Retorna todas as baixas";
 	public static final String BAIXA_GET_OPERATION = "Obtém os dados de uma baixa específica";
 	public static final String BAIXA_GET_RESPONSE = "Retorna a baixa correspondente ao baixaUid informado";

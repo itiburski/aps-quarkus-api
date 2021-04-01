@@ -1,7 +1,10 @@
 package br.com.jitec.aps.servico.business.service;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,6 +15,7 @@ import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.business.util.QueryBuilder;
+import br.com.jitec.aps.servico.business.data.BaixaFilter;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.Baixa;
 import br.com.jitec.aps.servico.data.repository.BaixaRepository;
@@ -20,6 +24,8 @@ import io.quarkus.panache.common.Page;
 
 @ApplicationScoped
 public class BaixaService {
+
+	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
 
 	@Inject
 	ClienteReplicaService clienteService;
@@ -33,9 +39,22 @@ public class BaixaService {
 	@Inject
 	ClienteSaldoProducer clienteSaldoProducer;
 
-	public Paged<Baixa> getAll(Pagination pagination) {
+	public Paged<Baixa> getAll(Pagination pagination, BaixaFilter filter) {
 		QueryBuilder builder = new QueryBuilder();
 		builder.setSortBy("id");
+
+		builder.addFilter(Objects.nonNull(filter.getClienteUid()), "cliente.uid = :clienteUid", "clienteUid",
+				filter.getClienteUid());
+		builder.addFilter(Objects.nonNull(filter.getTipoBaixaUid()), "tipoBaixa.uid = :tipoBaixaUid", "tipoBaixaUid",
+				filter.getTipoBaixaUid());
+		if (Objects.nonNull(filter.getDataFrom())) {
+			builder.addFilter("data >= :dataFrom", "dataFrom",
+					OffsetDateTime.of(filter.getDataFrom(), LocalTime.MIN, OFFSET));
+		}
+		if (Objects.nonNull(filter.getDataTo())) {
+			builder.addFilter("data <= :dataTo", "dataTo",
+					OffsetDateTime.of(filter.getDataTo(), LocalTime.MAX, OFFSET));
+		}
 
 		PanacheQuery<Baixa> query = repository.find(builder.getQuery(), builder.getParams())
 				.page(Page.of(pagination.getPageZeroBased(), pagination.getSize()));

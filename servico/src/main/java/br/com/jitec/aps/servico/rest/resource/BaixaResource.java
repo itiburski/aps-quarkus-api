@@ -1,5 +1,6 @@
 package br.com.jitec.aps.servico.rest.resource;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
 import br.com.jitec.aps.servico.api.ApiConstants;
+import br.com.jitec.aps.servico.business.data.BaixaFilter;
 import br.com.jitec.aps.servico.business.service.BaixaService;
 import br.com.jitec.aps.servico.data.model.Baixa;
 import br.com.jitec.aps.servico.rest.payload.mapper.BaixaMapper;
@@ -51,16 +53,19 @@ public class BaixaResource {
 	@Inject
 	BaixaMapper mapper;
 
-	@Operation(summary = ApiConstants.BAIXA_LIST_OPERATION)
+	@Operation(summary = ApiConstants.BAIXA_LIST_OPERATION, description = ApiConstants.BAIXA_LIST_OPERATION_DESCRIPTION)
 	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.BAIXA_LIST_RESPONSE),
 			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size) {
+	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
+			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("tipoBaixaUid") UUID tipoBaixaUid,
+			@QueryParam("dataFrom") LocalDate dataFrom, @QueryParam("dataTo") LocalDate dataTo) {
 
 		Pagination pagination = Pagination.builder().withPage(page).withSize(size).build();
+		BaixaFilter filter = new BaixaFilter(clienteUid, tipoBaixaUid, dataFrom, dataTo);
 
-		Paged<Baixa> query = service.getAll(pagination);
+		Paged<Baixa> query = service.getAll(pagination, filter);
 		List<BaixaSimpleResponse> baixaSimpleResponse = query.getContent().stream()
 				.map(fatura -> mapper.toSimpleResponse(fatura)).collect(Collectors.toList());
 
