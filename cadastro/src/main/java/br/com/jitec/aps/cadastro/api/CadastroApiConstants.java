@@ -1,11 +1,21 @@
 package br.com.jitec.aps.cadastro.api;
 
-public abstract class ApiConstants {
+public abstract class CadastroApiConstants {
+
+	public static final String API_TITLE = "APS-Cadastro";
+	public static final String API_DESCRIPTION = "API para controlar o módulo de cadastro do APS - Automação de Prestação de Serviço";
+	public static final String API_VERSION = "0.1.0";
+	public static final String LICENSE_NAME = "MIT License";
+	public static final String LICENSE_URL = "https://opensource.org/licenses/MIT";
 
 	public static final String TAG_CATEGORIAS_CLIENTE = "Categorias de Cliente";
+	public static final String TAG_CATEGORIAS_CLIENTE_DESCRIPTION = "Operações relacionadas a Categorias de Cliente";
 	public static final String TAG_CIDADES = "Cidades";
+	public static final String TAG_CIDADES_DESCRIPTION = "Operações relacionadas a Cidades";
 	public static final String TAG_CLIENTES = "Clientes";
-	public static final String TAG_TIPO_TELEFONE = "Tipo de Telefone";
+	public static final String TAG_CLIENTES_DESCRIPTION = "Operações relacionadas a Clientes";
+	public static final String TAG_TIPOS_TELEFONE = "Tipos de Telefone";
+	public static final String TAG_TIPOS_TELEFONE_DESCRIPTION = "Operações relacionadas a Tipos de Telefone";
 
 	public static final String STATUS_CODE_BAD_REQUEST = "Parâmetros inválidos na requisição";
 	public static final String STATUS_CODE_NOT_FOUND = "O recurso não foi encontrado com os parâmetros informados";
@@ -49,11 +59,14 @@ public abstract class ApiConstants {
 	public static final String CLIENTE_CREATE_RESPONSE = "Retorna o novo cliente cadastrado";
 	public static final String CLIENTE_UPDATEALL_OPERATION = "Atualiza os dados de um cliente existente";
 	public static final String CLIENTE_UPDATEALL_OPERATION_DESCRIPTION = "Atualiza todos os atributos do cliente com os valores informados no payload. Se o valor do payload for vazio ou null para um determinado atributo, o conteúdo do atributo será apagado";
-			//"Update all Cliente's fields with the payload values. If the payload value is empty or null, the field's value will be erased";
+	// "Update all Cliente's fields with the payload values. If the payload value is
+	// empty or null, the field's value will be erased";
 	public static final String CLIENTE_UPDATEALL_RESPONSE = "Retorna o cliente atualizado";
 	public static final String CLIENTE_UPDATENOTNULL_OPERATION = "Atualiza os dados contidos no payload para um cliente existente";
 	public static final String CLIENTE_UPDATENOTNULL_OPERATION_DESCRIPTION = "Atualiza um atributo do cliente apenas quando um valor não nulo for informado no payload para este atributo. Caso contrário, o conteúdo do atributo não será alterado.";
-			//"Update each Cliente's field only when the related payload field has a meaningful value (is not null). Otherwise, the field value will not be changed";
+	// "Update each Cliente's field only when the related payload field has a
+	// meaningful value (is not null). Otherwise, the field value will not be
+	// changed";
 	public static final String CLIENTE_UPDATENOTNULL_RESPONSE = "Retorna o cliente atualizado";
 	public static final String CLIENTE_DELETE_OPERATION = "Exclui um cliente existente";
 	public static final String CLIENTE_DELETE_RESPONSE = "Indica que o cliente foi excluído. Nenhum conteúdo será retornado";

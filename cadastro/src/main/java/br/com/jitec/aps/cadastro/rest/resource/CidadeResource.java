@@ -25,13 +25,13 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import br.com.jitec.aps.cadastro.api.ApiConstants;
+import br.com.jitec.aps.cadastro.api.CadastroApiConstants;
 import br.com.jitec.aps.cadastro.business.service.CidadeService;
 import br.com.jitec.aps.cadastro.rest.payload.mapper.CidadeMapper;
 import br.com.jitec.aps.cadastro.rest.payload.request.CidadeRequest;
 import br.com.jitec.aps.cadastro.rest.payload.response.CidadeResponse;
 
-@Tag(name = ApiConstants.TAG_CIDADES)
+@Tag(name = CadastroApiConstants.TAG_CIDADES)
 @Path("/cidades")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -43,44 +43,44 @@ public class CidadeResource {
 	@Inject
 	CidadeMapper mapper;
 
-	@Operation(summary = ApiConstants.CIDADE_LIST_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CIDADE_LIST_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = CadastroApiConstants.CIDADE_LIST_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = CadastroApiConstants.CIDADE_LIST_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	public List<CidadeResponse> getAll() {
 		return mapper.toListResponse(service.getAll());
 	}
 
-	@Operation(summary = ApiConstants.CIDADE_GET_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CIDADE_GET_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = CadastroApiConstants.CIDADE_GET_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = CadastroApiConstants.CIDADE_GET_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	@Path("{cidadeUid}")
 	public CidadeResponse get(@PathParam("cidadeUid") UUID cidadeUid) {
 		return mapper.toResponse(service.get(cidadeUid));
 	}
 
-	@Operation(summary = ApiConstants.CIDADE_CREATE_OPERATION)
+	@Operation(summary = CadastroApiConstants.CIDADE_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ApiConstants.CIDADE_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = CidadeResponse.class))),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "201", description = CadastroApiConstants.CIDADE_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = CidadeResponse.class))),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull CidadeRequest request) {
 		CidadeResponse cidadeResponse = mapper.toResponse(service.create(request.getNome(), request.getUf()));
 		return Response.status(Status.CREATED).entity(cidadeResponse).build();
 	}
 
-	@Operation(summary = ApiConstants.CIDADE_UPDATE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CIDADE_UPDATE_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = CadastroApiConstants.CIDADE_UPDATE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = CadastroApiConstants.CIDADE_UPDATE_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PUT
 	@Path("{cidadeUid}/version/{version}")
 	public CidadeResponse update(@PathParam("cidadeUid") UUID cidadeUid, @PathParam("version") Integer version,
@@ -88,11 +88,11 @@ public class CidadeResource {
 		return mapper.toResponse(service.update(cidadeUid, version, request.getNome(), request.getUf()));
 	}
 
-	@Operation(summary = ApiConstants.CIDADE_DELETE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.CIDADE_DELETE_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = CadastroApiConstants.CIDADE_DELETE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = CadastroApiConstants.CIDADE_DELETE_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@DELETE
 	@Path("{cidadeUid}/version/{version}")
 	public void delete(@PathParam("cidadeUid") UUID cidadeUid, @PathParam("version") Integer version) {

@@ -8,16 +8,15 @@ import org.eclipse.microprofile.openapi.annotations.info.License;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @OpenAPIDefinition(
-		tags = { @Tag(name = ApiConstants.TAG_CATEGORIAS_CLIENTE, description = "Operações relacionadas a Categorias de Cliente"),
-				@Tag(name = ApiConstants.TAG_CIDADES, description = "Operações relacionadas a Cidades"),
-				@Tag(name = ApiConstants.TAG_CLIENTES, description = "Operações relacionadas a Clientes"),
-				@Tag(name = ApiConstants.TAG_TIPO_TELEFONE, description = "Operações relacionadas a Tipos de Telefone") },
-	    info = @Info(
-				title = "APS-Cadastro", description = "API para controlar o módulo de cadastro do APS - Automação de Prestação de Serviço",
-				version = "0.1.0",
-	        license = @License(
-						name = "MIT License", url = "https://opensource.org/licenses/MIT"))
-	)
+	tags = { @Tag(name = CadastroApiConstants.TAG_CATEGORIAS_CLIENTE, description = CadastroApiConstants.TAG_CATEGORIAS_CLIENTE_DESCRIPTION),
+			@Tag(name = CadastroApiConstants.TAG_CIDADES, description = CadastroApiConstants.TAG_CIDADES_DESCRIPTION),
+			@Tag(name = CadastroApiConstants.TAG_CLIENTES, description =  CadastroApiConstants.TAG_CLIENTES_DESCRIPTION),
+			@Tag(name = CadastroApiConstants.TAG_TIPOS_TELEFONE, description =  CadastroApiConstants.TAG_TIPOS_TELEFONE_DESCRIPTION) },
+    info = @Info(
+			title = CadastroApiConstants.API_TITLE, description = CadastroApiConstants.API_DESCRIPTION,
+			version = CadastroApiConstants.API_VERSION,
+    license = @License(name = CadastroApiConstants.LICENSE_NAME, url = CadastroApiConstants.LICENSE_URL))
+)
 public class APSCadastroApplication extends Application {
 
 }

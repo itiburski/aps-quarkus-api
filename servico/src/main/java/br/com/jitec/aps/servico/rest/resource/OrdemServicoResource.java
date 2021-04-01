@@ -31,7 +31,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
-import br.com.jitec.aps.servico.api.ApiConstants;
+import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
@@ -42,7 +42,7 @@ import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
 import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSimpleResponse;
 
-@Tag(name = ApiConstants.TAG_ORDEM_SERVICO)
+@Tag(name = ServicoApiConstants.TAG_ORDENS_SERVICO)
 @Path("/ordens-servico")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -54,10 +54,10 @@ public class OrdemServicoResource {
 	@Inject
 	OrdemServicoMapper mapper;
 
-	@Operation(summary = ApiConstants.ORDEM_SERVICO_LIST_OPERATION, description = ApiConstants.ORDEM_SERVICO_LIST_OPERATION_DESCRIPTION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_LIST_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.ORDEM_SERVICO_LIST_OPERATION, description = ServicoApiConstants.ORDEM_SERVICO_LIST_OPERATION_DESCRIPTION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_LIST_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
 			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("entradaFrom") LocalDate entradaFrom,
@@ -77,23 +77,23 @@ public class OrdemServicoResource {
 				.header(Headers.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
-	@Operation(summary = ApiConstants.ORDEM_SERVICO_GET_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_GET_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.ORDEM_SERVICO_GET_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_GET_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	@Path("/{ordemServicoUid}")
 	public OrdemServicoResponse get(@PathParam("ordemServicoUid") UUID ordemServicoUid) {
 		return mapper.toResponse(osService.get(ordemServicoUid));
 	}
 
-	@Operation(summary = ApiConstants.ORDEM_SERVICO_CREATE_OPERATION)
+	@Operation(summary = ServicoApiConstants.ORDEM_SERVICO_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ApiConstants.ORDEM_SERVICO_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = OrdemServicoResponse.class))),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "201", description = ServicoApiConstants.ORDEM_SERVICO_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = OrdemServicoResponse.class))),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull OrdemServicoCreateRequest request) {
 		OrdemServico os = osService.create(request.getClienteUid(), request.getTipoServicoUid(), request.getValor(),
@@ -103,13 +103,13 @@ public class OrdemServicoResource {
 		return Response.status(Status.CREATED).entity(response).build();
 	}
 
-	@Operation(summary = ApiConstants.ORDEM_SERVICO_UPDATE_OPERATION)
+	@Operation(summary = ServicoApiConstants.ORDEM_SERVICO_UPDATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_UPDATE_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_UPDATE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PUT
 	@Path("/{ordemServicoUid}/version/{version}")
 	public OrdemServicoResponse update(@PathParam("ordemServicoUid") UUID ordemServicoUid,
@@ -120,13 +120,13 @@ public class OrdemServicoResource {
 		return mapper.toResponse(os);
 	}
 
-	@Operation(summary = ApiConstants.ORDEM_SERVICO_DEFINIR_LANCAMENTO_OPERATION)
+	@Operation(summary = ServicoApiConstants.ORDEM_SERVICO_DEFINIR_LANCAMENTO_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.ORDEM_SERVICO_DEFINIR_LANCAMENTO_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_DEFINIR_LANCAMENTO_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PATCH
 	@Path("/{ordemServicoUid}/version/{version}/lancamento")
 	public OrdemServicoResponse definirLancamento(@PathParam("ordemServicoUid") UUID ordemServicoUid,

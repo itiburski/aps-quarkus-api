@@ -30,7 +30,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
-import br.com.jitec.aps.servico.api.ApiConstants;
+import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.data.FaturaFilter;
 import br.com.jitec.aps.servico.business.service.FaturaService;
 import br.com.jitec.aps.servico.data.model.Fatura;
@@ -39,7 +39,7 @@ import br.com.jitec.aps.servico.rest.payload.request.FaturaRequest;
 import br.com.jitec.aps.servico.rest.payload.response.FaturaResponse;
 import br.com.jitec.aps.servico.rest.payload.response.FaturaSimpleResponse;
 
-@Tag(name = ApiConstants.TAG_FATURA)
+@Tag(name = ServicoApiConstants.TAG_FATURAS)
 @Path("/faturas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -51,10 +51,10 @@ public class FaturaResource {
 	@Inject
 	FaturaMapper faturaMapper;
 
-	@Operation(summary = ApiConstants.FATURA_LIST_OPERATION, description = ApiConstants.FATURA_LIST_OPERATION_DESCRIPTION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.FATURA_LIST_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.FATURA_LIST_OPERATION, description = ServicoApiConstants.FATURA_LIST_OPERATION_DESCRIPTION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.FATURA_LIST_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
 			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("codigo") Integer codigo,
@@ -72,11 +72,11 @@ public class FaturaResource {
 				.header(Headers.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
-	@Operation(summary = ApiConstants.FATURA_GET_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.FATURA_GET_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.FATURA_GET_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.FATURA_GET_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	@Path("/{faturaUid}")
 	public FaturaResponse get(@PathParam("faturaUid") UUID faturaUid) {
@@ -84,12 +84,12 @@ public class FaturaResource {
 		return faturaMapper.toResponse(fatura);
 	}
 
-	@Operation(summary = ApiConstants.FATURA_CREATE_OPERATION)
+	@Operation(summary = ServicoApiConstants.FATURA_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ApiConstants.FATURA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = FaturaSimpleResponse.class))),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "201", description = ServicoApiConstants.FATURA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = FaturaSimpleResponse.class))),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull FaturaRequest request) {
 		Fatura fatura = service.create(request.getData(), request.getOrdensServicoUid());
@@ -98,11 +98,11 @@ public class FaturaResource {
 		return Response.status(Status.CREATED).entity(response).build();
 	}
 
-	@Operation(summary = ApiConstants.FATURA_DELETE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.FATURA_DELETE_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.FATURA_DELETE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = ServicoApiConstants.FATURA_DELETE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@DELETE
 	@Path("/{faturaUid}/version/{version}")
 	public void delete(@PathParam("faturaUid") UUID faturaUid, @PathParam("version") Integer version) {

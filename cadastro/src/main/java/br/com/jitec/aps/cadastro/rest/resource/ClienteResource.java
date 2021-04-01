@@ -27,7 +27,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
-import br.com.jitec.aps.cadastro.api.ApiConstants;
+import br.com.jitec.aps.cadastro.api.CadastroApiConstants;
 import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteFilter;
 import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
@@ -44,7 +44,7 @@ import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
 
-@Tag(name = ApiConstants.TAG_CLIENTES)
+@Tag(name = CadastroApiConstants.TAG_CLIENTES)
 @Path("/clientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -62,12 +62,12 @@ public class ClienteResource {
 	@Inject
 	ClienteTelefoneMapper telefoneMapper;
 
-	@Operation(summary = ApiConstants.CLIENTE_LIST_OPERATION, description = ApiConstants.CLIENTE_LIST_OPERATION_DESCRIPTION)
+	@Operation(summary = CadastroApiConstants.CLIENTE_LIST_OPERATION, description = CadastroApiConstants.CLIENTE_LIST_OPERATION_DESCRIPTION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_LIST_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteSimplifResponse.class))),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_LIST_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteSimplifResponse.class))),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	public Response getClientes(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
 			@QueryParam("codigo") Integer codigo, @QueryParam("nomeOuRazaoSocial") String nomeOuRazaoSocial,
@@ -84,23 +84,23 @@ public class ClienteResource {
 				.header(Headers.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
-	@Operation(summary = ApiConstants.CLIENTE_GET_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_GET_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = CadastroApiConstants.CLIENTE_GET_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_GET_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	@Path("{clienteUid}")
 	public ClienteResponse get(@PathParam UUID clienteUid) {
 		return mapper.toResponse(service.getComplete(clienteUid));
 	}
 
-	@Operation(summary = ApiConstants.CLIENTE_CREATE_OPERATION)
+	@Operation(summary = CadastroApiConstants.CLIENTE_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ApiConstants.CLIENTE_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteResponse.class))),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "201", description = CadastroApiConstants.CLIENTE_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteResponse.class))),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull ClienteCreateRequest request) {
 		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
@@ -113,12 +113,12 @@ public class ClienteResource {
 		return Response.status(Status.CREATED).entity(clienteResponse).build();
 	}
 
-	@Operation(summary = ApiConstants.CLIENTE_UPDATEALL_OPERATION, description = ApiConstants.CLIENTE_UPDATEALL_OPERATION_DESCRIPTION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_UPDATEALL_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = CadastroApiConstants.CLIENTE_UPDATEALL_OPERATION, description = CadastroApiConstants.CLIENTE_UPDATEALL_OPERATION_DESCRIPTION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_UPDATEALL_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PUT
 	@Path("{clienteUid}/version/{version}")
 	public ClienteResponse updateAll(@PathParam UUID clienteUid, @PathParam Integer version,
@@ -133,13 +133,13 @@ public class ClienteResource {
 				telefones));
 	}
 
-	@Operation(summary = ApiConstants.CLIENTE_UPDATENOTNULL_OPERATION, description = ApiConstants.CLIENTE_UPDATENOTNULL_OPERATION_DESCRIPTION)
+	@Operation(summary = CadastroApiConstants.CLIENTE_UPDATENOTNULL_OPERATION, description = CadastroApiConstants.CLIENTE_UPDATENOTNULL_OPERATION_DESCRIPTION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = ApiConstants.CLIENTE_UPDATENOTNULL_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_UPDATENOTNULL_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PATCH
 	@Path("{clienteUid}/version/{version}")
 	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @PathParam Integer version,
@@ -154,11 +154,11 @@ public class ClienteResource {
 				telefones));
 	}
 
-	@Operation(summary = ApiConstants.CLIENTE_DELETE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.CLIENTE_DELETE_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = CadastroApiConstants.CLIENTE_DELETE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = CadastroApiConstants.CLIENTE_DELETE_RESPONSE),
+			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@DELETE
 	@Path("{clienteUid}/version/{version}")
 	public void delete(@PathParam UUID clienteUid, @PathParam Integer version) {

@@ -31,7 +31,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
-import br.com.jitec.aps.servico.api.ApiConstants;
+import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.data.BaixaFilter;
 import br.com.jitec.aps.servico.business.service.BaixaService;
 import br.com.jitec.aps.servico.data.model.Baixa;
@@ -41,7 +41,7 @@ import br.com.jitec.aps.servico.rest.payload.request.BaixaUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.BaixaResponse;
 import br.com.jitec.aps.servico.rest.payload.response.BaixaSimpleResponse;
 
-@Tag(name = ApiConstants.TAG_BAIXA)
+@Tag(name = ServicoApiConstants.TAG_BAIXAS)
 @Path("/baixas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -53,10 +53,10 @@ public class BaixaResource {
 	@Inject
 	BaixaMapper mapper;
 
-	@Operation(summary = ApiConstants.BAIXA_LIST_OPERATION, description = ApiConstants.BAIXA_LIST_OPERATION_DESCRIPTION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.BAIXA_LIST_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.BAIXA_LIST_OPERATION, description = ServicoApiConstants.BAIXA_LIST_OPERATION_DESCRIPTION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.BAIXA_LIST_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	public Response getAll(@QueryParam("page") Integer page, @QueryParam("size") Integer size,
 			@QueryParam("clienteUid") UUID clienteUid, @QueryParam("tipoBaixaUid") UUID tipoBaixaUid,
@@ -74,11 +74,11 @@ public class BaixaResource {
 				.header(Headers.TOTAL_ITEMS, query.getItemCount()).build();
 	}
 
-	@Operation(summary = ApiConstants.BAIXA_GET_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.BAIXA_GET_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.BAIXA_GET_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.BAIXA_GET_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
 	@Path("/{baixaUid}")
 	public BaixaResponse get(@PathParam("baixaUid") UUID baixaUid) {
@@ -86,12 +86,12 @@ public class BaixaResource {
 		return mapper.toResponse(baixa);
 	}
 
-	@Operation(summary = ApiConstants.BAIXA_CREATE_OPERATION)
+	@Operation(summary = ServicoApiConstants.BAIXA_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ApiConstants.BAIXA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = BaixaSimpleResponse.class))),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+			@APIResponse(responseCode = "201", description = ServicoApiConstants.BAIXA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = BaixaSimpleResponse.class))),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull BaixaCreateRequest request) {
 		Baixa baixa = service.create(request.getTipoBaixaUid(), request.getData(), request.getValor(),
@@ -100,12 +100,12 @@ public class BaixaResource {
 		return Response.status(Status.CREATED).entity(response).build();
 	}
 
-	@Operation(summary = ApiConstants.BAIXA_UPDATE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ApiConstants.BAIXA_UPDATE_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "422", description = ApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.BAIXA_UPDATE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.BAIXA_UPDATE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@PUT
 	@Path("/{baixaUid}/version/{version}")
 	public BaixaResponse update(@PathParam("baixaUid") UUID baixaUid, @PathParam("version") Integer version,
@@ -115,11 +115,11 @@ public class BaixaResource {
 		return mapper.toResponse(baixa);
 	}
 
-	@Operation(summary = ApiConstants.BAIXA_DELETE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "204", description = ApiConstants.BAIXA_DELETE_RESPONSE),
-			@APIResponse(responseCode = "400", description = ApiConstants.STATUS_CODE_BAD_REQUEST),
-			@APIResponse(responseCode = "404", description = ApiConstants.STATUS_CODE_NOT_FOUND),
-			@APIResponse(responseCode = "500", description = ApiConstants.STATUS_CODE_SERVER_ERROR) })
+	@Operation(summary = ServicoApiConstants.BAIXA_DELETE_OPERATION)
+	@APIResponses(value = { @APIResponse(responseCode = "204", description = ServicoApiConstants.BAIXA_DELETE_RESPONSE),
+			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
+			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
+			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@DELETE
 	@Path("/{baixaUid}/version/{version}")
 	public void delete(@PathParam("baixaUid") UUID baixaUid, @PathParam("version") Integer version) {
