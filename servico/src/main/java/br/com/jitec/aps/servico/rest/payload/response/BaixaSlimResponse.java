@@ -4,19 +4,13 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public class BaixaSimpleResponse {
+public class BaixaSlimResponse {
 
 	private UUID baixaUid;
-
-	private ClienteResponse cliente;
-
-	private TipoBaixaResponse tipoBaixa;
-
+	private ClienteSlimResponse cliente;
+	private TipoBaixaSlimResponse tipoBaixa;
 	private OffsetDateTime data;
-
 	private BigDecimal valor;
-
-	private Integer version;
 
 	public UUID getBaixaUid() {
 		return baixaUid;
@@ -26,19 +20,19 @@ public class BaixaSimpleResponse {
 		this.baixaUid = baixaUid;
 	}
 
-	public ClienteResponse getCliente() {
+	public ClienteSlimResponse getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(ClienteResponse cliente) {
+	public void setCliente(ClienteSlimResponse cliente) {
 		this.cliente = cliente;
 	}
 
-	public TipoBaixaResponse getTipoBaixa() {
+	public TipoBaixaSlimResponse getTipoBaixa() {
 		return tipoBaixa;
 	}
 
-	public void setTipoBaixa(TipoBaixaResponse tipoBaixa) {
+	public void setTipoBaixa(TipoBaixaSlimResponse tipoBaixa) {
 		this.tipoBaixa = tipoBaixa;
 	}
 
@@ -56,14 +50,6 @@ public class BaixaSimpleResponse {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
 	}
 
 }

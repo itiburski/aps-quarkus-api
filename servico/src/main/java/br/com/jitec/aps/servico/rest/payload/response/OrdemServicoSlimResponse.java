@@ -4,30 +4,19 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public class OrdemServicoSimpleResponse {
+public class OrdemServicoSlimResponse {
 
 	private UUID ordemServicoUid;
-
 	private Integer numero;
-
-	private ClienteResponse cliente;
-
-	private TipoServicoResponse tipoServico;
-
+	private ClienteSlimResponse cliente;
+	private TipoServicoSlimResponse tipoServico;
 	private BigDecimal valor;
-
 	private String contato;
-
 	private String descricao;
-
 	private OffsetDateTime entrada;
-
 	private OffsetDateTime agendadoPara;
-
 	private OffsetDateTime lancamento;
-
 	private OffsetDateTime entrega;
-
 	private Integer codigoFatura;
 
 	public UUID getOrdemServicoUid() {
@@ -46,19 +35,19 @@ public class OrdemServicoSimpleResponse {
 		this.numero = numero;
 	}
 
-	public ClienteResponse getCliente() {
+	public ClienteSlimResponse getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(ClienteResponse cliente) {
+	public void setCliente(ClienteSlimResponse cliente) {
 		this.cliente = cliente;
 	}
 
-	public TipoServicoResponse getTipoServico() {
+	public TipoServicoSlimResponse getTipoServico() {
 		return tipoServico;
 	}
 
-	public void setTipoServico(TipoServicoResponse tipoServico) {
+	public void setTipoServico(TipoServicoSlimResponse tipoServico) {
 		this.tipoServico = tipoServico;
 	}
 

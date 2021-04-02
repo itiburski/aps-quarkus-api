@@ -1,31 +1,24 @@
 package br.com.jitec.aps.servico.rest.payload.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 import br.com.jitec.aps.commons.rest.payload.mapper.QuarkusMapperConfig;
 import br.com.jitec.aps.servico.data.model.Fatura;
-import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.rest.payload.response.FaturaResponse;
-import br.com.jitec.aps.servico.rest.payload.response.FaturaSimpleResponse;
-import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSimpleResponse;
+import br.com.jitec.aps.servico.rest.payload.response.FaturaSlimResponse;
 
-@Mapper(config = QuarkusMapperConfig.class)
+@Mapper(config = QuarkusMapperConfig.class, uses = { ClienteMapper.class, OrdemServicoMapper.class })
 public interface FaturaMapper {
 
-	@Mappings({ @Mapping(source = "uid", target = "faturaUid"),
-			@Mapping(source = "cliente.uid", target = "cliente.clienteUid") })
-	FaturaSimpleResponse toSimpleResponse(Fatura entity);
+	@Mapping(source = "uid", target = "faturaUid")
+	FaturaSlimResponse toSlimResponse(Fatura entity);
 
-	@Mappings({ @Mapping(source = "uid", target = "faturaUid"),
-			@Mapping(source = "cliente.uid", target = "cliente.clienteUid") })
+	List<FaturaSlimResponse> toListSlimResponse(List<Fatura> entities);
+
+	@Mapping(source = "uid", target = "faturaUid")
 	FaturaResponse toResponse(Fatura entity);
-
-	@Mappings({ @Mapping(source = "uid", target = "ordemServicoUid"),
-			@Mapping(source = "tipoServico.uid", target = "tipoServico.tipoServicoUid"),
-			@Mapping(source = "cliente.uid", target = "cliente.clienteUid"),
-		@Mapping(source = "fatura.codigo", target = "codigoFatura") })	
-	OrdemServicoSimpleResponse toSimpleResponse(OrdemServico entity);
 
 }

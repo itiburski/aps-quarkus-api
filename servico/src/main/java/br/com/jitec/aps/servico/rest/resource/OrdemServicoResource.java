@@ -3,7 +3,6 @@ package br.com.jitec.aps.servico.rest.resource;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -36,11 +35,11 @@ import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.rest.payload.mapper.OrdemServicoMapper;
-import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoLancamentoRequest;
 import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoCreateRequest;
+import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoLancamentoRequest;
 import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
-import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSimpleResponse;
+import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_ORDENS_SERVICO)
 @Path("/ordens-servico")
@@ -55,7 +54,8 @@ public class OrdemServicoResource {
 	OrdemServicoMapper mapper;
 
 	@Operation(summary = ServicoApiConstants.ORDEM_SERVICO_LIST_OPERATION, description = ServicoApiConstants.ORDEM_SERVICO_LIST_OPERATION_DESCRIPTION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_LIST_RESPONSE),
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_LIST_RESPONSE),
 			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
@@ -69,8 +69,7 @@ public class OrdemServicoResource {
 				.withEntradaTo(entradaTo).withLancado(lancado).withEntregue(entregue).withFaturado(faturado).build();
 
 		Paged<OrdemServico> query = osService.getAll(pagination, filter);
-		List<OrdemServicoSimpleResponse> ordensServico = query.getContent().stream()
-				.map(os -> mapper.toSimpleResponse(os)).collect(Collectors.toList());
+		List<OrdemServicoSlimResponse> ordensServico = mapper.toListSlimResponse(query.getContent());
 
 		return Response.ok(ordensServico).header(Headers.PAGE_NUMBER, pagination.getPage())
 				.header(Headers.PAGE_SIZE, pagination.getSize()).header(Headers.TOTAL_PAGES, query.getPageCount())
@@ -78,7 +77,8 @@ public class OrdemServicoResource {
 	}
 
 	@Operation(summary = ServicoApiConstants.ORDEM_SERVICO_GET_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_GET_RESPONSE),
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = ServicoApiConstants.ORDEM_SERVICO_GET_RESPONSE),
 			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })

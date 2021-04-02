@@ -2,17 +2,17 @@ package br.com.jitec.aps.servico.rest.payload.response;
 
 import java.util.UUID;
 
-public class ClienteResponse {
+public class TipoBaixaSlimResponse {
 
-	private UUID clienteUid;
+	private UUID tipoBaixaUid;
 	private String nome;
 
-	public UUID getClienteUid() {
-		return clienteUid;
+	public UUID getTipoBaixaUid() {
+		return tipoBaixaUid;
 	}
 
-	public void setClienteUid(UUID clienteUid) {
-		this.clienteUid = clienteUid;
+	public void setTipoBaixaUid(UUID tipoBaixaUid) {
+		this.tipoBaixaUid = tipoBaixaUid;
 	}
 
 	public String getNome() {

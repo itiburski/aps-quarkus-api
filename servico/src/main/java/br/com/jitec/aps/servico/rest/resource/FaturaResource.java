@@ -3,7 +3,6 @@ package br.com.jitec.aps.servico.rest.resource;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -37,7 +36,7 @@ import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.rest.payload.mapper.FaturaMapper;
 import br.com.jitec.aps.servico.rest.payload.request.FaturaRequest;
 import br.com.jitec.aps.servico.rest.payload.response.FaturaResponse;
-import br.com.jitec.aps.servico.rest.payload.response.FaturaSimpleResponse;
+import br.com.jitec.aps.servico.rest.payload.response.FaturaSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_FATURAS)
 @Path("/faturas")
@@ -64,8 +63,7 @@ public class FaturaResource {
 		FaturaFilter filter = new FaturaFilter(clienteUid, codigo, dataFrom, dataTo);
 
 		Paged<Fatura> query = service.getAll(pagination, filter);
-		List<FaturaSimpleResponse> faturasSimpleResponse = query.getContent().stream()
-				.map(fatura -> faturaMapper.toSimpleResponse(fatura)).collect(Collectors.toList());
+		List<FaturaSlimResponse> faturasSimpleResponse = faturaMapper.toListSlimResponse(query.getContent());
 
 		return Response.ok(faturasSimpleResponse).header(Headers.PAGE_NUMBER, pagination.getPage())
 				.header(Headers.PAGE_SIZE, pagination.getSize()).header(Headers.TOTAL_PAGES, query.getPageCount())
@@ -86,20 +84,21 @@ public class FaturaResource {
 
 	@Operation(summary = ServicoApiConstants.FATURA_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ServicoApiConstants.FATURA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = FaturaSimpleResponse.class))),
+			@APIResponse(responseCode = "201", description = ServicoApiConstants.FATURA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = FaturaSlimResponse.class))),
 			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull FaturaRequest request) {
 		Fatura fatura = service.create(request.getData(), request.getOrdensServicoUid());
-		FaturaSimpleResponse response = faturaMapper.toSimpleResponse(fatura);
+		FaturaSlimResponse response = faturaMapper.toSlimResponse(fatura);
 
 		return Response.status(Status.CREATED).entity(response).build();
 	}
 
 	@Operation(summary = ServicoApiConstants.FATURA_DELETE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "204", description = ServicoApiConstants.FATURA_DELETE_RESPONSE),
+	@APIResponses(value = {
+			@APIResponse(responseCode = "204", description = ServicoApiConstants.FATURA_DELETE_RESPONSE),
 			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = ServicoApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })

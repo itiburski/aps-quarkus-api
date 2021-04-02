@@ -4,19 +4,13 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public class FaturaSimpleResponse {
+public class FaturaSlimResponse {
 
 	private UUID faturaUid;
-
 	private Integer codigo;
-
 	private BigDecimal valorTotal;
-
 	private OffsetDateTime data;
-
-	private ClienteResponse cliente;
-
-	private Integer version;
+	private ClienteSlimResponse cliente;
 
 	public UUID getFaturaUid() {
 		return faturaUid;
@@ -50,20 +44,12 @@ public class FaturaSimpleResponse {
 		this.data = data;
 	}
 
-	public ClienteResponse getCliente() {
+	public ClienteSlimResponse getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(ClienteResponse cliente) {
+	public void setCliente(ClienteSlimResponse cliente) {
 		this.cliente = cliente;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
 	}
 
 }

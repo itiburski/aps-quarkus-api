@@ -17,7 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.service.TipoBaixaService;
 import br.com.jitec.aps.servico.rest.payload.mapper.TipoBaixaMapper;
-import br.com.jitec.aps.servico.rest.payload.response.TipoBaixaResponse;
+import br.com.jitec.aps.servico.rest.payload.response.TipoBaixaSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_TIPOS_BAIXA)
 @Path("/tipos-baixa")
@@ -36,8 +36,8 @@ public class TipoBaixaResource {
 			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public List<TipoBaixaResponse> getAll() {
-		return mapper.toListResponse(service.getAll());
+	public List<TipoBaixaSlimResponse> getAll() {
+		return mapper.toListSlimResponse(service.getAll());
 	}
 
 }

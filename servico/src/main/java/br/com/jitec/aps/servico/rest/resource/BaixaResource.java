@@ -3,7 +3,6 @@ package br.com.jitec.aps.servico.rest.resource;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -39,7 +38,7 @@ import br.com.jitec.aps.servico.rest.payload.mapper.BaixaMapper;
 import br.com.jitec.aps.servico.rest.payload.request.BaixaCreateRequest;
 import br.com.jitec.aps.servico.rest.payload.request.BaixaUpdateRequest;
 import br.com.jitec.aps.servico.rest.payload.response.BaixaResponse;
-import br.com.jitec.aps.servico.rest.payload.response.BaixaSimpleResponse;
+import br.com.jitec.aps.servico.rest.payload.response.BaixaSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_BAIXAS)
 @Path("/baixas")
@@ -66,8 +65,7 @@ public class BaixaResource {
 		BaixaFilter filter = new BaixaFilter(clienteUid, tipoBaixaUid, dataFrom, dataTo);
 
 		Paged<Baixa> query = service.getAll(pagination, filter);
-		List<BaixaSimpleResponse> baixaSimpleResponse = query.getContent().stream()
-				.map(fatura -> mapper.toSimpleResponse(fatura)).collect(Collectors.toList());
+		List<BaixaSlimResponse> baixaSimpleResponse = mapper.toListSlimResponse(query.getContent());
 
 		return Response.ok(baixaSimpleResponse).header(Headers.PAGE_NUMBER, pagination.getPage())
 				.header(Headers.PAGE_SIZE, pagination.getSize()).header(Headers.TOTAL_PAGES, query.getPageCount())
@@ -88,7 +86,7 @@ public class BaixaResource {
 
 	@Operation(summary = ServicoApiConstants.BAIXA_CREATE_OPERATION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "201", description = ServicoApiConstants.BAIXA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = BaixaSimpleResponse.class))),
+			@APIResponse(responseCode = "201", description = ServicoApiConstants.BAIXA_CREATE_RESPONSE, content = @Content(schema = @Schema(allOf = BaixaSlimResponse.class))),
 			@APIResponse(responseCode = "400", description = ServicoApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "422", description = ServicoApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
