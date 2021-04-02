@@ -2,7 +2,7 @@ package br.com.jitec.aps.cadastro.rest.payload.response;
 
 import java.util.UUID;
 
-public class ClienteSimplifResponse {
+public class ClienteSlimResponse {
 
 	private UUID clienteUid;
 	private Integer codigo;
@@ -10,7 +10,6 @@ public class ClienteSimplifResponse {
 	private String razaoSocial;
 	private String contato;
 	private Boolean ativo;
-	private Integer version;
 
 	public UUID getClienteUid() {
 		return clienteUid;
@@ -58,14 +57,6 @@ public class ClienteSimplifResponse {
 
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
 	}
 
 }

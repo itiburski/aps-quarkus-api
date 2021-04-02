@@ -39,7 +39,7 @@ import br.com.jitec.aps.cadastro.rest.payload.mapper.ClienteTelefoneMapper;
 import br.com.jitec.aps.cadastro.rest.payload.request.ClienteCreateRequest;
 import br.com.jitec.aps.cadastro.rest.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteResponse;
-import br.com.jitec.aps.cadastro.rest.payload.response.ClienteSimplifResponse;
+import br.com.jitec.aps.cadastro.rest.payload.response.ClienteSlimResponse;
 import br.com.jitec.aps.commons.business.util.Paged;
 import br.com.jitec.aps.commons.business.util.Pagination;
 import br.com.jitec.aps.commons.rest.http.Headers;
@@ -64,7 +64,7 @@ public class ClienteResource {
 
 	@Operation(summary = CadastroApiConstants.CLIENTE_LIST_OPERATION, description = CadastroApiConstants.CLIENTE_LIST_OPERATION_DESCRIPTION)
 	@APIResponses(value = {
-			@APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_LIST_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteSimplifResponse.class))),
+			@APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_LIST_RESPONSE, content = @Content(schema = @Schema(allOf = ClienteSlimResponse.class))),
 			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
 			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
@@ -77,7 +77,7 @@ public class ClienteResource {
 		ClienteFilter filter = new ClienteFilter(codigo, nomeOuRazaoSocial, ativo);
 
 		Paged<Cliente> query = service.getClientes(pagination, filter, sort);
-		List<ClienteSimplifResponse> clientes = mapper.toSimplifListResponse(query.getContent());
+		List<ClienteSlimResponse> clientes = mapper.toListSlimResponse(query.getContent());
 
 		return Response.ok(clientes).header(Headers.PAGE_NUMBER, pagination.getPage())
 				.header(Headers.PAGE_SIZE, pagination.getSize()).header(Headers.TOTAL_PAGES, query.getPageCount())

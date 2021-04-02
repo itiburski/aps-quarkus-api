@@ -20,8 +20,8 @@ public class ClienteResponse {
 	private String homepage;
 	private String cnpj;
 	private String inscricaoEstadual;
-	private CidadeResponse cidade;
-	private CategoriaClienteResponse categoriaCliente;
+	private CidadeSlimResponse cidade;
+	private CategoriaClienteSlimResponse categoriaCliente;
 	private List<ClienteEmailResponse> emails;
 	private List<ClienteTelefoneResponse> telefones;
 	private Integer version;
@@ -138,19 +138,19 @@ public class ClienteResponse {
 		this.inscricaoEstadual = inscricaoEstadual;
 	}
 
-	public CidadeResponse getCidade() {
+	public CidadeSlimResponse getCidade() {
 		return cidade;
 	}
 
-	public void setCidade(CidadeResponse cidade) {
+	public void setCidade(CidadeSlimResponse cidade) {
 		this.cidade = cidade;
 	}
 
-	public CategoriaClienteResponse getCategoriaCliente() {
+	public CategoriaClienteSlimResponse getCategoriaCliente() {
 		return categoriaCliente;
 	}
 
-	public void setCategoriaCliente(CategoriaClienteResponse categoriaCliente) {
+	public void setCategoriaCliente(CategoriaClienteSlimResponse categoriaCliente) {
 		this.categoriaCliente = categoriaCliente;
 	}
 

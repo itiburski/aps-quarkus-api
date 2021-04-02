@@ -30,6 +30,7 @@ import br.com.jitec.aps.cadastro.business.service.TipoTelefoneService;
 import br.com.jitec.aps.cadastro.rest.payload.mapper.TipoTelefoneMapper;
 import br.com.jitec.aps.cadastro.rest.payload.request.TipoTelefoneRequest;
 import br.com.jitec.aps.cadastro.rest.payload.response.TipoTelefoneResponse;
+import br.com.jitec.aps.cadastro.rest.payload.response.TipoTelefoneSlimResponse;
 
 @Tag(name = CadastroApiConstants.TAG_TIPOS_TELEFONE)
 @Path("/tipos-telefone")
@@ -49,8 +50,8 @@ public class TipoTelefoneResource {
 			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public List<TipoTelefoneResponse> getAll() {
-		return mapper.toListResponse(service.getAll());
+	public List<TipoTelefoneSlimResponse> getAll() {
+		return mapper.toListSlimResponse(service.getAll());
 	}
 
 	@Operation(summary = CadastroApiConstants.TIPO_TELEFONE_GET_OPERATION)

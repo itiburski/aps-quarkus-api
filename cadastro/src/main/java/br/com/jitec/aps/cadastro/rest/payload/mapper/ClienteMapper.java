@@ -9,25 +9,23 @@ import org.mapstruct.Mappings;
 import br.com.jitec.aps.cadastro.data.model.Cliente;
 import br.com.jitec.aps.cadastro.data.model.ClienteEmail;
 import br.com.jitec.aps.cadastro.data.model.ClienteTelefone;
-import br.com.jitec.aps.cadastro.data.model.TipoTelefone;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteEmailResponse;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteResponse;
-import br.com.jitec.aps.cadastro.rest.payload.response.ClienteSimplifResponse;
+import br.com.jitec.aps.cadastro.rest.payload.response.ClienteSlimResponse;
 import br.com.jitec.aps.cadastro.rest.payload.response.ClienteTelefoneResponse;
-import br.com.jitec.aps.cadastro.rest.payload.response.TipoTelefoneResponse;
 import br.com.jitec.aps.commons.rest.payload.mapper.QuarkusMapperConfig;
 
-@Mapper(config = QuarkusMapperConfig.class)
+@Mapper(config = QuarkusMapperConfig.class, uses = { CategoriaClienteMapper.class, CidadeMapper.class,
+		TipoTelefoneMapper.class })
 public interface ClienteMapper {
 
 	@Mapping(source = "uid", target = "clienteUid")
-	ClienteSimplifResponse toSimplifResponse(Cliente cliente);
+	ClienteSlimResponse toSlimResponse(Cliente cliente);
 
-	List<ClienteSimplifResponse> toSimplifListResponse(List<Cliente> cliente);
+	List<ClienteSlimResponse> toListSlimResponse(List<Cliente> cliente);
 
 	@Mappings({ @Mapping(source = "uid", target = "clienteUid"),
-			@Mapping(source = "categoria.uid", target = "categoriaCliente.categoriaClienteUid"),
-			@Mapping(source = "cidade.uid", target = "cidade.cidadeUid") })
+			@Mapping(source = "categoria", target = "categoriaCliente") })
 	ClienteResponse toResponse(Cliente cliente);
 
 	@Mapping(source = "uid", target = "emailUid")
@@ -35,8 +33,5 @@ public interface ClienteMapper {
 
 	@Mapping(source = "uid", target = "telefoneUid")
 	ClienteTelefoneResponse toResponse(ClienteTelefone clienteTelefone);
-
-	@Mapping(source = "uid", target = "tipoTelefoneUid")
-	TipoTelefoneResponse toResponse(TipoTelefone tipoTelefone);
 
 }

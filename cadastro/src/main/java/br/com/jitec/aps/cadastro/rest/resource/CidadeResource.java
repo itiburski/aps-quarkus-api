@@ -30,6 +30,7 @@ import br.com.jitec.aps.cadastro.business.service.CidadeService;
 import br.com.jitec.aps.cadastro.rest.payload.mapper.CidadeMapper;
 import br.com.jitec.aps.cadastro.rest.payload.request.CidadeRequest;
 import br.com.jitec.aps.cadastro.rest.payload.response.CidadeResponse;
+import br.com.jitec.aps.cadastro.rest.payload.response.CidadeSlimResponse;
 
 @Tag(name = CadastroApiConstants.TAG_CIDADES)
 @Path("/cidades")
@@ -48,8 +49,8 @@ public class CidadeResource {
 			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public List<CidadeResponse> getAll() {
-		return mapper.toListResponse(service.getAll());
+	public List<CidadeSlimResponse> getAll() {
+		return mapper.toListSlimResponse(service.getAll());
 	}
 
 	@Operation(summary = CadastroApiConstants.CIDADE_GET_OPERATION)

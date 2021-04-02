@@ -5,7 +5,7 @@ import java.util.UUID;
 public class ClienteTelefoneResponse {
 
 	private UUID telefoneUid;
-	private TipoTelefoneResponse tipoTelefone;
+	private TipoTelefoneSlimResponse tipoTelefone;
 	private Integer numero;
 
 	public UUID getTelefoneUid() {
@@ -16,11 +16,11 @@ public class ClienteTelefoneResponse {
 		this.telefoneUid = telefoneUid;
 	}
 
-	public TipoTelefoneResponse getTipoTelefone() {
+	public TipoTelefoneSlimResponse getTipoTelefone() {
 		return tipoTelefone;
 	}
 
-	public void setTipoTelefone(TipoTelefoneResponse tipoTelefone) {
+	public void setTipoTelefone(TipoTelefoneSlimResponse tipoTelefone) {
 		this.tipoTelefone = tipoTelefone;
 	}
 

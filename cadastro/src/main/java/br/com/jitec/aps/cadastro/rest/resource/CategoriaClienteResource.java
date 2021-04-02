@@ -30,6 +30,7 @@ import br.com.jitec.aps.cadastro.business.service.CategoriaClienteService;
 import br.com.jitec.aps.cadastro.rest.payload.mapper.CategoriaClienteMapper;
 import br.com.jitec.aps.cadastro.rest.payload.request.CategoriaClienteRequest;
 import br.com.jitec.aps.cadastro.rest.payload.response.CategoriaClienteResponse;
+import br.com.jitec.aps.cadastro.rest.payload.response.CategoriaClienteSlimResponse;
 
 @Tag(name = CadastroApiConstants.TAG_CATEGORIAS_CLIENTE)
 @Path("/categorias-cliente")
@@ -49,8 +50,8 @@ public class CategoriaClienteResource {
 			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@GET
-	public List<CategoriaClienteResponse> getAll() {
-		return mapper.toListResponse(service.getAll());
+	public List<CategoriaClienteSlimResponse> getAll() {
+		return mapper.toListSlimResponse(service.getAll());
 	}
 
 	@Operation(summary = CadastroApiConstants.CATEGORIA_CLIENTE_GET_OPERATION)
