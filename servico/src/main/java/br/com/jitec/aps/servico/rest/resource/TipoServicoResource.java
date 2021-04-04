@@ -16,8 +16,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.service.TipoServicoService;
-import br.com.jitec.aps.servico.rest.payload.mapper.TipoServicoMapper;
-import br.com.jitec.aps.servico.rest.payload.response.TipoServicoSlimResponse;
+import br.com.jitec.aps.servico.payload.mapper.TipoServicoMapper;
+import br.com.jitec.aps.servico.payload.response.TipoServicoSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_TIPOS_SERVICO)
 @Path("/tipos-servico")

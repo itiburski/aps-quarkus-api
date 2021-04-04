@@ -27,10 +27,10 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.cadastro.api.CadastroApiConstants;
 import br.com.jitec.aps.cadastro.business.service.CategoriaClienteService;
-import br.com.jitec.aps.cadastro.rest.payload.mapper.CategoriaClienteMapper;
-import br.com.jitec.aps.cadastro.rest.payload.request.CategoriaClienteRequest;
-import br.com.jitec.aps.cadastro.rest.payload.response.CategoriaClienteResponse;
-import br.com.jitec.aps.cadastro.rest.payload.response.CategoriaClienteSlimResponse;
+import br.com.jitec.aps.cadastro.payload.mapper.CategoriaClienteMapper;
+import br.com.jitec.aps.cadastro.payload.request.CategoriaClienteRequest;
+import br.com.jitec.aps.cadastro.payload.response.CategoriaClienteResponse;
+import br.com.jitec.aps.cadastro.payload.response.CategoriaClienteSlimResponse;
 
 @Tag(name = CadastroApiConstants.TAG_CATEGORIAS_CLIENTE)
 @Path("/categorias-cliente")

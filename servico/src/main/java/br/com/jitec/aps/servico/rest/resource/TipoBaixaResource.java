@@ -16,8 +16,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.service.TipoBaixaService;
-import br.com.jitec.aps.servico.rest.payload.mapper.TipoBaixaMapper;
-import br.com.jitec.aps.servico.rest.payload.response.TipoBaixaSlimResponse;
+import br.com.jitec.aps.servico.payload.mapper.TipoBaixaMapper;
+import br.com.jitec.aps.servico.payload.response.TipoBaixaSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_TIPOS_BAIXA)
 @Path("/tipos-baixa")

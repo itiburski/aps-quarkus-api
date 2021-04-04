@@ -27,10 +27,10 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.com.jitec.aps.cadastro.api.CadastroApiConstants;
 import br.com.jitec.aps.cadastro.business.service.CidadeService;
-import br.com.jitec.aps.cadastro.rest.payload.mapper.CidadeMapper;
-import br.com.jitec.aps.cadastro.rest.payload.request.CidadeRequest;
-import br.com.jitec.aps.cadastro.rest.payload.response.CidadeResponse;
-import br.com.jitec.aps.cadastro.rest.payload.response.CidadeSlimResponse;
+import br.com.jitec.aps.cadastro.payload.mapper.CidadeMapper;
+import br.com.jitec.aps.cadastro.payload.request.CidadeRequest;
+import br.com.jitec.aps.cadastro.payload.response.CidadeResponse;
+import br.com.jitec.aps.cadastro.payload.response.CidadeSlimResponse;
 
 @Tag(name = CadastroApiConstants.TAG_CIDADES)
 @Path("/cidades")

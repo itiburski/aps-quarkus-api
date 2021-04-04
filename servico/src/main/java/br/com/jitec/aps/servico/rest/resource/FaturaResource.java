@@ -33,10 +33,10 @@ import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.data.FaturaFilter;
 import br.com.jitec.aps.servico.business.service.FaturaService;
 import br.com.jitec.aps.servico.data.model.Fatura;
-import br.com.jitec.aps.servico.rest.payload.mapper.FaturaMapper;
-import br.com.jitec.aps.servico.rest.payload.request.FaturaRequest;
-import br.com.jitec.aps.servico.rest.payload.response.FaturaResponse;
-import br.com.jitec.aps.servico.rest.payload.response.FaturaSlimResponse;
+import br.com.jitec.aps.servico.payload.mapper.FaturaMapper;
+import br.com.jitec.aps.servico.payload.request.FaturaRequest;
+import br.com.jitec.aps.servico.payload.response.FaturaResponse;
+import br.com.jitec.aps.servico.payload.response.FaturaSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_FATURAS)
 @Path("/faturas")

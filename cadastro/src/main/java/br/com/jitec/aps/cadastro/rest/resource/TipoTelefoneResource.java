@@ -27,10 +27,10 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.cadastro.api.CadastroApiConstants;
 import br.com.jitec.aps.cadastro.business.service.TipoTelefoneService;
-import br.com.jitec.aps.cadastro.rest.payload.mapper.TipoTelefoneMapper;
-import br.com.jitec.aps.cadastro.rest.payload.request.TipoTelefoneRequest;
-import br.com.jitec.aps.cadastro.rest.payload.response.TipoTelefoneResponse;
-import br.com.jitec.aps.cadastro.rest.payload.response.TipoTelefoneSlimResponse;
+import br.com.jitec.aps.cadastro.payload.mapper.TipoTelefoneMapper;
+import br.com.jitec.aps.cadastro.payload.request.TipoTelefoneRequest;
+import br.com.jitec.aps.cadastro.payload.response.TipoTelefoneResponse;
+import br.com.jitec.aps.cadastro.payload.response.TipoTelefoneSlimResponse;
 
 @Tag(name = CadastroApiConstants.TAG_TIPOS_TELEFONE)
 @Path("/tipos-telefone")

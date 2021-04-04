@@ -34,11 +34,11 @@ import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.data.BaixaFilter;
 import br.com.jitec.aps.servico.business.service.BaixaService;
 import br.com.jitec.aps.servico.data.model.Baixa;
-import br.com.jitec.aps.servico.rest.payload.mapper.BaixaMapper;
-import br.com.jitec.aps.servico.rest.payload.request.BaixaCreateRequest;
-import br.com.jitec.aps.servico.rest.payload.request.BaixaUpdateRequest;
-import br.com.jitec.aps.servico.rest.payload.response.BaixaResponse;
-import br.com.jitec.aps.servico.rest.payload.response.BaixaSlimResponse;
+import br.com.jitec.aps.servico.payload.mapper.BaixaMapper;
+import br.com.jitec.aps.servico.payload.request.BaixaCreateRequest;
+import br.com.jitec.aps.servico.payload.request.BaixaUpdateRequest;
+import br.com.jitec.aps.servico.payload.response.BaixaResponse;
+import br.com.jitec.aps.servico.payload.response.BaixaSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_BAIXAS)
 @Path("/baixas")

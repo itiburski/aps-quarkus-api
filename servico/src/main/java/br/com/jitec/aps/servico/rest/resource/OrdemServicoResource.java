@@ -34,12 +34,12 @@ import br.com.jitec.aps.servico.api.ServicoApiConstants;
 import br.com.jitec.aps.servico.business.data.OrdemServicoFilter;
 import br.com.jitec.aps.servico.business.service.OrdemServicoService;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
-import br.com.jitec.aps.servico.rest.payload.mapper.OrdemServicoMapper;
-import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoCreateRequest;
-import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoLancamentoRequest;
-import br.com.jitec.aps.servico.rest.payload.request.OrdemServicoUpdateRequest;
-import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoResponse;
-import br.com.jitec.aps.servico.rest.payload.response.OrdemServicoSlimResponse;
+import br.com.jitec.aps.servico.payload.mapper.OrdemServicoMapper;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoCreateRequest;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoLancamentoRequest;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoUpdateRequest;
+import br.com.jitec.aps.servico.payload.response.OrdemServicoResponse;
+import br.com.jitec.aps.servico.payload.response.OrdemServicoSlimResponse;
 
 @Tag(name = ServicoApiConstants.TAG_ORDENS_SERVICO)
 @Path("/ordens-servico")
