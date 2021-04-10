@@ -48,11 +48,6 @@ public abstract class GenericClienteRequest {
 	private UUID cidadeUid;
 	private UUID categoriaClienteUid;
 
-	@Valid
-	private List<ClienteEmailRequest> emails;
-
-	private List<ClienteTelefoneRequest> telefones;
-
 	public String getNome() {
 		return nome;
 	}
@@ -147,22 +142,6 @@ public abstract class GenericClienteRequest {
 
 	public void setCategoriaClienteUid(UUID categoriaClienteUid) {
 		this.categoriaClienteUid = categoriaClienteUid;
-	}
-
-	public List<ClienteEmailRequest> getEmails() {
-		return emails;
-	}
-
-	public void setEmails(List<ClienteEmailRequest> emails) {
-		this.emails = emails;
-	}
-
-	public List<ClienteTelefoneRequest> getTelefones() {
-		return telefones;
-	}
-
-	public void setTelefones(List<ClienteTelefoneRequest> telefones) {
-		this.telefones = telefones;
 	}
 
 }

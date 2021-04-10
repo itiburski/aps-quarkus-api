@@ -123,8 +123,8 @@ public class ClienteResource {
 	@Path("{clienteUid}/version/{version}")
 	public ClienteResponse updateAll(@PathParam UUID clienteUid, @PathParam Integer version,
 			@Valid @NotNull ClienteUpdateRequest request) {
-		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
-		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
+		List<ClienteEmailDTO> emails = emailMapper.toListUpdateDto(request.getEmails());
+		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListUpdateDto(request.getTelefones());
 
 		return mapper.toResponse(service.updateAll(clienteUid, version, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
@@ -144,8 +144,8 @@ public class ClienteResource {
 	@Path("{clienteUid}/version/{version}")
 	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @PathParam Integer version,
 			@Valid @NotNull ClienteUpdateRequest request) {
-		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
-		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
+		List<ClienteEmailDTO> emails = emailMapper.toListUpdateDto(request.getEmails());
+		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListUpdateDto(request.getTelefones());
 
 		return mapper.toResponse(service.updateNotNull(clienteUid, version, request.getNome(), request.getRazaoSocial(),
 				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),

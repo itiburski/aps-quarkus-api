@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
 
-public class ClienteTelefoneRequest {
+public class ClienteTelefoneUpdateRequest {
 
 	private UUID telefoneUid;
 	private UUID tipoTelefoneUid;
