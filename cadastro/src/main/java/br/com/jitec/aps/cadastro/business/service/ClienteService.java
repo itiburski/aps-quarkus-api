@@ -15,9 +15,7 @@ import javax.transaction.Transactional;
 
 import org.jboss.logging.Logger;
 
-import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteFilter;
-import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.cadastro.business.producer.ClienteProducer;
 import br.com.jitec.aps.cadastro.data.model.CategoriaCliente;
 import br.com.jitec.aps.cadastro.data.model.Cidade;
@@ -25,6 +23,13 @@ import br.com.jitec.aps.cadastro.data.model.Cliente;
 import br.com.jitec.aps.cadastro.data.model.ClienteEmail;
 import br.com.jitec.aps.cadastro.data.model.ClienteTelefone;
 import br.com.jitec.aps.cadastro.data.repository.ClienteRepository;
+import br.com.jitec.aps.cadastro.payload.mapper.ClienteMapper;
+import br.com.jitec.aps.cadastro.payload.request.ClienteCreateRequest;
+import br.com.jitec.aps.cadastro.payload.request.ClienteEmailCreateRequest;
+import br.com.jitec.aps.cadastro.payload.request.ClienteEmailUpdateRequest;
+import br.com.jitec.aps.cadastro.payload.request.ClienteTelefoneCreateRequest;
+import br.com.jitec.aps.cadastro.payload.request.ClienteTelefoneUpdateRequest;
+import br.com.jitec.aps.cadastro.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.commons.business.data.ClienteSaldoDto;
 import br.com.jitec.aps.commons.business.exception.DataNotFoundException;
 import br.com.jitec.aps.commons.business.exception.InvalidDataException;
@@ -46,6 +51,9 @@ public class ClienteService {
 
 	@Inject
 	ClienteRepository repository;
+
+	@Inject
+	ClienteMapper clienteMapper;
 
 	@Inject
 	CidadeService cidadeService;
@@ -115,38 +123,31 @@ public class ClienteService {
 		return cliente;
 	}
 
+	/**
+	 * Create a new Cliente
+	 * 
+	 * @param request
+	 * @return
+	 */
 	@Transactional
-	public Cliente create(String nome, String razaoSocial, String contato, String rua, String complemento,
-			String bairro, String cep, String homepage, String cnpj, String inscricaoEstadual, UUID cidadeUid,
-			UUID categoriaUid, List<ClienteEmailDTO> emails, List<ClienteTelefoneDTO> telefones) {
+	public Cliente create(ClienteCreateRequest request) {
+		Cliente cliente = clienteMapper.toCliente(request);
 
-		Cliente cliente = new Cliente();
 		cliente.setCodigo(repository.getNextCodigoCliente());
-		cliente.setNome(nome);
-		cliente.setRazaoSocial(razaoSocial);
-		cliente.setContato(contato);
-		cliente.setRua(rua);
-		cliente.setComplemento(complemento);
-		cliente.setBairro(bairro);
-		cliente.setCep(cep);
-		cliente.setHomepage(homepage);
-		cliente.setCnpj(cnpj);
-		cliente.setInscricaoEstadual(inscricaoEstadual);
-		if (Objects.nonNull(cidadeUid)) {
-			cliente.setCidade(cidadeService.get(cidadeUid));
-		}
-		if (Objects.nonNull(categoriaUid)) {
-			cliente.setCategoria(categClienteService.get(categoriaUid));
-		}
 		cliente.setAtivo(Boolean.TRUE);
 		cliente.setSaldo(BigDecimal.ZERO);
 
-		for (ClienteEmailDTO dto : emails) {
-			cliente.addEmail(new ClienteEmail(dto.getEmail()));
+		if (Objects.nonNull(request.getCidadeUid())) {
+			cliente.setCidade(cidadeService.get(request.getCidadeUid()));
 		}
-
-		for (ClienteTelefoneDTO dto : telefones) {
-			cliente.addTelefone(buildClienteTelefone(dto));
+		if (Objects.nonNull(request.getCategoriaClienteUid())) {
+			cliente.setCategoria(categClienteService.get(request.getCategoriaClienteUid()));
+		}
+		for (ClienteEmailCreateRequest cecr : request.getEmails()) {
+			cliente.addEmail(new ClienteEmail(cecr.getEmail()));
+		}
+		for (ClienteTelefoneCreateRequest ctcr : request.getTelefones()) {
+			cliente.addTelefone(buildClienteTelefone(ctcr.getNumero(), ctcr.getTipoTelefoneUid()));
 		}
 
 		repository.persist(cliente);
@@ -154,11 +155,11 @@ public class ClienteService {
 		return cliente;
 	}
 
-	private ClienteTelefone buildClienteTelefone(ClienteTelefoneDTO dto) {
+	private ClienteTelefone buildClienteTelefone(Integer numero, UUID tipoTelefoneUid) {
 		ClienteTelefone telefone = new ClienteTelefone();
-		telefone.setNumero(dto.getNumero());
-		if (Objects.nonNull(dto.getTipoTelefoneUid())) {
-			telefone.setTipoTelefone(tipoTelefoneService.get(dto.getTipoTelefoneUid()));
+		telefone.setNumero(numero);
+		if (Objects.nonNull(tipoTelefoneUid)) {
+			telefone.setTipoTelefone(tipoTelefoneService.get(tipoTelefoneUid));
 		}
 		return telefone;
 	}
@@ -168,48 +169,22 @@ public class ClienteService {
 	 * is empty or null, the field's value will be erased
 	 *
 	 * @param clienteUid
-	 * @param nome
-	 * @param razaoSocial
-	 * @param contato
-	 * @param ativo
-	 * @param rua
-	 * @param complemento
-	 * @param bairro
-	 * @param cep
-	 * @param homepage
-	 * @param cnpj
-	 * @param inscricaoEstadual
-	 * @param cidadeUid
-	 * @param categoriaClienteUid
-	 * @param emails
-	 * @param telefones
+	 * @param version
+	 * @param request
 	 * @return the entity with all updated fields
 	 */
 	@Transactional
-	public Cliente updateAll(UUID clienteUid, Integer version, String nome, String razaoSocial, String contato,
-			Boolean ativo, String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
-			String inscricaoEstadual, UUID cidadeUid, UUID categoriaClienteUid, List<ClienteEmailDTO> emails,
-			List<ClienteTelefoneDTO> telefones) {
-
+	public Cliente updateAll(UUID clienteUid, Integer version, ClienteUpdateRequest request) {
 		Cliente cliente = getComplete(clienteUid, version);
+		clienteMapper.update(request, cliente);
 
-		cliente.setNome(nome);
-		cliente.setRazaoSocial(razaoSocial);
-		cliente.setContato(contato);
-		cliente.setAtivo(Objects.nonNull(ativo) ? ativo : Boolean.FALSE);
-		cliente.setRua(rua);
-		cliente.setComplemento(complemento);
-		cliente.setBairro(bairro);
-		cliente.setCep(cep);
-		cliente.setHomepage(homepage);
-		cliente.setCnpj(cnpj);
-		cliente.setInscricaoEstadual(inscricaoEstadual);
-		cliente.setCidade(Objects.nonNull(cidadeUid) ? cidadeService.get(cidadeUid) : null);
-		cliente.setCategoria(
-				Objects.nonNull(categoriaClienteUid) ? categClienteService.get(categoriaClienteUid) : null);
+		cliente.setCidade(Objects.nonNull(request.getCidadeUid()) ? cidadeService.get(request.getCidadeUid()) : null);
+		cliente.setCategoria(Objects.nonNull(request.getCategoriaClienteUid())
+				? categClienteService.get(request.getCategoriaClienteUid())
+				: null);
 
-		mergeEmails(cliente, emails);
-		mergeTelefones(cliente, telefones);
+		mergeEmails(cliente, request.getEmails());
+		mergeTelefones(cliente, request.getTelefones());
 
 		repository.persist(cliente);
 		clienteProducer.sendClienteAtualizado(cliente);
@@ -227,13 +202,13 @@ public class ClienteService {
 	 * @param cliente
 	 * @param emails
 	 */
-	private void mergeEmails(Cliente cliente, List<ClienteEmailDTO> emails) {
-		List<ClienteEmailDTO> newEmails = emails.stream().filter(upd -> upd.getEmailUid() == null)
+	private void mergeEmails(Cliente cliente, List<ClienteEmailUpdateRequest> emails) {
+		List<ClienteEmailUpdateRequest> newEmails = emails.stream().filter(upd -> upd.getEmailUid() == null)
 				.collect(Collectors.toList());
 		List<ClienteEmail> removedEmails = new ArrayList<>();
 
 		for (ClienteEmail existing : cliente.getEmails()) {
-			Optional<ClienteEmailDTO> optUpdated = emails.stream()
+			Optional<ClienteEmailUpdateRequest> optUpdated = emails.stream()
 					.filter(updated -> existing.getUid().equals(updated.getEmailUid())).findFirst();
 			if (optUpdated.isPresent()) {
 				existing.setEmail(optUpdated.get().getEmail());
@@ -246,13 +221,13 @@ public class ClienteService {
 		newEmails.stream().forEach(added -> cliente.addEmail(new ClienteEmail(added.getEmail())));
 	}
 
-	private void mergeTelefones(Cliente cliente, List<ClienteTelefoneDTO> telefones) {
-		List<ClienteTelefoneDTO> newTelefones = telefones.stream().filter(upd -> upd.getTelefoneUid() == null)
+	private void mergeTelefones(Cliente cliente, List<ClienteTelefoneUpdateRequest> telefones) {
+		List<ClienteTelefoneUpdateRequest> newTelefones = telefones.stream().filter(upd -> upd.getTelefoneUid() == null)
 				.collect(Collectors.toList());
 		List<ClienteTelefone> removedTelefones = new ArrayList<>();
 
 		for (ClienteTelefone existing : cliente.getTelefones()) {
-			Optional<ClienteTelefoneDTO> optUpdated = telefones.stream()
+			Optional<ClienteTelefoneUpdateRequest> optUpdated = telefones.stream()
 					.filter(updated -> existing.getUid().equals(updated.getTelefoneUid())).findFirst();
 			if (optUpdated.isPresent()) {
 				existing.setNumero(optUpdated.get().getNumero());
@@ -265,7 +240,8 @@ public class ClienteService {
 		}
 
 		removedTelefones.stream().forEach(removed -> cliente.removeTelefone(removed));
-		newTelefones.stream().forEach(added -> cliente.addTelefone(buildClienteTelefone(added)));
+		newTelefones.stream().forEach(
+				added -> cliente.addTelefone(buildClienteTelefone(added.getNumero(), added.getTipoTelefoneUid())));
 	}
 
 	/**
@@ -274,74 +250,58 @@ public class ClienteService {
 	 *
 	 * @param clienteUid
 	 * @param nome
-	 * @param razaoSocial
-	 * @param contato
-	 * @param ativo
-	 * @param rua
-	 * @param complemento
-	 * @param bairro
-	 * @param cep
-	 * @param homepage
-	 * @param cnpj
-	 * @param inscricaoEstadual
-	 * @param cidadeUid
-	 * @param categoriaUid
-	 * @param emails
-	 * @param telefones
+	 * @param request
 	 * @return the entity with updated fields
 	 */
 	@Transactional
-	public Cliente updateNotNull(UUID clienteUid, Integer version, String nome, String razaoSocial, String contato,
-			Boolean ativo, String rua, String complemento, String bairro, String cep, String homepage, String cnpj,
-			String inscricaoEstadual, UUID cidadeUid, UUID categoriaUid, List<ClienteEmailDTO> emails,
-			List<ClienteTelefoneDTO> telefones) {
+	public Cliente updateNotNull(UUID clienteUid, Integer version, ClienteUpdateRequest request) {
 
 		Cliente cliente = getComplete(clienteUid, version);
 
-		if (Objects.nonNull(nome)) {
-			cliente.setNome(nome);
+		if (Objects.nonNull(request.getNome())) {
+			cliente.setNome(request.getNome());
 		}
-		if (Objects.nonNull(razaoSocial)) {
-			cliente.setRazaoSocial(razaoSocial);
+		if (Objects.nonNull(request.getRazaoSocial())) {
+			cliente.setRazaoSocial(request.getRazaoSocial());
 		}
-		if (Objects.nonNull(contato)) {
-			cliente.setContato(contato);
+		if (Objects.nonNull(request.getContato())) {
+			cliente.setContato(request.getContato());
 		}
-		if (Objects.nonNull(ativo)) {
-			cliente.setAtivo(ativo);
+		if (Objects.nonNull(request.getAtivo())) {
+			cliente.setAtivo(request.getAtivo());
 		}
-		if (Objects.nonNull(rua)) {
-			cliente.setRua(rua);
+		if (Objects.nonNull(request.getRua())) {
+			cliente.setRua(request.getRua());
 		}
-		if (Objects.nonNull(complemento)) {
-			cliente.setComplemento(complemento);
+		if (Objects.nonNull(request.getComplemento())) {
+			cliente.setComplemento(request.getComplemento());
 		}
-		if (Objects.nonNull(bairro)) {
-			cliente.setBairro(bairro);
+		if (Objects.nonNull(request.getBairro())) {
+			cliente.setBairro(request.getBairro());
 		}
-		if (Objects.nonNull(cep)) {
-			cliente.setCep(cep);
+		if (Objects.nonNull(request.getCep())) {
+			cliente.setCep(request.getCep());
 		}
-		if (Objects.nonNull(homepage)) {
-			cliente.setHomepage(homepage);
+		if (Objects.nonNull(request.getHomepage())) {
+			cliente.setHomepage(request.getHomepage());
 		}
-		if (Objects.nonNull(cnpj)) {
-			cliente.setCnpj(cnpj);
+		if (Objects.nonNull(request.getCnpj())) {
+			cliente.setCnpj(request.getCnpj());
 		}
-		if (Objects.nonNull(inscricaoEstadual)) {
-			cliente.setInscricaoEstadual(inscricaoEstadual);
+		if (Objects.nonNull(request.getInscricaoEstadual())) {
+			cliente.setInscricaoEstadual(request.getInscricaoEstadual());
 		}
-		if (Objects.nonNull(cidadeUid)) {
-			cliente.setCidade(cidadeService.get(cidadeUid));
+		if (Objects.nonNull(request.getCidadeUid())) {
+			cliente.setCidade(cidadeService.get(request.getCidadeUid()));
 		}
-		if (Objects.nonNull(categoriaUid)) {
-			cliente.setCategoria(categClienteService.get(categoriaUid));
+		if (Objects.nonNull(request.getCategoriaClienteUid())) {
+			cliente.setCategoria(categClienteService.get(request.getCategoriaClienteUid()));
 		}
-		if (Objects.nonNull(emails)) {
-			mergeEmails(cliente, emails);
+		if (Objects.nonNull(request.getEmails())) {
+			mergeEmails(cliente, request.getEmails());
 		}
-		if (Objects.nonNull(telefones)) {
-			mergeTelefones(cliente, telefones);
+		if (Objects.nonNull(request.getTelefones())) {
+			mergeTelefones(cliente, request.getTelefones());
 		}
 
 		repository.persist(cliente);

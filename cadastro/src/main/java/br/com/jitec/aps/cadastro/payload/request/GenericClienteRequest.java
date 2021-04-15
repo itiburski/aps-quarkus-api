@@ -1,9 +1,7 @@
 package br.com.jitec.aps.cadastro.payload.request;
 
-import java.util.List;
 import java.util.UUID;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 

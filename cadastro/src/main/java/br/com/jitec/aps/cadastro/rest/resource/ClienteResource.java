@@ -28,14 +28,10 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import br.com.jitec.aps.cadastro.api.CadastroApiConstants;
-import br.com.jitec.aps.cadastro.business.data.ClienteEmailDTO;
 import br.com.jitec.aps.cadastro.business.data.ClienteFilter;
-import br.com.jitec.aps.cadastro.business.data.ClienteTelefoneDTO;
 import br.com.jitec.aps.cadastro.business.service.ClienteService;
 import br.com.jitec.aps.cadastro.data.model.Cliente;
-import br.com.jitec.aps.cadastro.payload.mapper.ClienteEmailMapper;
 import br.com.jitec.aps.cadastro.payload.mapper.ClienteMapper;
-import br.com.jitec.aps.cadastro.payload.mapper.ClienteTelefoneMapper;
 import br.com.jitec.aps.cadastro.payload.request.ClienteCreateRequest;
 import br.com.jitec.aps.cadastro.payload.request.ClienteUpdateRequest;
 import br.com.jitec.aps.cadastro.payload.response.ClienteResponse;
@@ -55,12 +51,6 @@ public class ClienteResource {
 
 	@Inject
 	ClienteMapper mapper;
-
-	@Inject
-	ClienteEmailMapper emailMapper;
-
-	@Inject
-	ClienteTelefoneMapper telefoneMapper;
 
 	@Operation(summary = CadastroApiConstants.CLIENTE_LIST_OPERATION, description = CadastroApiConstants.CLIENTE_LIST_OPERATION_DESCRIPTION)
 	@APIResponses(value = {
@@ -103,18 +93,13 @@ public class ClienteResource {
 			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull ClienteCreateRequest request) {
-		List<ClienteEmailDTO> emails = emailMapper.toListDto(request.getEmails());
-		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListDto(request.getTelefones());
-
-		ClienteResponse clienteResponse = mapper.toResponse(service.create(request.getNome(), request.getRazaoSocial(),
-				request.getContato(), request.getRua(), request.getComplemento(), request.getBairro(), request.getCep(),
-				request.getHomepage(), request.getCnpj(), request.getInscricaoEstadual(), request.getCidadeUid(),
-				request.getCategoriaClienteUid(), emails, telefones));
+		ClienteResponse clienteResponse = mapper.toResponse(service.create(request));
 		return Response.status(Status.CREATED).entity(clienteResponse).build();
 	}
 
 	@Operation(summary = CadastroApiConstants.CLIENTE_UPDATEALL_OPERATION, description = CadastroApiConstants.CLIENTE_UPDATEALL_OPERATION_DESCRIPTION)
-	@APIResponses(value = { @APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_UPDATEALL_RESPONSE),
+	@APIResponses(value = {
+			@APIResponse(responseCode = "200", description = CadastroApiConstants.CLIENTE_UPDATEALL_RESPONSE),
 			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "422", description = CadastroApiConstants.STATUS_CODE_UNPROCESSABLE_ENTITY),
@@ -123,14 +108,8 @@ public class ClienteResource {
 	@Path("{clienteUid}/version/{version}")
 	public ClienteResponse updateAll(@PathParam UUID clienteUid, @PathParam Integer version,
 			@Valid @NotNull ClienteUpdateRequest request) {
-		List<ClienteEmailDTO> emails = emailMapper.toListUpdateDto(request.getEmails());
-		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListUpdateDto(request.getTelefones());
 
-		return mapper.toResponse(service.updateAll(clienteUid, version, request.getNome(), request.getRazaoSocial(),
-				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
-				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaClienteUid(), emails,
-				telefones));
+		return mapper.toResponse(service.updateAll(clienteUid, version, request));
 	}
 
 	@Operation(summary = CadastroApiConstants.CLIENTE_UPDATENOTNULL_OPERATION, description = CadastroApiConstants.CLIENTE_UPDATENOTNULL_OPERATION_DESCRIPTION)
@@ -144,18 +123,13 @@ public class ClienteResource {
 	@Path("{clienteUid}/version/{version}")
 	public ClienteResponse updateNotNull(@PathParam UUID clienteUid, @PathParam Integer version,
 			@Valid @NotNull ClienteUpdateRequest request) {
-		List<ClienteEmailDTO> emails = emailMapper.toListUpdateDto(request.getEmails());
-		List<ClienteTelefoneDTO> telefones = telefoneMapper.toListUpdateDto(request.getTelefones());
 
-		return mapper.toResponse(service.updateNotNull(clienteUid, version, request.getNome(), request.getRazaoSocial(),
-				request.getContato(), request.getAtivo(), request.getRua(), request.getComplemento(),
-				request.getBairro(), request.getCep(), request.getHomepage(), request.getCnpj(),
-				request.getInscricaoEstadual(), request.getCidadeUid(), request.getCategoriaClienteUid(), emails,
-				telefones));
+		return mapper.toResponse(service.updateNotNull(clienteUid, version, request));
 	}
 
 	@Operation(summary = CadastroApiConstants.CLIENTE_DELETE_OPERATION)
-	@APIResponses(value = { @APIResponse(responseCode = "204", description = CadastroApiConstants.CLIENTE_DELETE_RESPONSE),
+	@APIResponses(value = {
+			@APIResponse(responseCode = "204", description = CadastroApiConstants.CLIENTE_DELETE_RESPONSE),
 			@APIResponse(responseCode = "400", description = CadastroApiConstants.STATUS_CODE_BAD_REQUEST),
 			@APIResponse(responseCode = "404", description = CadastroApiConstants.STATUS_CODE_NOT_FOUND),
 			@APIResponse(responseCode = "500", description = CadastroApiConstants.STATUS_CODE_SERVER_ERROR) })
