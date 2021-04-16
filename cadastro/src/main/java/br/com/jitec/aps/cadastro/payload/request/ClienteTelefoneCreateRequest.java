@@ -2,13 +2,13 @@ package br.com.jitec.aps.cadastro.payload.request;
 
 import java.util.UUID;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class ClienteTelefoneCreateRequest {
 
 	private UUID tipoTelefoneUid;
 
-	@NotBlank
+	@NotNull
 	private Integer numero;
 
 	public UUID getTipoTelefoneUid() {

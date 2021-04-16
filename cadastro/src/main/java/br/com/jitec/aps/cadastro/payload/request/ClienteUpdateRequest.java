@@ -12,6 +12,7 @@ public class ClienteUpdateRequest extends GenericClienteRequest {
 	@Valid
 	private List<ClienteEmailUpdateRequest> emails;
 
+	@Valid
 	private List<ClienteTelefoneUpdateRequest> telefones;
 
 	public Boolean getAtivo() {

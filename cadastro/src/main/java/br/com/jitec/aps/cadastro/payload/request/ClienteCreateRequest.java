@@ -10,6 +10,7 @@ public class ClienteCreateRequest extends GenericClienteRequest {
 	@Valid
 	private List<ClienteEmailCreateRequest> emails;
 
+	@Valid
 	private List<ClienteTelefoneCreateRequest> telefones;
 
 	public List<ClienteEmailCreateRequest> getEmails() {
