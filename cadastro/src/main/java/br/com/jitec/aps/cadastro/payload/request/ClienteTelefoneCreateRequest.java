@@ -32,30 +32,4 @@ public class ClienteTelefoneCreateRequest {
 		return "ClienteTelefoneCreateRequest [numero=" + numero + ", tipoTelefoneUid=" + tipoTelefoneUid + "]";
 	}
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		private ClienteTelefoneCreateRequest instance;
-
-		private Builder() {
-			instance = new ClienteTelefoneCreateRequest();
-		}
-
-		public Builder withNumero(Integer numero) {
-			instance.setNumero(numero);
-			return this;
-		}
-
-		public Builder withTipoTelefoneUid(UUID tipoTelefoneUid) {
-			instance.setTipoTelefoneUid(tipoTelefoneUid);
-			return this;
-		}
-
-		public ClienteTelefoneCreateRequest build() {
-			return instance;
-		}
-	}
-
 }

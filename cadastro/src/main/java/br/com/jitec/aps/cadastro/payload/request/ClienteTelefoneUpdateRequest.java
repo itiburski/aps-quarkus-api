@@ -42,35 +42,4 @@ public class ClienteTelefoneUpdateRequest {
 				+ ", telefoneUid=" + telefoneUid + "]";
 	}
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		private ClienteTelefoneUpdateRequest instance;
-
-		private Builder() {
-			instance = new ClienteTelefoneUpdateRequest();
-		}
-
-		public Builder withNumero(Integer numero) {
-			instance.setNumero(numero);
-			return this;
-		}
-
-		public Builder withTelefoneUid(UUID telefoneUid) {
-			instance.setTelefoneUid(telefoneUid);
-			return this;
-		}
-
-		public Builder withTipoTelefoneUid(UUID tipoTelefoneUid) {
-			instance.setTipoTelefoneUid(tipoTelefoneUid);
-			return this;
-		}
-
-		public ClienteTelefoneUpdateRequest build() {
-			return instance;
-		}
-	}
-
 }

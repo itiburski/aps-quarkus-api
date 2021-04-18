@@ -34,29 +34,4 @@ public class ClienteEmailUpdateRequest {
 		return "ClienteEmailUpdateRequest [email=" + email + ", emailUid=" + emailUid + "]";
 	}
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		private ClienteEmailUpdateRequest instance;
-
-		private Builder() {
-			instance = new ClienteEmailUpdateRequest();
-		}
-
-		public Builder withEmailUid(UUID emailUid) {
-			instance.setEmailUid(emailUid);
-			return this;
-		}
-
-		public Builder withEmail(String email) {
-			instance.setEmail(email);
-			return this;
-		}
-
-		public ClienteEmailUpdateRequest build() {
-			return instance;
-		}
-	}
 }

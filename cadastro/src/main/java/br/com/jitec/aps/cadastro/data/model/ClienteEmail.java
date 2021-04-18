@@ -1,7 +1,5 @@
 package br.com.jitec.aps.cadastro.data.model;
 
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -66,33 +64,6 @@ public class ClienteEmail extends APSEntity {
 	@Override
 	public String toString() {
 		return "ClienteEmail [email=" + email + ", id=" + getId() + ", UUID=" + getUid() + "]";
-	}
-
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		private ClienteEmail instance = new ClienteEmail();
-
-		private Builder() {
-			// empty
-		}
-
-		public Builder withEmail(String email) {
-			instance.setEmail(email);
-			return this;
-		}
-
-		public Builder withUid(UUID uid) {
-			instance.setUid(uid);
-			return this;
-		}
-
-		public ClienteEmail build() {
-			return instance;
-		}
-
 	}
 
 }

@@ -22,24 +22,4 @@ public class ClienteEmailCreateRequest {
 		return "ClienteEmailCreateRequest [email=" + email + "]";
 	}
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		private ClienteEmailCreateRequest instance;
-
-		private Builder() {
-			instance = new ClienteEmailCreateRequest();
-		}
-
-		public Builder withEmail(String email) {
-			instance.setEmail(email);
-			return this;
-		}
-
-		public ClienteEmailCreateRequest build() {
-			return instance;
-		}
-	}
 }
