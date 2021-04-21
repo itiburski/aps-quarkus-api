@@ -96,9 +96,7 @@ public class OrdemServicoResource {
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull OrdemServicoCreateRequest request) {
-		OrdemServico os = osService.create(request.getClienteUid(), request.getTipoServicoUid(), request.getValor(),
-				request.getContato(), request.getDescricao(), request.getObservacao(), request.getEntrada(),
-				request.getAgendadoPara(), request.getEntrega());
+		OrdemServico os = osService.create(request);
 		OrdemServicoResponse response = mapper.toResponse(os);
 		return Response.status(Status.CREATED).entity(response).build();
 	}
@@ -114,9 +112,7 @@ public class OrdemServicoResource {
 	@Path("/{ordemServicoUid}/version/{version}")
 	public OrdemServicoResponse update(@PathParam("ordemServicoUid") UUID ordemServicoUid,
 			@PathParam("version") Integer version, @Valid @NotNull OrdemServicoUpdateRequest request) {
-		OrdemServico os = osService.update(ordemServicoUid, version, request.getTipoServicoUid(), request.getContato(),
-				request.getDescricao(), request.getObservacao(), request.getEntrada(), request.getAgendadoPara(),
-				request.getEntrega());
+		OrdemServico os = osService.update(ordemServicoUid, version, request);
 		return mapper.toResponse(os);
 	}
 
@@ -131,8 +127,7 @@ public class OrdemServicoResource {
 	@Path("/{ordemServicoUid}/version/{version}/lancamento")
 	public OrdemServicoResponse definirLancamento(@PathParam("ordemServicoUid") UUID ordemServicoUid,
 			@PathParam("version") Integer version, @Valid @NotNull OrdemServicoLancamentoRequest request) {
-		OrdemServico os = osService.definirLancamento(ordemServicoUid, version, request.getLancamento(),
-				request.getValor());
+		OrdemServico os = osService.definirLancamento(ordemServicoUid, version, request);
 		return mapper.toResponse(os);
 	}
 }

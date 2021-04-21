@@ -29,7 +29,15 @@ import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.model.TipoServico;
+import br.com.jitec.aps.servico.data.model.builder.ClienteReplicaBuilder;
+import br.com.jitec.aps.servico.data.model.builder.OrdemServicoBuilder;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoCreateRequest;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoLancamentoRequest;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoUpdateRequest;
+import br.com.jitec.aps.servico.payload.request.builder.OrdemServicoCreateRequestBuilder;
+import br.com.jitec.aps.servico.payload.request.builder.OrdemServicoLancamentoRequestBuilder;
+import br.com.jitec.aps.servico.payload.request.builder.OrdemServicoUpdateRequestBuilder;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
@@ -184,16 +192,15 @@ public class OrdemServicoServiceTest {
 
 	@Test
 	public void create_WithAllFieldsInformed_ShouldPopulateMatchingAttributes() {
-		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID tipoServicoUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-
 		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(7);
 
-		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(getCliente(Boolean.TRUE));
-		Mockito.when(tipoServicoServiceMock.get(tipoServicoUid)).thenReturn(new TipoServico());
+		Mockito.when(clienteServiceMock.get(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c")))
+				.thenReturn(getCliente(Boolean.TRUE));
+		Mockito.when(tipoServicoServiceMock.get(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b")))
+				.thenReturn(new TipoServico());
 
-		OrdemServico result = service.create(clienteUid, tipoServicoUid, BigDecimal.ONE, "contato", "descricao",
-				"observacao", OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
+		OrdemServicoCreateRequest request = OrdemServicoCreateRequestBuilder.create().withDefaultValues().build();
+		OrdemServico result = service.create(request);
 
 		Assertions.assertNotNull(result.getUid());
 		Assertions.assertEquals(7, result.getNumero());
@@ -206,8 +213,9 @@ public class OrdemServicoServiceTest {
 	public void create_WithNullAllFields_ShouldCreateWithNullValues() {
 		Mockito.when(repositoryMock.getNextNumeroOS()).thenReturn(7);
 
-		OrdemServico result = service.create(null, null, BigDecimal.ONE, "contato", "descricao", "observacao",
-				OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
+		OrdemServicoCreateRequest request = OrdemServicoCreateRequestBuilder.create().withDefaultValues()
+				.withClienteUid(null).withTipoServicoUid(null).build();
+		OrdemServico result = service.create(request);
 
 		Assertions.assertNotNull(result.getUid());
 		Assertions.assertEquals(7, result.getNumero());
@@ -223,9 +231,9 @@ public class OrdemServicoServiceTest {
 		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(getCliente(Boolean.FALSE));
 
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> service.create(clienteUid, null, BigDecimal.ONE, "contato", "descricao", "observacao",
-						OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now()),
+		OrdemServicoCreateRequest request = OrdemServicoCreateRequestBuilder.create().withDefaultValues().build();
+
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(request),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Não é possível cadastrar uma ordem de serviço para um cliente inativo",
@@ -237,12 +245,11 @@ public class OrdemServicoServiceTest {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
 		OrdemServico os = getOrdemServico(osUid, 123);
-		UUID tipoServicoUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
 
-		OrdemServico result = service.update(osUid, version, tipoServicoUid, "contato", "descricao", "observacao",
-				OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now());
+		OrdemServicoUpdateRequest request = OrdemServicoUpdateRequestBuilder.create().withDefaultValues().build();
+		OrdemServico result = service.update(osUid, version, request);
 
 		Assertions.assertEquals("contato", result.getContato());
 	}
@@ -251,13 +258,11 @@ public class OrdemServicoServiceTest {
 	public void update_WithNonexistingUidAndVersion_ShouldThrowException() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID tipoServicoUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.empty());
 
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> service.update(osUid, version, tipoServicoUid, "contato", "descricao", "observacao",
-						OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now()),
+				() -> service.update(osUid, version, OrdemServicoUpdateRequestBuilder.create().build()),
 				"should have thrown DataNotFoundException");
 
 		Assertions.assertEquals("Ordem de Serviço não encontrada para versao especificada", thrown.getMessage());
@@ -267,81 +272,78 @@ public class OrdemServicoServiceTest {
 	public void definirLancamento_WithEmptyValorEmptyDtLancamento_ShouldUpdateData() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, 123);
-		os.setCliente(new ClienteReplica());
-		UUID clienteUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		os.getCliente().setUid(clienteUid);
 
+		ClienteReplica clienteReplica = ClienteReplicaBuilder.create().withDefaultValues().build();
+		OrdemServico os = OrdemServicoBuilder.create().withUid(osUid).withCliente(clienteReplica).build();
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
 
-		OrdemServico result = service.definirLancamento(osUid, version,
-				OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")), new BigDecimal("123"));
+		OrdemServicoLancamentoRequest request = OrdemServicoLancamentoRequestBuilder.create().withDefaultValues()
+				.build();
+		OrdemServico result = service.definirLancamento(osUid, version, request);
 
 		Assertions.assertEquals(new BigDecimal("123"), result.getValor());
 		Assertions.assertEquals(OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")),
 				result.getLancamento());
 
-		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, new BigDecimal("-123"));
+		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(
+				UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"), new BigDecimal("-123"));
 	}
 
 	@Test
 	public void definirLancamento_WithExistingValorEmptyDtLancamento_ShouldUpdateData() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, 123);
-		os.setValor(new BigDecimal("100"));
-		os.setCliente(new ClienteReplica());
-		UUID clienteUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		os.getCliente().setUid(clienteUid);
 
+		ClienteReplica clienteReplica = ClienteReplicaBuilder.create().withDefaultValues().build();
+		OrdemServico os = OrdemServicoBuilder.create().withUid(osUid).withCliente(clienteReplica)
+				.withValor(new BigDecimal("100")).build();
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
 
-		OrdemServico result = service.definirLancamento(osUid, version,
-				OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")), new BigDecimal("123"));
+		OrdemServicoLancamentoRequest request = OrdemServicoLancamentoRequestBuilder.create().withDefaultValues()
+				.build();
+		OrdemServico result = service.definirLancamento(osUid, version, request);
 
 		Assertions.assertEquals(new BigDecimal("123"), result.getValor());
 		Assertions.assertEquals(OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")),
 				result.getLancamento());
 
-		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, new BigDecimal("-123"));
+		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(
+				UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"), new BigDecimal("-123"));
 	}
 
 	@Test
 	public void definirLancamento_WithExistingDtLancamento_ShouldUpdateData() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, 123);
-		os.setLancamento(OffsetDateTime.now());
-		os.setValor(new BigDecimal("50"));
-		os.setCliente(new ClienteReplica());
-		UUID clienteUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		os.getCliente().setUid(clienteUid);
 
+		ClienteReplica clienteReplica = ClienteReplicaBuilder.create().withDefaultValues().build();
+		OrdemServico os = OrdemServicoBuilder.create().withUid(osUid).withCliente(clienteReplica)
+				.withValor(new BigDecimal("50")).withLancamento(OffsetDateTime.now()).build();
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
 
-		OrdemServico result = service.definirLancamento(osUid, version,
-				OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")), new BigDecimal("123"));
+		OrdemServicoLancamentoRequest request = OrdemServicoLancamentoRequestBuilder.create().withDefaultValues()
+				.build();
+		OrdemServico result = service.definirLancamento(osUid, version, request);
 
 		Assertions.assertEquals(new BigDecimal("123"), result.getValor());
 		Assertions.assertEquals(OffsetDateTime.of(2021, 3, 14, 0, 0, 0, 0, ZoneOffset.of("-03")),
 				result.getLancamento());
 
-		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, new BigDecimal("-73"));
+		Mockito.verify(clienteSaldoProducerMock)
+				.sendUpdateSaldoCliente(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"), new BigDecimal("-73"));
 	}
 
 	@Test
 	public void definirLancamento_WithNonexistingUidAndVersion_ShouldThrowException() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, 123);
-		os.setCliente(new ClienteReplica());
-		os.getCliente().setUid(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"));
-
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.empty());
 
+		OrdemServicoLancamentoRequest request = OrdemServicoLancamentoRequestBuilder.create().withDefaultValues()
+				.build();
+
 		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
-				() -> service.definirLancamento(osUid, version, OffsetDateTime.now(), new BigDecimal("123")),
-				"should have thrown DataNotFoundException");
+				() -> service.definirLancamento(osUid, version, request), "should have thrown DataNotFoundException");
 
 		Assertions.assertEquals("Ordem de Serviço não encontrada para versao especificada", thrown.getMessage());
 
@@ -353,16 +355,17 @@ public class OrdemServicoServiceTest {
 	public void definirLancamento_WithOrdemServicoJaFaturada_ShouldThrowException() {
 		Integer version = 1;
 		UUID osUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		OrdemServico os = getOrdemServico(osUid, 123);
-		os.setCliente(new ClienteReplica());
-		os.setFatura(new Fatura());
-		os.getCliente().setUid(UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b"));
 
+		ClienteReplica clienteReplica = ClienteReplicaBuilder.create().withDefaultValues().build();
+		OrdemServico os = OrdemServicoBuilder.create().withUid(osUid).withCliente(clienteReplica)
+				.withFatura(new Fatura()).build();
 		Mockito.when(repositoryMock.findByUidVersion(osUid, version)).thenReturn(Optional.of(os));
 
+		OrdemServicoLancamentoRequest request = OrdemServicoLancamentoRequestBuilder.create().withDefaultValues()
+				.build();
+
 		Exception thrown = Assertions.assertThrows(InvalidDataException.class,
-				() -> service.definirLancamento(osUid, version, OffsetDateTime.now(), new BigDecimal("123")),
-				"should have thrown InvalidDataException");
+				() -> service.definirLancamento(osUid, version, request), "should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Ordem de serviço já foi faturada", thrown.getMessage());
 

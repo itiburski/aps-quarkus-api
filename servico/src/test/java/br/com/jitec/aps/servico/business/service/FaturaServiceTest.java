@@ -26,6 +26,7 @@ import br.com.jitec.aps.servico.business.data.FaturaFilter;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
+import br.com.jitec.aps.servico.data.model.builder.OrdemServicoBuilder;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -132,9 +133,9 @@ public class FaturaServiceTest {
 
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		ClienteReplica cliente = new ClienteReplica(clienteUid, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServico.builder().withUid(uid1).withCliente(cliente)
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
-		OrdemServico os2 = OrdemServico.builder().withUid(uid2).withCliente(cliente)
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
@@ -160,11 +161,11 @@ public class FaturaServiceTest {
 
 		UUID clienteUid1 = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		ClienteReplica cliente1 = new ClienteReplica(clienteUid1, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServico.builder().withUid(uid1).withCliente(cliente1)
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente1)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
 		UUID clienteUid2 = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
 		ClienteReplica cliente2 = new ClienteReplica(clienteUid2, "nome", Boolean.TRUE);
-		OrdemServico os2 = OrdemServico.builder().withUid(uid2).withCliente(cliente2)
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente2)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
@@ -186,9 +187,9 @@ public class FaturaServiceTest {
 
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		ClienteReplica cliente = new ClienteReplica(clienteUid, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServico.builder().withUid(uid1).withCliente(cliente).withLancamento(null)
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente).withLancamento(null)
 				.withValor(BigDecimal.valueOf(70L)).build();
-		OrdemServico os2 = OrdemServico.builder().withUid(uid2).withCliente(cliente)
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
@@ -211,9 +212,9 @@ public class FaturaServiceTest {
 
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		ClienteReplica cliente = new ClienteReplica(clienteUid, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServico.builder().withUid(uid1).withCliente(cliente)
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
-		OrdemServico os2 = OrdemServico.builder().withUid(uid2).withCliente(cliente)
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente)
 				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).withFatura(new Fatura())
 				.build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);

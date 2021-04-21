@@ -22,6 +22,10 @@ import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import br.com.jitec.aps.servico.payload.mapper.OrdemServicoMapper;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoCreateRequest;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoLancamentoRequest;
+import br.com.jitec.aps.servico.payload.request.OrdemServicoUpdateRequest;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 
@@ -32,6 +36,9 @@ public class OrdemServicoService {
 
 	@Inject
 	OrdemServicoRepository repository;
+
+	@Inject
+	OrdemServicoMapper ordemServicoMapper;
 
 	@Inject
 	ClienteReplicaService clienteService;
@@ -92,24 +99,15 @@ public class OrdemServicoService {
 	}
 
 	@Transactional
-	public OrdemServico create(UUID clienteUid, UUID tipoServicoUid, BigDecimal valor, String contato, String descricao,
-			String observacao, OffsetDateTime entrada, OffsetDateTime agendadoPara, OffsetDateTime entrega) {
-		OrdemServico os = new OrdemServico();
-
-		os.setValor(valor);
-		os.setContato(contato);
-		os.setDescricao(descricao);
-		os.setObservacao(observacao);
-		os.setEntrada(entrada);
-		os.setAgendadoPara(agendadoPara);
-		os.setEntrega(entrega);
+	public OrdemServico create(OrdemServicoCreateRequest request) {
+		OrdemServico os = ordemServicoMapper.toOrdemServico(request);
 		os.setNumero(repository.getNextNumeroOS());
 
-		if (Objects.nonNull(clienteUid)) {
-			os.setCliente(getCliente(clienteUid));
+		if (Objects.nonNull(request.getClienteUid())) {
+			os.setCliente(getCliente(request.getClienteUid()));
 		}
-		if (Objects.nonNull(tipoServicoUid)) {
-			os.setTipoServico(tipoServicoService.get(tipoServicoUid));
+		if (Objects.nonNull(request.getTipoServicoUid())) {
+			os.setTipoServico(tipoServicoService.get(request.getTipoServicoUid()));
 		}
 
 		repository.persist(os);
@@ -126,20 +124,12 @@ public class OrdemServicoService {
 	}
 
 	@Transactional
-	public OrdemServico update(UUID ordemServicoUid, Integer version, UUID tipoServicoUid, String contato,
-			String descricao, String observacao, OffsetDateTime entrada, OffsetDateTime agendadoPara,
-			OffsetDateTime entrega) {
+	public OrdemServico update(UUID ordemServicoUid, Integer version, OrdemServicoUpdateRequest request) {
 		OrdemServico os = get(ordemServicoUid, version);
+		ordemServicoMapper.update(request, os);
 
-		os.setContato(contato);
-		os.setDescricao(descricao);
-		os.setObservacao(observacao);
-		os.setEntrada(entrada);
-		os.setAgendadoPara(agendadoPara);
-		os.setEntrega(entrega);
-
-		if (Objects.nonNull(tipoServicoUid)) {
-			os.setTipoServico(tipoServicoService.get(tipoServicoUid));
+		if (Objects.nonNull(request.getTipoServicoUid())) {
+			os.setTipoServico(tipoServicoService.get(request.getTipoServicoUid()));
 		}
 
 		repository.persist(os);
@@ -148,8 +138,8 @@ public class OrdemServicoService {
 	}
 
 	@Transactional
-	public OrdemServico definirLancamento(UUID ordemServicoUid, Integer version, OffsetDateTime lancamento,
-			BigDecimal valor) {
+	public OrdemServico definirLancamento(UUID ordemServicoUid, Integer version,
+			OrdemServicoLancamentoRequest request) {
 		OrdemServico os = get(ordemServicoUid, version);
 
 		if (Objects.nonNull(os.getFatura())) {
@@ -157,10 +147,10 @@ public class OrdemServicoService {
 		}
 
 		BigDecimal vlAnterior = os.getLancamento() != null ? os.getValor() : BigDecimal.ZERO;
-		BigDecimal saldoARefletirNoCliente = vlAnterior.subtract(valor);
+		BigDecimal saldoARefletirNoCliente = vlAnterior.subtract(request.getValor());
 
-		os.setValor(valor);
-		os.setLancamento(lancamento);
+		os.setValor(request.getValor());
+		os.setLancamento(request.getLancamento());
 		repository.persist(os);
 
 		clienteSaldoProducer.sendUpdateSaldoCliente(os.getCliente().getUid(), saldoARefletirNoCliente);
