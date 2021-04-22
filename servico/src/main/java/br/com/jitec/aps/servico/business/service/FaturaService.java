@@ -23,6 +23,7 @@ import br.com.jitec.aps.servico.data.model.Fatura;
 import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import br.com.jitec.aps.servico.payload.request.FaturaRequest;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 
@@ -85,8 +86,8 @@ public class FaturaService {
 	}
 
 	@Transactional
-	public Fatura create(OffsetDateTime data, List<UUID> ordensServicoUid) {
-		List<OrdemServico> ordensServico = ordemServicoService.get(ordensServicoUid);
+	public Fatura create(FaturaRequest request) {
+		List<OrdemServico> ordensServico = ordemServicoService.get(request.getOrdensServicoUid());
 
 		long clientesDistintos = ordensServico.stream().map(os -> os.getCliente().getUid()).distinct().count();
 		if (clientesDistintos != 1) {
@@ -112,7 +113,7 @@ public class FaturaService {
 		fatura.setCliente(ordensServico.get(0).getCliente());
 		fatura.setValorTotal(totalFatura);
 		fatura.setCodigo(repository.getNextCodigoFatura());
-		fatura.setData(data);
+		fatura.setData(request.getData());
 		repository.persist(fatura);
 
 		ordensServico.forEach(os -> os.setFatura(fatura));

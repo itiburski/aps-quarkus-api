@@ -90,7 +90,7 @@ public class FaturaResource {
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull FaturaRequest request) {
-		Fatura fatura = service.create(request.getData(), request.getOrdensServicoUid());
+		Fatura fatura = service.create(request);
 		FaturaSlimResponse response = faturaMapper.toSlimResponse(fatura);
 
 		return Response.status(Status.CREATED).entity(response).build();

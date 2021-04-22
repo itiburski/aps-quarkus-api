@@ -29,6 +29,8 @@ import br.com.jitec.aps.servico.data.model.OrdemServico;
 import br.com.jitec.aps.servico.data.model.builder.OrdemServicoBuilder;
 import br.com.jitec.aps.servico.data.repository.FaturaRepository;
 import br.com.jitec.aps.servico.data.repository.OrdemServicoRepository;
+import br.com.jitec.aps.servico.payload.request.FaturaRequest;
+import br.com.jitec.aps.servico.payload.request.builder.FaturaRequestBuilder;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
@@ -126,22 +128,19 @@ public class FaturaServiceTest {
 	@Test
 	public void create_WithCorrectData_ShouldReturnFatura() {
 		OffsetDateTime dataFatura = OffsetDateTime.now();
-
-		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		List<UUID> uids = Arrays.asList(uid1, uid2);
+		FaturaRequest request = FaturaRequestBuilder.create().withDefaultValues().withData(dataFatura).build();
 
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		ClienteReplica cliente = new ClienteReplica(clienteUid, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente)
-				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
-		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente)
-				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(0))
+				.withCliente(cliente).withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(1))
+				.withCliente(cliente).withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
-		Mockito.when(ordemServicoServiceMock.get(uids)).thenReturn(ordensServico);
+		Mockito.when(ordemServicoServiceMock.get(request.getOrdensServicoUid())).thenReturn(ordensServico);
 
-		Fatura result = service.create(dataFatura, uids);
+		Fatura result = service.create(request);
 
 		Assertions.assertEquals(BigDecimal.valueOf(92L), result.getValorTotal());
 		Assertions.assertEquals(clienteUid, result.getCliente().getUid());
@@ -153,25 +152,21 @@ public class FaturaServiceTest {
 
 	@Test
 	public void create_WithDistinctCliente_ShouldThrowException() {
-		OffsetDateTime dataFatura = OffsetDateTime.now();
+		FaturaRequest request = FaturaRequestBuilder.create().withDefaultValues().build();
 
-		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		List<UUID> uids = Arrays.asList(uid1, uid2);
-
-		UUID clienteUid1 = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
-		ClienteReplica cliente1 = new ClienteReplica(clienteUid1, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente1)
-				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
-		UUID clienteUid2 = UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8");
-		ClienteReplica cliente2 = new ClienteReplica(clienteUid2, "nome", Boolean.TRUE);
-		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente2)
-				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
+		ClienteReplica cliente1 = new ClienteReplica(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"), "nome",
+				Boolean.TRUE);
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(0))
+				.withCliente(cliente1).withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
+		ClienteReplica cliente2 = new ClienteReplica(UUID.fromString("e1b4f9c0-6ab4-4040-b3a6-b7089da42be8"), "nome",
+				Boolean.TRUE);
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(1))
+				.withCliente(cliente2).withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
-		Mockito.when(ordemServicoServiceMock.get(uids)).thenReturn(ordensServico);
+		Mockito.when(ordemServicoServiceMock.get(request.getOrdensServicoUid())).thenReturn(ordensServico);
 
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(dataFatura, uids),
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(request),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("As ordens de serviço informadas devem ser do mesmo cliente", thrown.getMessage());
@@ -179,23 +174,19 @@ public class FaturaServiceTest {
 
 	@Test
 	public void create_WithoutDataLancamento_ShouldThrowException() {
-		OffsetDateTime dataFatura = OffsetDateTime.now();
+		FaturaRequest request = FaturaRequestBuilder.create().withDefaultValues().build();
 
-		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		List<UUID> uids = Arrays.asList(uid1, uid2);
-
-		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
-		ClienteReplica cliente = new ClienteReplica(clienteUid, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente).withLancamento(null)
-				.withValor(BigDecimal.valueOf(70L)).build();
-		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente)
-				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
+		ClienteReplica cliente = new ClienteReplica(UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da"), "nome",
+				Boolean.TRUE);
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(0))
+				.withCliente(cliente).withLancamento(null).withValor(BigDecimal.valueOf(70L)).build();
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(1))
+				.withCliente(cliente).withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
-		Mockito.when(ordemServicoServiceMock.get(uids)).thenReturn(ordensServico);
+		Mockito.when(ordemServicoServiceMock.get(request.getOrdensServicoUid())).thenReturn(ordensServico);
 
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(dataFatura, uids),
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(request),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Uma ou mais ordens de serviço informadas ainda não foram lançadas",
@@ -204,24 +195,20 @@ public class FaturaServiceTest {
 
 	@Test
 	public void create_WithFaturaAlreadyAssigned_ShouldThrowException() {
-		OffsetDateTime dataFatura = OffsetDateTime.now();
-
-		UUID uid1 = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID uid2 = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		List<UUID> uids = Arrays.asList(uid1, uid2);
+		FaturaRequest request = FaturaRequestBuilder.create().withDefaultValues().build();
 
 		UUID clienteUid = UUID.fromString("92bd0555-93e3-4ee7-86c7-7ed6dd39c5da");
 		ClienteReplica cliente = new ClienteReplica(clienteUid, "nome", Boolean.TRUE);
-		OrdemServico os1 = OrdemServicoBuilder.create().withUid(uid1).withCliente(cliente)
-				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
-		OrdemServico os2 = OrdemServicoBuilder.create().withUid(uid2).withCliente(cliente)
-				.withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L)).withFatura(new Fatura())
-				.build();
+		OrdemServico os1 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(0))
+				.withCliente(cliente).withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(70L)).build();
+		OrdemServico os2 = OrdemServicoBuilder.create().withUid(request.getOrdensServicoUid().get(1))
+				.withCliente(cliente).withLancamento(OffsetDateTime.now()).withValor(BigDecimal.valueOf(22L))
+				.withFatura(new Fatura()).build();
 		List<OrdemServico> ordensServico = Arrays.asList(os1, os2);
 
-		Mockito.when(ordemServicoServiceMock.get(uids)).thenReturn(ordensServico);
+		Mockito.when(ordemServicoServiceMock.get(request.getOrdensServicoUid())).thenReturn(ordensServico);
 
-		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(dataFatura, uids),
+		Exception thrown = Assertions.assertThrows(InvalidDataException.class, () -> service.create(request),
 				"should have thrown InvalidDataException");
 
 		Assertions.assertEquals("Uma ou mais ordens de serviço informadas já foram faturadas", thrown.getMessage());
@@ -247,8 +234,8 @@ public class FaturaServiceTest {
 
 		mockFindSingleResultOptionalEmpty();
 
-		Exception thrown = Assertions.assertThrows(DataNotFoundException.class, () -> service.delete(faturaUid, version),
-				"should have thrown DataNotFoundException");
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
+				() -> service.delete(faturaUid, version), "should have thrown DataNotFoundException");
 
 		Assertions.assertEquals("Fatura não encontrada para versão especificada", thrown.getMessage());
 
