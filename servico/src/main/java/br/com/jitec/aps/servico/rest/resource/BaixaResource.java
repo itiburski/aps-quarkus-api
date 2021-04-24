@@ -92,8 +92,7 @@ public class BaixaResource {
 			@APIResponse(responseCode = "500", description = ServicoApiConstants.STATUS_CODE_SERVER_ERROR) })
 	@POST
 	public Response create(@Valid @NotNull BaixaCreateRequest request) {
-		Baixa baixa = service.create(request.getTipoBaixaUid(), request.getData(), request.getValor(),
-				request.getObservacao(), request.getClienteUid());
+		Baixa baixa = service.create(request);
 		BaixaResponse response = mapper.toResponse(baixa);
 		return Response.status(Status.CREATED).entity(response).build();
 	}
@@ -108,8 +107,7 @@ public class BaixaResource {
 	@Path("/{baixaUid}/version/{version}")
 	public BaixaResponse update(@PathParam("baixaUid") UUID baixaUid, @PathParam("version") Integer version,
 			@Valid @NotNull BaixaUpdateRequest request) {
-		Baixa baixa = service.update(baixaUid, version, request.getTipoBaixaUid(), request.getData(),
-				request.getValor(), request.getObservacao());
+		Baixa baixa = service.update(baixaUid, version, request);
 		return mapper.toResponse(baixa);
 	}
 

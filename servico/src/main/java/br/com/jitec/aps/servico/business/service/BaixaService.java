@@ -19,6 +19,9 @@ import br.com.jitec.aps.servico.business.data.BaixaFilter;
 import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.Baixa;
 import br.com.jitec.aps.servico.data.repository.BaixaRepository;
+import br.com.jitec.aps.servico.payload.mapper.BaixaMapper;
+import br.com.jitec.aps.servico.payload.request.BaixaCreateRequest;
+import br.com.jitec.aps.servico.payload.request.BaixaUpdateRequest;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 
@@ -26,6 +29,9 @@ import io.quarkus.panache.common.Page;
 public class BaixaService {
 
 	private static final ZoneOffset OFFSET = OffsetDateTime.now().getOffset();
+
+	@Inject
+	BaixaMapper baixaMapper;
 
 	@Inject
 	ClienteReplicaService clienteService;
@@ -71,33 +77,27 @@ public class BaixaService {
 	}
 
 	@Transactional
-	public Baixa create(UUID tipoBaixaUid, OffsetDateTime data, BigDecimal valor, String observacao, UUID clienteUid) {
-		Baixa baixa = new Baixa();
-		baixa.setData(data);
-		baixa.setValor(valor);
-		baixa.setObservacao(observacao);
-		baixa.setTipoBaixa(tipoBaixaService.get(tipoBaixaUid));
-		baixa.setCliente(clienteService.get(clienteUid));
+	public Baixa create(BaixaCreateRequest request) {
+		Baixa baixa = baixaMapper.toBaixa(request);
+		baixa.setTipoBaixa(tipoBaixaService.get(request.getTipoBaixaUid()));
+		baixa.setCliente(clienteService.get(request.getClienteUid()));
 
 		repository.persist(baixa);
 
-		BigDecimal saldoARefletirNoCliente = valor;
-		clienteSaldoProducer.sendUpdateSaldoCliente(clienteUid, saldoARefletirNoCliente);
+		BigDecimal saldoARefletirNoCliente = baixa.getValor();
+		clienteSaldoProducer.sendUpdateSaldoCliente(request.getClienteUid(), saldoARefletirNoCliente);
 
 		return baixa;
 	}
 
 	@Transactional
-	public Baixa update(UUID baixaUid, Integer version, UUID tipoBaixaUid, OffsetDateTime data, BigDecimal valor,
-			String observacao) {
+	public Baixa update(UUID baixaUid, Integer version, BaixaUpdateRequest request) {
 		Baixa baixa = get(baixaUid, version);
 
-		BigDecimal saldoARefletirNoCliente = valor.subtract(baixa.getValor());
-
-		baixa.setData(data);
-		baixa.setValor(valor);
-		baixa.setObservacao(observacao);
-		baixa.setTipoBaixa(tipoBaixaService.get(tipoBaixaUid));
+		BigDecimal saldoARefletirNoCliente = request.getValor().subtract(baixa.getValor());
+		
+		baixaMapper.updateBaixa(request, baixa);
+		baixa.setTipoBaixa(tipoBaixaService.get(request.getTipoBaixaUid()));
 
 		repository.persist(baixa);
 

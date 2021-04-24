@@ -27,7 +27,12 @@ import br.com.jitec.aps.servico.business.producer.ClienteSaldoProducer;
 import br.com.jitec.aps.servico.data.model.Baixa;
 import br.com.jitec.aps.servico.data.model.ClienteReplica;
 import br.com.jitec.aps.servico.data.model.TipoBaixa;
+import br.com.jitec.aps.servico.data.model.builder.BaixaBuilder;
 import br.com.jitec.aps.servico.data.repository.BaixaRepository;
+import br.com.jitec.aps.servico.payload.request.BaixaCreateRequest;
+import br.com.jitec.aps.servico.payload.request.BaixaUpdateRequest;
+import br.com.jitec.aps.servico.payload.request.builder.BaixaCreateRequestBuilder;
+import br.com.jitec.aps.servico.payload.request.builder.BaixaUpdateRequestBuilder;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.test.junit.QuarkusTest;
@@ -57,8 +62,8 @@ public class BaixaServiceTest {
 	ClienteSaldoProducer clienteSaldoProducerMock;
 
 	public void getAll_WithPagination_ShouldReturnList() {
-		Baixa baixa1 = buildBaixa(UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f"));
-		Baixa baixa2 = buildBaixa(UUID.fromString("95c3a27b-af00-43b5-9b71-6f09b0e98867"));
+		Baixa baixa1 = BaixaBuilder.create().withUid(UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f")).build();
+		Baixa baixa2 = BaixaBuilder.create().withUid(UUID.fromString("95c3a27b-af00-43b5-9b71-6f09b0e98867")).build();
 		List<Baixa> baixas = Arrays.asList(baixa1, baixa2);
 
 		String query = "order by id";
@@ -80,7 +85,7 @@ public class BaixaServiceTest {
 		LocalDate dataTo = LocalDate.of(2021, 2, 28);
 		BaixaFilter filter = new BaixaFilter(clienteUid, tipoBaixaUid, dataFrom, dataTo);
 
-		Baixa baixa1 = buildBaixa(UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f"));
+		Baixa baixa1 = BaixaBuilder.create().withUid(UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f")).build();
 		List<Baixa> baixas = Arrays.asList(baixa1);
 
 		String query = "cliente.uid = :clienteUid and tipoBaixa.uid = :tipoBaixaUid and data >= :dataFrom and data <= :dataTo order by id";
@@ -95,13 +100,13 @@ public class BaixaServiceTest {
 		Paged<Baixa> result = service.getAll(PAGINATION, filter);
 
 		Assertions.assertEquals(1, result.getContent().size());
-		Mockito.verify(repositoryMock).find(query, params);		
+		Mockito.verify(repositoryMock).find(query, params);
 	}
-	
+
 	@Test
 	public void get_WithExistingUUID_ShouldReturnBaixa() {
 		UUID uid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
-		Baixa baixa1 = buildBaixa(uid);
+		Baixa baixa1 = BaixaBuilder.create().withUid(uid).build();
 		Mockito.when(repositoryMock.findByUid(uid)).thenReturn(Optional.of(baixa1));
 
 		Baixa result = service.get(uid);
@@ -122,13 +127,12 @@ public class BaixaServiceTest {
 
 	@Test
 	public void create_WithCorrectData_ShouldReturnBaixa() {
-		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID tipoBaixaUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+		BaixaCreateRequest request = BaixaCreateRequestBuilder.create().withDefaultValues().build();
 
-		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(new ClienteReplica());
-		Mockito.when(tipoBaixaServiceMock.get(tipoBaixaUid)).thenReturn(new TipoBaixa());
+		Mockito.when(clienteServiceMock.get(request.getClienteUid())).thenReturn(new ClienteReplica());
+		Mockito.when(tipoBaixaServiceMock.get(request.getTipoBaixaUid())).thenReturn(new TipoBaixa());
 
-		Baixa result = service.create(tipoBaixaUid, OffsetDateTime.now(), BigDecimal.TEN, "observacao", clienteUid);
+		Baixa result = service.create(request);
 
 		Assertions.assertNotNull(result.getUid());
 		Assertions.assertNotNull(result.getCliente());
@@ -137,18 +141,19 @@ public class BaixaServiceTest {
 		Assertions.assertEquals("observacao", result.getObservacao());
 
 		Mockito.verify(repositoryMock).persist(result);
-		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, BigDecimal.TEN);
+		Mockito.verify(clienteSaldoProducerMock)
+				.sendUpdateSaldoCliente(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"), BigDecimal.TEN);
 	}
 
 	@Test
 	public void create_WithNullAllFields_ShouldCreateWithNullValues() {
-		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID tipoBaixaUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
+		BaixaCreateRequest request = BaixaCreateRequestBuilder.create().withDefaultValues().withObservacao(null)
+				.build();
 
-		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(new ClienteReplica());
-		Mockito.when(tipoBaixaServiceMock.get(tipoBaixaUid)).thenReturn(new TipoBaixa());
+		Mockito.when(clienteServiceMock.get(request.getClienteUid())).thenReturn(new ClienteReplica());
+		Mockito.when(tipoBaixaServiceMock.get(request.getTipoBaixaUid())).thenReturn(new TipoBaixa());
 
-		Baixa result = service.create(tipoBaixaUid, OffsetDateTime.now(), BigDecimal.TEN, null, clienteUid);
+		Baixa result = service.create(request);
 
 		Assertions.assertNotNull(result.getUid());
 		Assertions.assertNotNull(result.getCliente());
@@ -157,23 +162,23 @@ public class BaixaServiceTest {
 		Assertions.assertNull(result.getObservacao());
 
 		Mockito.verify(repositoryMock).persist(result);
-		Mockito.verify(clienteSaldoProducerMock).sendUpdateSaldoCliente(clienteUid, BigDecimal.TEN);
+		Mockito.verify(clienteSaldoProducerMock)
+				.sendUpdateSaldoCliente(UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c"), BigDecimal.TEN);
 	}
 
 	@Test
 	public void update_WithExistingUidAndVersion_ShouldUpdateData() {
 		UUID baixaUid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
 		Integer version = 3;
-		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		UUID tipoBaixaUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
-		Baixa baixa = buildBaixa(baixaUid, BigDecimal.TEN, clienteUid);
-
+		Baixa baixa = BaixaBuilder.create().withDefaultValues().build();
+		UUID clienteUid = baixa.getCliente().getUid();
 		Mockito.when(repositoryMock.findByUidVersion(baixaUid, version)).thenReturn(Optional.of(baixa));
 		Mockito.when(clienteServiceMock.get(clienteUid)).thenReturn(new ClienteReplica());
-		Mockito.when(tipoBaixaServiceMock.get(tipoBaixaUid)).thenReturn(new TipoBaixa());
 
-		Baixa result = service.update(baixaUid, version, tipoBaixaUid, OffsetDateTime.now(), BigDecimal.ONE,
-				"observacao-alterada");
+		BaixaUpdateRequest request = BaixaUpdateRequestBuilder.create().withDefaultValues().build();
+		Mockito.when(tipoBaixaServiceMock.get(request.getTipoBaixaUid())).thenReturn(new TipoBaixa());
+
+		Baixa result = service.update(baixaUid, version, request);
 
 		Assertions.assertNotNull(result.getUid());
 		Assertions.assertNotNull(result.getCliente());
@@ -190,15 +195,12 @@ public class BaixaServiceTest {
 	public void update_WithNonexistingUidAndVersion_ShouldThrowException() {
 		UUID baixaUid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
 		Integer version = 3;
-		UUID tipoBaixaUid = UUID.fromString("66a1f5d6-f838-450e-b186-542f52413e4b");
 
 		Mockito.when(repositoryMock.findByUidVersion(baixaUid, version)).thenReturn(Optional.empty());
 
-		Exception thrown = Assertions
-				.assertThrows(
-						DataNotFoundException.class, () -> service.update(baixaUid, version, tipoBaixaUid,
-								OffsetDateTime.now(), BigDecimal.ONE, "observacao-alterada"),
-						"should have thrown DataNotFoundException");
+		Exception thrown = Assertions.assertThrows(DataNotFoundException.class,
+				() -> service.update(baixaUid, version, BaixaUpdateRequestBuilder.create().build()),
+				"should have thrown DataNotFoundException");
 
 		Assertions.assertEquals("Baixa não encontrada para versao especificada", thrown.getMessage());
 
@@ -212,8 +214,8 @@ public class BaixaServiceTest {
 	public void delete_WithExistingUidAndVersion_ShouldDelete() {
 		UUID baixaUid = UUID.fromString("00b2d407-85b0-4b07-be1f-b08d7909126f");
 		Integer version = 3;
-		UUID clienteUid = UUID.fromString("e08394a0-324c-428b-9ee8-47d1d9c4eb3c");
-		Baixa baixa = buildBaixa(baixaUid, BigDecimal.TEN, clienteUid);
+		Baixa baixa = BaixaBuilder.create().withDefaultValues().build();
+		UUID clienteUid = baixa.getCliente().getUid();
 
 		Mockito.when(repositoryMock.findByUidVersion(baixaUid, version)).thenReturn(Optional.of(baixa));
 
@@ -238,20 +240,6 @@ public class BaixaServiceTest {
 		Mockito.verify(repositoryMock, Mockito.never()).delete(ArgumentMatchers.any(Baixa.class));
 		Mockito.verify(clienteSaldoProducerMock, Mockito.never())
 				.sendUpdateSaldoCliente(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any(BigDecimal.class));
-	}
-
-	private Baixa buildBaixa(UUID uid) {
-		Baixa baixa = new Baixa();
-		baixa.setUid(uid);
-		return baixa;
-	}
-
-	private Baixa buildBaixa(UUID uid, BigDecimal valor, UUID clienteUid) {
-		Baixa baixa = buildBaixa(uid);
-		baixa.setValor(valor);
-		baixa.setCliente(new ClienteReplica());
-		baixa.getCliente().setUid(clienteUid);
-		return baixa;
 	}
 
 	@SuppressWarnings("unchecked")
