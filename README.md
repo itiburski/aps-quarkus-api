@@ -19,7 +19,7 @@ This API provides HTTP endpoint's for the following actions:
 This project was developed with following technologies:
 
 * Java 11 (OpenJDK Runtime Environment (build 11.0.9+11))
-* Quarkus 1.8.3.Final
+* Quarkus 1.13.2.Final
 * Apache Maven 3.6.3
 * JUnit 5
 * PostgreSQL 12
